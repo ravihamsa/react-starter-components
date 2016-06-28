@@ -96,7 +96,7 @@ var config = {
         ];
     },
 
-    plugins: [
+    plugins: DEBUG ? [] : [
         new webpack.optimize.UglifyJsPlugin({
             compress: {
                 screw_ie8: true, // jscs:ignore requireCamelCaseOrUpperCaseIdentifiers
