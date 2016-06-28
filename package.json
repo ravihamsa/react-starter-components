@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
+  "repository": "https://github.com/ravihamsa/react-starter",
   "dependencies": {
     "babel-core": "^6.10.4",
     "babel-loader": "^6.2.4",
@@ -12,10 +13,12 @@
     "history": "^3.0.0",
     "lodash": "^4.13.1",
     "moment": "^2.13.0",
+    "node-fetch": "^1.5.3",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "reflux": "^0.4.1",
-    "url-loader": "^0.5.7"
+    "url-loader": "^0.5.7",
+    "whatwg-fetch": "^1.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.6",

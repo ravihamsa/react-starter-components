@@ -4,8 +4,16 @@
 
 
 import React, {Component, PropTypes} from "react";
-import Child from './components/Child/Child'
+import Child from './components/Child'
+import NameList from './components/NameList'
 import emptyFunction from 'fbjs/lib/emptyFunction';
+import dataSourceConfigs from './requests';
+import dataLoader from './core/dataLoader';
+import SmartWrapper from './core/SmartWrapper'
+
+for (let requestId in dataSourceConfigs) {
+    dataLoader.addResource(requestId, dataSourceConfigs[requestId]);
+}
 
 const context = {
     insertCss: styles => styles._insertCss(),
@@ -24,7 +32,21 @@ class App extends Component {
     }
 
     render() {
-        return <div>This is React App <br/><Child view="create" text="My React App"/></div>
+        
+        var childSmartConfig = {
+            dataRequests:[{
+                propKey:'names',
+                requestId:'nameList'
+            }]
+        }
+        
+        return <div>This is React App <br/>
+            <SmartWrapper {...childSmartConfig}>
+                <NameList/>
+            </SmartWrapper>
+
+            <Child  view="create" text="My React App"/>
+        </div>
     }
 
 
