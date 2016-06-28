@@ -58,15 +58,7 @@ class SmartWrapper extends Component {
     }
 
     render() {
-        let children =  this.props.children;
-        if(!Array.isArray(this.props.children)){
-            children = [children];
-        }
-
-        let childComponents = children.map(function(childComponent,index){
-            return React.cloneElement(childComponent, {...this.dataIndex, key:index});
-        },this)
-        return this.state.loading ? <Loader/> : <div>{childComponents}</div>
+        return this.state.loading ? <Loader/> : React.cloneElement(this.props.children, {...this.dataIndex});
     }
 
 }

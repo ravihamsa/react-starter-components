@@ -32,20 +32,22 @@ class App extends Component {
     }
 
     render() {
-        
+
         var childSmartConfig = {
-            dataRequests:[{
-                propKey:'names',
-                requestId:'nameList'
+            dataRequests: [{
+                propKey: 'names',
+                requestId: 'nameList'
             }]
         }
-        
+
         return <div>This is React App <br/>
             <SmartWrapper {...childSmartConfig}>
                 <NameList/>
             </SmartWrapper>
 
-            <Child  view="create" text="My React App"/>
+            
+
+            <Child view="create" text="My React App"/>
         </div>
     }
 

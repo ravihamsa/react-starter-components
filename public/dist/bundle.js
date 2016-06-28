@@ -9321,19 +9321,7 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var children = this.props.children;
-	            if (!Array.isArray(this.props.children)) {
-	                children = [children];
-	            }
-	
-	            var childComponents = children.map(function (childComponent, index) {
-	                return _react2.default.cloneElement(childComponent, _extends({}, this.dataIndex, { key: index }));
-	            }, this);
-	            return this.state.loading ? _react2.default.createElement(_Loader2.default, null) : _react2.default.createElement(
-	                'div',
-	                null,
-	                childComponents
-	            );
+	            return this.state.loading ? _react2.default.createElement(_Loader2.default, null) : _react2.default.cloneElement(this.props.children, _extends({}, this.dataIndex));
 	        }
 	    }]);
 	
