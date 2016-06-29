@@ -12,7 +12,7 @@ class TextBox extends FormElement {
             <label htmlFor="exampleInputEmail1">Email address</label>
             <input type="email" className="form-control" id="exampleInputEmail1" name={this.props.name}
                    placeholder="Enter email" onChange={this.onChange.bind(this)}/>
-            <small className="text-muted">We'll never share your email with anyone else.</small>
+            <small className="text-muted">We will never share your email with anyone else.</small>
         </fieldset>
     }
 }
