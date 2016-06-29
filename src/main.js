@@ -8,8 +8,10 @@ import Child from './components/Child'
 import NameList from './components/NameList'
 import emptyFunction from 'fbjs/lib/emptyFunction';
 import dataSourceConfigs from './requests';
-import dataLoader from './core/dataLoader';
-import SmartWrapper from './core/SmartWrapper'
+import {dataLoader, SmartWrapper, SimpleStore} from './core';
+import {Form, TextBox} from './components/Form';
+
+
 
 for (let requestId in dataSourceConfigs) {
     dataLoader.addResource(requestId, dataSourceConfigs[requestId]);
@@ -19,6 +21,9 @@ const context = {
     insertCss: styles => styles._insertCss(),
     onSetTitle: value => (document.title = value),
 }
+
+
+
 
 class App extends Component {
 
@@ -31,6 +36,7 @@ class App extends Component {
         }
     }
 
+
     render() {
 
         var childSmartConfig = {
@@ -40,12 +46,29 @@ class App extends Component {
             }]
         }
 
+
+
         return <div>This is React App <br/>
             <SmartWrapper {...childSmartConfig}>
                 <NameList/>
             </SmartWrapper>
 
-            
+
+            test
+
+            <div className="container">
+                <Form>
+                    <TextBox name="something"/>
+
+                </Form>
+            </div>
+
+            <div className="container">
+                <Form>
+                    <TextBox name="otherthing"/>
+
+                </Form>
+            </div>
 
             <Child view="create" text="My React App"/>
         </div>

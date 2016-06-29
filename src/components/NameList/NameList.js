@@ -12,7 +12,7 @@ class NameList extends Component {
         let names = this.props.names.map(function(nameObject, index){
             return <li key={index}>{nameObject.name}</li>
         })
-
+        
         return <ul>
             {names}
         </ul>
