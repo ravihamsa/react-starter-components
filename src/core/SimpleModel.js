@@ -25,6 +25,14 @@ class SimpleModel extends EventEmitter {
         }
     }
 
+    get(prop){
+        return this._dataIndex[prop]
+    }
+
+    getAll(){
+        return this._dataIndex;
+    }
+
     triggerPropChange(prop, value, oldValue){
         this._changed[prop]=value;
         this.emit('change:'+prop, value, oldValue);
@@ -33,6 +41,8 @@ class SimpleModel extends EventEmitter {
     triggerChange(changed, allData){
         this.emit('change', changed, allData);
     }
+
+
 }
 
 

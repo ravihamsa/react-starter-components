@@ -10117,6 +10117,16 @@
 	            }
 	        }
 	    }, {
+	        key: 'get',
+	        value: function get(prop) {
+	            return this._dataIndex[prop];
+	        }
+	    }, {
+	        key: 'getAll',
+	        value: function getAll() {
+	            return this._dataIndex;
+	        }
+	    }, {
 	        key: 'triggerPropChange',
 	        value: function triggerPropChange(prop, value, oldValue) {
 	            this._changed[prop] = value;
