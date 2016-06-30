@@ -10,6 +10,7 @@ import emptyFunction from 'fbjs/lib/emptyFunction';
 import dataSourceConfigs from './requests';
 import {dataLoader, SmartWrapper, SimpleStore} from './core';
 import {Form, TextInput, Select} from './components/Form';
+import List from './components/common/List';
 
 
 
@@ -41,7 +42,7 @@ class App extends Component {
 
         var childSmartConfig = {
             dataRequests: [{
-                propKey: 'names',
+                propKey: 'items',
                 requestId: 'nameList'
             }]
         }
@@ -57,7 +58,7 @@ class App extends Component {
 
         return <div>This is React App <br/>
             <SmartWrapper {...childSmartConfig}>
-                <NameList/>
+                <List></List>
             </SmartWrapper>
 
 
