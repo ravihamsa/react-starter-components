@@ -12,7 +12,7 @@ class TextBox extends FormElement {
             <label>{this.props.label}</label>
             <input type={this.props.type} className="form-control" name={this.props.name}
                    placeholder={this.props.placeholder} onChange={this.onChange.bind(this)}/>
-            <small className="text-muted">We'll never share your email with anyone else.</small>
+            <small className="text-muted">We will never share your email with anyone else.</small>
         </fieldset>
     }
 }
