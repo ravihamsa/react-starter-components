@@ -5,10 +5,15 @@ import React, {PropTypes, Component} from "react";
 
 class FormElement extends Component {
 
-
     onChange(event) {
         let name = this.props.name;
         this.context.valueStore.set({[name]: event.target.value})
+    }
+
+    componentWillMount(){
+        if(this.props.defaultValue){
+            this.context.valueStore.set({[this.props.name]: this.props.defaultValue})
+        }
     }
 }
 
@@ -20,12 +25,14 @@ FormElement.propTypes = {
     type: PropTypes.string.isRequired,
     placeholder: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
+    defaultValue:PropTypes.string,
+    options:PropTypes.array
 }
 
 FormElement.defaultProps = {
     type: 'text',
     placeholder: 'Enter Text',
-    label: 'Text Input',
+    label: 'Text Input'
 }
 
 

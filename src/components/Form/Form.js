@@ -12,8 +12,8 @@ class Form extends Component {
         </form>
     }
 
-    onValueChange(changed){
-        console.log(changed)
+    onValueChange(changed, allData){
+        console.log(allData)
     }
 
     getChildContext(){

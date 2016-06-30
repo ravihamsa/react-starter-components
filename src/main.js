@@ -9,7 +9,7 @@ import NameList from './components/NameList'
 import emptyFunction from 'fbjs/lib/emptyFunction';
 import dataSourceConfigs from './requests';
 import {dataLoader, SmartWrapper, SimpleStore} from './core';
-import {Form, TextBox} from './components/Form';
+import {Form, TextInput, Select} from './components/Form';
 
 
 
@@ -47,6 +47,13 @@ class App extends Component {
         }
 
 
+        var selectSmartConfig = {
+            dataRequests: [{
+                propKey: 'options',
+                requestId: 'nameList'
+            }]
+        }
+
 
         return <div>This is React App <br/>
             <SmartWrapper {...childSmartConfig}>
@@ -58,7 +65,10 @@ class App extends Component {
 
             <div className="container">
                 <Form>
-                    <TextBox name="something"/>
+                    <TextInput name="something" defaultValue="Ravi Hamsa"/>
+                    <SmartWrapper {...selectSmartConfig}>
+                        <Select  name="otherthing" label="Enter Other thing" placeholder="This is placeholder" defaultValue={'2'}/>
+                    </SmartWrapper>
 
                 </Form>
             </div>
@@ -67,7 +77,7 @@ class App extends Component {
                 <Form>
                     <div>
                         <span>
-                            <TextBox name="otherthing" label="Enter Other thing" placeholder="This is placeholder"/>
+                            <TextInput name="otherthing2" label="Enter Other thing" placeholder="This is placeholder" helperText="We will never share your email with anyone else."/>
                         </span>
                     </div>
                 </Form>

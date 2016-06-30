@@ -4,4 +4,5 @@
 
 export Form from './Form';
 export FormElement from './FormElement';
-export TextBox from './TextBox'
+export TextInput from './TextInput'
+export Select from './Select'

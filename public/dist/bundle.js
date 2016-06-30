@@ -141,6 +141,13 @@
 	                }]
 	            };
 	
+	            var selectSmartConfig = {
+	                dataRequests: [{
+	                    propKey: 'options',
+	                    requestId: 'nameList'
+	                }]
+	            };
+	
 	            return _react2.default.createElement(
 	                'div',
 	                null,
@@ -158,7 +165,12 @@
 	                    _react2.default.createElement(
 	                        _Form.Form,
 	                        null,
-	                        _react2.default.createElement(_Form.TextBox, { name: 'something' })
+	                        _react2.default.createElement(_Form.TextInput, { name: 'something', defaultValue: 'Ravi Hamsa' }),
+	                        _react2.default.createElement(
+	                            _core.SmartWrapper,
+	                            selectSmartConfig,
+	                            _react2.default.createElement(_Form.Select, { name: 'otherthing', label: 'Enter Other thing', placeholder: 'This is placeholder', defaultValue: '2' })
+	                        )
 	                    )
 	                ),
 	                _react2.default.createElement(
@@ -173,7 +185,7 @@
 	                            _react2.default.createElement(
 	                                'span',
 	                                null,
-	                                _react2.default.createElement(_Form.TextBox, { name: 'otherthing', label: 'Enter Other thing', placeholder: 'This is placeholder' })
+	                                _react2.default.createElement(_Form.TextInput, { name: 'otherthing2', label: 'Enter Other thing', placeholder: 'This is placeholder', helperText: 'We will never share your email with anyone else.' })
 	                            )
 	                        )
 	                    )
@@ -9788,7 +9800,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.TextBox = exports.FormElement = exports.Form = undefined;
+	exports.Select = exports.TextInput = exports.FormElement = exports.Form = undefined;
 	
 	var _Form2 = __webpack_require__(/*! ./Form */ 128);
 	
@@ -9798,9 +9810,13 @@
 	
 	var _FormElement3 = _interopRequireDefault(_FormElement2);
 	
-	var _TextBox2 = __webpack_require__(/*! ./TextBox */ 130);
+	var _TextInput2 = __webpack_require__(/*! ./TextInput */ 131);
 	
-	var _TextBox3 = _interopRequireDefault(_TextBox2);
+	var _TextInput3 = _interopRequireDefault(_TextInput2);
+	
+	var _Select2 = __webpack_require__(/*! ./Select */ 132);
+	
+	var _Select3 = _interopRequireDefault(_Select2);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -9809,7 +9825,8 @@
 	                                */
 	
 	exports.FormElement = _FormElement3.default;
-	exports.TextBox = _TextBox3.default;
+	exports.TextInput = _TextInput3.default;
+	exports.Select = _Select3.default;
 
 /***/ },
 /* 128 */
@@ -9863,8 +9880,8 @@
 	        }
 	    }, {
 	        key: 'onValueChange',
-	        value: function onValueChange(changed) {
-	            console.log(changed);
+	        value: function onValueChange(changed, allData) {
+	            console.log(allData);
 	        }
 	    }, {
 	        key: 'getChildContext',
@@ -9935,6 +9952,13 @@
 	            var name = this.props.name;
 	            this.context.valueStore.set(_defineProperty({}, name, event.target.value));
 	        }
+	    }, {
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            if (this.props.defaultValue) {
+	                this.context.valueStore.set(_defineProperty({}, this.props.name, this.props.defaultValue));
+	            }
+	        }
 	    }]);
 	
 	    return FormElement;
@@ -9947,7 +9971,9 @@
 	FormElement.propTypes = {
 	    type: _react.PropTypes.string.isRequired,
 	    placeholder: _react.PropTypes.string.isRequired,
-	    label: _react.PropTypes.string.isRequired
+	    label: _react.PropTypes.string.isRequired,
+	    defaultValue: _react.PropTypes.string,
+	    options: _react.PropTypes.array
 	};
 	
 	FormElement.defaultProps = {
@@ -9959,10 +9985,11 @@
 	exports.default = FormElement;
 
 /***/ },
-/* 130 */
-/*!****************************************!*\
-  !*** ./src/components/Form/TextBox.js ***!
-  \****************************************/
+/* 130 */,
+/* 131 */
+/*!******************************************!*\
+  !*** ./src/components/Form/TextInput.js ***!
+  \******************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -9991,16 +10018,16 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by ravi.hamsa on 6/29/16.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
-	var TextBox = function (_FormElement) {
-	    _inherits(TextBox, _FormElement);
+	var TextInput = function (_FormElement) {
+	    _inherits(TextInput, _FormElement);
 	
-	    function TextBox() {
-	        _classCallCheck(this, TextBox);
+	    function TextInput() {
+	        _classCallCheck(this, TextInput);
 	
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(TextBox).apply(this, arguments));
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(TextInput).apply(this, arguments));
 	    }
 	
-	    _createClass(TextBox, [{
+	    _createClass(TextInput, [{
 	        key: "render",
 	        value: function render() {
 	            return _react2.default.createElement(
@@ -10012,20 +10039,99 @@
 	                    this.props.label
 	                ),
 	                _react2.default.createElement("input", { type: this.props.type, className: "form-control", name: this.props.name,
-	                    placeholder: this.props.placeholder, onChange: this.onChange.bind(this) }),
-	                _react2.default.createElement(
+	                    placeholder: this.props.placeholder, onChange: this.onChange.bind(this), defaultValue: this.props.defaultValue }),
+	                this.props.helperText ? _react2.default.createElement(
 	                    "small",
 	                    { className: "text-muted" },
-	                    "We will never share your email with anyone else."
-	                )
+	                    this.props.helperText
+	                ) : ''
 	            );
 	        }
 	    }]);
 	
-	    return TextBox;
+	    return TextInput;
 	}(_FormElement3.default);
 	
-	exports.default = TextBox;
+	exports.default = TextInput;
+
+/***/ },
+/* 132 */
+/*!***************************************!*\
+  !*** ./src/components/Form/Select.js ***!
+  \***************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _FormElement2 = __webpack_require__(/*! ./FormElement */ 129);
+	
+	var _FormElement3 = _interopRequireDefault(_FormElement2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by ravi.hamsa on 6/29/16.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+	
+	var Select = function (_FormElement) {
+	    _inherits(Select, _FormElement);
+	
+	    function Select() {
+	        _classCallCheck(this, Select);
+	
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Select).apply(this, arguments));
+	    }
+	
+	    _createClass(Select, [{
+	        key: "render",
+	        value: function render() {
+	            return _react2.default.createElement(
+	                "fieldset",
+	                { className: "form-group" },
+	                _react2.default.createElement(
+	                    "label",
+	                    null,
+	                    this.props.label
+	                ),
+	                _react2.default.createElement(
+	                    "select",
+	                    { className: "form-control", name: this.props.name,
+	                        placeholder: this.props.placeholder, onChange: this.onChange.bind(this), defaultValue: this.props.defaultValue },
+	                    this.props.options.map(function (option, index) {
+	                        return _react2.default.createElement(
+	                            "option",
+	                            { value: option.id, key: index },
+	                            option.name
+	                        );
+	                    }, this)
+	                ),
+	                this.props.helperText ? _react2.default.createElement(
+	                    "small",
+	                    { className: "text-muted" },
+	                    this.props.helperText
+	                ) : ''
+	            );
+	        }
+	    }]);
+	
+	    return Select;
+	}(_FormElement3.default);
+	
+	exports.default = Select;
 
 /***/ }
 /******/ ]);
