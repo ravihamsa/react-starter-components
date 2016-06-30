@@ -3,7 +3,7 @@
  */
 import {EventEmitter} from 'events';
 
-class Store extends EventEmitter {
+class SimpleModel extends EventEmitter {
     constructor(){
         super(...arguments);
         this._dataIndex = {};
@@ -36,4 +36,4 @@ class Store extends EventEmitter {
 }
 
 
-export default Store;
+export default SimpleModel;

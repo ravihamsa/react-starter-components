@@ -3,6 +3,6 @@
  */
 
 export dataLoader from './dataLoader'
-export SimpleStore from './SimpleStore'
+export SimpleStore from './SimpleModel'
 export SmartWrapper from './SmartWrapper'
 export utils from './utils'

@@ -2926,9 +2926,9 @@
 	
 	var _dataLoader3 = _interopRequireDefault(_dataLoader2);
 	
-	var _SimpleStore2 = __webpack_require__(/*! ./SimpleStore */ 122);
+	var _SimpleModel = __webpack_require__(/*! ./SimpleModel */ 133);
 	
-	var _SimpleStore3 = _interopRequireDefault(_SimpleStore2);
+	var _SimpleModel2 = _interopRequireDefault(_SimpleModel);
 	
 	var _SmartWrapper2 = __webpack_require__(/*! ./SmartWrapper */ 124);
 	
@@ -2944,7 +2944,7 @@
 	                                            * Created by ravi.hamsa on 6/29/16.
 	                                            */
 	
-	exports.SimpleStore = _SimpleStore3.default;
+	exports.SimpleStore = _SimpleModel2.default;
 	exports.SmartWrapper = _SmartWrapper3.default;
 	exports.utils = _utils3.default;
 
@@ -9222,79 +9222,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./~/timers-browserify/main.js */ 121).setImmediate, __webpack_require__(/*! ./~/timers-browserify/main.js */ 121).clearImmediate))
 
 /***/ },
-/* 122 */
-/*!*********************************!*\
-  !*** ./src/core/SimpleStore.js ***!
-  \*********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _events = __webpack_require__(/*! events */ 123);
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by ravi.hamsa on 6/29/16.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
-	
-	
-	var Store = function (_EventEmitter) {
-	    _inherits(Store, _EventEmitter);
-	
-	    function Store() {
-	        _classCallCheck(this, Store);
-	
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Store).apply(this, arguments));
-	
-	        _this._dataIndex = {};
-	        return _this;
-	    }
-	
-	    _createClass(Store, [{
-	        key: 'set',
-	        value: function set(map) {
-	            this._changed = {};
-	            for (var prop in map) {
-	                var oldValue = this._dataIndex[prop];
-	                var value = map[prop];
-	                if (oldValue !== value) {
-	                    this._dataIndex[prop] = value;
-	                    this.triggerPropChange(prop, value, oldValue);
-	                }
-	            }
-	
-	            if (Object.keys(this._changed).length !== 0) {
-	                this.triggerChange(this._changed, this._dataIndex);
-	            }
-	        }
-	    }, {
-	        key: 'triggerPropChange',
-	        value: function triggerPropChange(prop, value, oldValue) {
-	            this._changed[prop] = value;
-	            this.emit('change:' + prop, value, oldValue);
-	        }
-	    }, {
-	        key: 'triggerChange',
-	        value: function triggerChange(changed, allData) {
-	            this.emit('change', changed, allData);
-	        }
-	    }]);
-	
-	    return Store;
-	}(_events.EventEmitter);
-	
-	exports.default = Store;
-
-/***/ },
+/* 122 */,
 /* 123 */
 /*!****************************!*\
   !*** ./~/events/events.js ***!
@@ -10132,6 +10060,79 @@
 	}(_FormElement3.default);
 	
 	exports.default = Select;
+
+/***/ },
+/* 133 */
+/*!*********************************!*\
+  !*** ./src/core/SimpleModel.js ***!
+  \*********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _events = __webpack_require__(/*! events */ 123);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by ravi.hamsa on 6/29/16.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+	
+	
+	var SimpleModel = function (_EventEmitter) {
+	    _inherits(SimpleModel, _EventEmitter);
+	
+	    function SimpleModel() {
+	        _classCallCheck(this, SimpleModel);
+	
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SimpleModel).apply(this, arguments));
+	
+	        _this._dataIndex = {};
+	        return _this;
+	    }
+	
+	    _createClass(SimpleModel, [{
+	        key: 'set',
+	        value: function set(map) {
+	            this._changed = {};
+	            for (var prop in map) {
+	                var oldValue = this._dataIndex[prop];
+	                var value = map[prop];
+	                if (oldValue !== value) {
+	                    this._dataIndex[prop] = value;
+	                    this.triggerPropChange(prop, value, oldValue);
+	                }
+	            }
+	
+	            if (Object.keys(this._changed).length !== 0) {
+	                this.triggerChange(this._changed, this._dataIndex);
+	            }
+	        }
+	    }, {
+	        key: 'triggerPropChange',
+	        value: function triggerPropChange(prop, value, oldValue) {
+	            this._changed[prop] = value;
+	            this.emit('change:' + prop, value, oldValue);
+	        }
+	    }, {
+	        key: 'triggerChange',
+	        value: function triggerChange(changed, allData) {
+	            this.emit('change', changed, allData);
+	        }
+	    }]);
+	
+	    return SimpleModel;
+	}(_events.EventEmitter);
+	
+	exports.default = SimpleModel;
 
 /***/ }
 /******/ ]);
