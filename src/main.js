@@ -65,8 +65,11 @@ class App extends Component {
 
             <div className="container">
                 <Form>
-                    <TextBox name="otherthing"/>
-
+                    <div>
+                        <span>
+                            <TextBox name="otherthing" label="Enter Other thing" placeholder="This is placeholder"/>
+                        </span>
+                    </div>
                 </Form>
             </div>
 
