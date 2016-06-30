@@ -18,7 +18,7 @@ class Form extends Component {
 
     getChildContext(){
 
-        let store = new SimpleStore();
+        let store = this.props.valueStore || new SimpleStore();
         store.on('change', this.onValueChange.bind(this));
 
         return {

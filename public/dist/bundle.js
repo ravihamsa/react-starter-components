@@ -89,9 +89,7 @@
 	
 	var _Form = __webpack_require__(/*! ./components/Form */ 127);
 	
-	var _List = __webpack_require__(/*! ./components/common/List */ 134);
-	
-	var _List2 = _interopRequireDefault(_List);
+	var _common = __webpack_require__(/*! ./components/common */ 135);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -160,16 +158,15 @@
 	                _react2.default.createElement(
 	                    _core.SmartWrapper,
 	                    childSmartConfig,
-	                    _react2.default.createElement(_List2.default, null)
+	                    _react2.default.createElement(_common.List, null)
 	                ),
-	                'test',
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'container' },
 	                    _react2.default.createElement(
 	                        _Form.Form,
 	                        null,
-	                        _react2.default.createElement(_Form.TextInput, { name: 'something', defaultValue: 'Ravi Hamsa' }),
+	                        _react2.default.createElement(_Form.TextInput, { name: 'something', defaultValue: 'default value from attribute' }),
 	                        _react2.default.createElement(
 	                            _core.SmartWrapper,
 	                            selectSmartConfig,
@@ -182,15 +179,34 @@
 	                    { className: 'container' },
 	                    _react2.default.createElement(
 	                        _Form.Form,
-	                        null,
+	                        { valueStore: new _core.SimpleStore({ otherthing2: 'default value from value store' }) },
 	                        _react2.default.createElement(
 	                            'div',
 	                            null,
 	                            _react2.default.createElement(
 	                                'span',
 	                                null,
-	                                _react2.default.createElement(_Form.TextInput, { name: 'otherthing2', label: 'Enter Other thing', placeholder: 'This is placeholder', helperText: 'We will never share your email with anyone else.' })
+	                                _react2.default.createElement(_Form.TextInput, { name: 'otherthing2', label: 'Enter Other thing -- 2', placeholder: 'This is placeholder', helperText: 'We will never share your email with anyone else.' })
 	                            )
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'container' },
+	                    _react2.default.createElement(
+	                        _common.FormCollection,
+	                        { items: [{ uname: 'ravi', password: 'kavi' }, { uname: 'kavi', password: 'ravi' }] },
+	                        _react2.default.createElement(
+	                            _Form.Form,
+	                            null,
+	                            _react2.default.createElement(
+	                                'h1',
+	                                null,
+	                                'Title'
+	                            ),
+	                            _react2.default.createElement(_Form.TextInput, { name: 'uname', defaultValue: '' }),
+	                            _react2.default.createElement(_Form.TextInput, { type: 'password', name: 'password', defaultValue: '' })
 	                        )
 	                    )
 	                ),
@@ -9819,7 +9835,7 @@
 	        key: 'getChildContext',
 	        value: function getChildContext() {
 	
-	            var store = new _core.SimpleStore();
+	            var store = this.props.valueStore || new _core.SimpleStore();
 	            store.on('change', this.onValueChange.bind(this));
 	
 	            return {
@@ -9890,6 +9906,11 @@
 	            if (this.props.defaultValue) {
 	                this.context.valueStore.set(_defineProperty({}, this.props.name, this.props.defaultValue));
 	            }
+	        }
+	    }, {
+	        key: 'getDefaultValue',
+	        value: function getDefaultValue() {
+	            return this.context.valueStore.get(this.props.name);
 	        }
 	    }]);
 	
@@ -9962,6 +9983,9 @@
 	    _createClass(TextInput, [{
 	        key: "render",
 	        value: function render() {
+	
+	            var defaultValue = this.getDefaultValue();
+	
 	            return _react2.default.createElement(
 	                "fieldset",
 	                { className: "form-group" },
@@ -9971,7 +9995,7 @@
 	                    this.props.label
 	                ),
 	                _react2.default.createElement("input", { type: this.props.type, className: "form-control", name: this.props.name,
-	                    placeholder: this.props.placeholder, onChange: this.onChange.bind(this), defaultValue: this.props.defaultValue }),
+	                    placeholder: this.props.placeholder, onChange: this.onChange.bind(this), defaultValue: defaultValue }),
 	                this.props.helperText ? _react2.default.createElement(
 	                    "small",
 	                    { className: "text-muted" },
@@ -10031,6 +10055,9 @@
 	    _createClass(Select, [{
 	        key: "render",
 	        value: function render() {
+	
+	            var defaultValue = this.getDefaultValue();
+	
 	            return _react2.default.createElement(
 	                "fieldset",
 	                { className: "form-group" },
@@ -10042,7 +10069,7 @@
 	                _react2.default.createElement(
 	                    "select",
 	                    { className: "form-control", name: this.props.name,
-	                        placeholder: this.props.placeholder, onChange: this.onChange.bind(this), defaultValue: this.props.defaultValue },
+	                        placeholder: this.props.placeholder, onChange: this.onChange.bind(this), defaultValue: defaultValue },
 	                    this.props.options.map(function (option, index) {
 	                        return _react2.default.createElement(
 	                            "option",
@@ -10094,12 +10121,15 @@
 	var SimpleModel = function (_EventEmitter) {
 	    _inherits(SimpleModel, _EventEmitter);
 	
-	    function SimpleModel() {
+	    function SimpleModel(attributes) {
 	        _classCallCheck(this, SimpleModel);
 	
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SimpleModel).apply(this, arguments));
 	
 	        _this._dataIndex = {};
+	        if (attributes) {
+	            _this.set(attributes);
+	        }
 	        return _this;
 	    }
 	
@@ -10221,9 +10251,9 @@
 	            var itemArray = self.props.items;
 	            var ContainerTag = self.props.tagName || 'ul';
 	            var noItemMessage = self.props.noDataMessage || 'No Items Found';
-	            var ListItem = self.props.listItem || ListItem;
+	            var ListItemClass = self.props.ListItem || ListItem;
 	            var listItems = itemArray.map(function (item) {
-	                return _react2.default.createElement(ListItem, _extends({ key: item.id, id: item.id, itemData: item }, self.props));
+	                return _react2.default.createElement(ListItemClass, _extends({ key: item.id, id: item.id, itemData: item }, self.props));
 	            });
 	
 	            if (listItems.length > 0) {
@@ -10250,7 +10280,109 @@
 	}(_react.Component);
 	
 	exports.default = List;
-	exports.default = List;
+
+/***/ },
+/* 135 */
+/*!****************************************!*\
+  !*** ./src/components/common/index.js ***!
+  \****************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.FormCollection = exports.List = undefined;
+	
+	var _List2 = __webpack_require__(/*! ./List */ 134);
+	
+	var _List3 = _interopRequireDefault(_List2);
+	
+	var _FormCollection2 = __webpack_require__(/*! ./FormCollection */ 136);
+	
+	var _FormCollection3 = _interopRequireDefault(_FormCollection2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.List = _List3.default; /**
+	                                * Created by ravi.hamsa on 6/29/16.
+	                                */
+	
+	exports.FormCollection = _FormCollection3.default;
+
+/***/ },
+/* 136 */
+/*!*************************************************!*\
+  !*** ./src/components/common/FormCollection.js ***!
+  \*************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _core = __webpack_require__(/*! ../../core */ 115);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by ravi.hamsa on 6/30/16.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+	
+	
+	var FormCollection = function (_Component) {
+	    _inherits(FormCollection, _Component);
+	
+	    function FormCollection() {
+	        _classCallCheck(this, FormCollection);
+	
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(FormCollection).apply(this, arguments));
+	
+	        _this._dataCollection = _this.props.items || [];
+	        return _this;
+	    }
+	
+	    _createClass(FormCollection, [{
+	        key: 'onFormChange',
+	        value: function onFormChange(index, changed, allData) {
+	            this._dataCollection[index] = allData;
+	            console.log(this._dataCollection);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	
+	            var forms = this._dataCollection.map(function (formItem, index) {
+	                var valueStore = new _core.SimpleStore(formItem);
+	                valueStore.on('change', this.onFormChange.bind(this, index));
+	                return _react2.default.cloneElement(this.props.children, { key: index, valueStore: valueStore });
+	            }, this);
+	
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'form-collection' },
+	                forms
+	            );
+	        }
+	    }]);
+	
+	    return FormCollection;
+	}(_react.Component);
+	
+	exports.default = FormCollection;
 
 /***/ }
 /******/ ]);

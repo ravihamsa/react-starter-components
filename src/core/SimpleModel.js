@@ -4,9 +4,12 @@
 import {EventEmitter} from 'events';
 
 class SimpleModel extends EventEmitter {
-    constructor(){
+    constructor(attributes){
         super(...arguments);
         this._dataIndex = {};
+        if(attributes){
+            this.set(attributes);
+        }
     }
 
     set(map){

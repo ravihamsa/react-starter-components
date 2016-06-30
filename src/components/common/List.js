@@ -18,9 +18,9 @@ class List extends Component {
         var itemArray = self.props.items;
         var ContainerTag = self.props.tagName || 'ul';
         var noItemMessage = self.props.noDataMessage || 'No Items Found'
-        var ListItem = self.props.listItem || ListItem;
+        var ListItemClass = self.props.ListItem || ListItem;
         var listItems = itemArray.map(function (item) {
-            return <ListItem key={item.id} id={item.id} itemData={item} {...self.props}/>
+            return <ListItemClass key={item.id} id={item.id} itemData={item} {...self.props}/>
         });
 
         if (listItems.length > 0) {
@@ -31,8 +31,5 @@ class List extends Component {
 
     }
 }
-
-
-export default List;
 
 export default List;

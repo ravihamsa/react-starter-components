@@ -10,7 +10,8 @@ import emptyFunction from 'fbjs/lib/emptyFunction';
 import dataSourceConfigs from './requests';
 import {dataLoader, SmartWrapper, SimpleStore} from './core';
 import {Form, TextInput, Select} from './components/Form';
-import List from './components/common/List';
+import {List, FormCollection} from './components/common';
+
 
 
 
@@ -62,11 +63,10 @@ class App extends Component {
             </SmartWrapper>
 
 
-            test
 
             <div className="container">
                 <Form>
-                    <TextInput name="something" defaultValue="Ravi Hamsa"/>
+                    <TextInput name="something" defaultValue="default value from attribute"/>
                     <SmartWrapper {...selectSmartConfig}>
                         <Select  name="otherthing" label="Enter Other thing" placeholder="This is placeholder" defaultValue={'2'}/>
                     </SmartWrapper>
@@ -75,13 +75,24 @@ class App extends Component {
             </div>
 
             <div className="container">
-                <Form>
+                <Form valueStore={new SimpleStore({otherthing2:'default value from value store'})}>
                     <div>
                         <span>
-                            <TextInput name="otherthing2" label="Enter Other thing" placeholder="This is placeholder" helperText="We will never share your email with anyone else."/>
+                            <TextInput name="otherthing2" label="Enter Other thing -- 2" placeholder="This is placeholder" helperText="We will never share your email with anyone else."/>
                         </span>
                     </div>
                 </Form>
+            </div>
+
+
+            <div className="container">
+                <FormCollection items={[{uname:'ravi', password:'kavi'},{uname:'kavi', password:'ravi'}]}>
+                    <Form>
+                        <h1>Title</h1>
+                        <TextInput name="uname" defaultValue=""/>
+                        <TextInput type="password" name="password" defaultValue=""/>
+                    </Form>
+                </FormCollection>
             </div>
 
             <Child view="create" text="My React App"/>

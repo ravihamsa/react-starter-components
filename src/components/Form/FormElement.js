@@ -15,6 +15,10 @@ class FormElement extends Component {
             this.context.valueStore.set({[this.props.name]: this.props.defaultValue})
         }
     }
+
+    getDefaultValue(){
+        return this.context.valueStore.get(this.props.name);
+    }
 }
 
 FormElement.contextTypes = {
