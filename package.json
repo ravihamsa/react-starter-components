@@ -2,7 +2,7 @@
   "name": "react-starter",
   "version": "1.0.0",
   "description": "",
-  "main": "src/main.js",
+  "main": "public/dist/bundle.js",
   "repository": "https://github.com/ravihamsa/react-starter",
   "dependencies": {
     "babel-core": "^6.10.4",
