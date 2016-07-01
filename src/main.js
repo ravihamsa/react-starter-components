@@ -94,8 +94,10 @@ class App extends Component {
                     </Form>
                 </FormCollection>
             </div>
+            <SmartWrapper activeRules={[{expr:'true', prop:'test'}]} test={false} >
+                <Child view="create" text="My React App"/>
+            </SmartWrapper>
 
-            <Child view="create" text="My React App"/>
         </div>
     }
 
