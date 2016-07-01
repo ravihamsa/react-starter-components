@@ -111,3 +111,7 @@ window.App = App;
 window.appContext = context;
 
 export default App;
+
+import starterCore from './core';
+import starterComponents from './components';
+export {starterComponents, starterCore}

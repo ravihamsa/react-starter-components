@@ -2,5 +2,7 @@
  * Created by ravi.hamsa on 6/29/16.
  */
 
-export List from './List';
-export FormCollection from './FormCollection';
+import List from './List';
+import FormCollection from './FormCollection';
+
+export default {List, FormCollection}

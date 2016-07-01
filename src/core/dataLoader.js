@@ -2,13 +2,15 @@
  * Created by ravi.hamsa on 6/28/16.
  */
 
-import fetch from './fetch';
+import fetch from './fetch/fetch.client';
 import Promise from 'bluebird';
 
 class DataLoader {
-    _resourceConfigIndex = {}
+    constructor(){
+        this._resourceConfigIndex = {}
 
-    _commonHeaders = {}
+        this._commonHeaders = {}
+    }
 
     generateGetUrl(url, data) {
         if (!data) {

@@ -3,9 +3,11 @@
  */
 
 var path = require('path');
+var fs = require('fs');
 var webpack = require('webpack');
 var nodeModulesPath = path.resolve(__dirname, 'node_modules');
 var buildPath = path.resolve(__dirname, 'public', 'dist');
+var buildPathNode = path.resolve(__dirname, 'lib');
 var mainPath = path.resolve(__dirname, 'app', 'main.js');
 const DEBUG = process.env.NODE_ENV !== 'production';
 
@@ -105,4 +107,96 @@ var config = {
         })]
 }
 
-module.exports = config;
+var nodeModules = {};
+fs.readdirSync('node_modules')
+    .filter(function(x) {
+        return ['.bin'].indexOf(x) === -1;
+    })
+    .forEach(function(mod) {
+        nodeModules[mod] = 'commonjs ' + mod;
+    });
+
+var configNode = {
+
+    entry: ['./src/index.js'],
+
+    devtool: DEBUG ? 'cheap-module-eval-source-map' : false,
+
+    target: 'node',
+
+    output: {
+
+        // We need to give Webpack a path. It does not actually need it,
+        // because files are kept in memory in webpack-dev-server, but an
+        // error will occur if nothing is specified. We use the buildPath
+        // as that points to where the files will eventually be bundled
+        // in production
+        path: buildPathNode,
+        filename: 'index.js',
+
+        // Everything related to Webpack should go through a build path,
+        // localhost:3000/build. That makes proxying easier to handle
+        publicPath: '/lib/',
+        libraryTarget: 'commonjs2'
+    },
+
+    externals: nodeModules,
+
+    module: {
+
+        loaders: [
+
+            // I highly recommend using the babel-loader as it gives you
+            // ES6/7 syntax and JSX transpiling out of the box
+            {
+                test: /\.js$/,
+                loaders: ['babel'],
+                exclude: [nodeModulesPath]
+            },
+            {
+                test: /\.scss$/,
+                loaders: [
+                    'isomorphic-style-loader',
+                    `css-loader?${JSON.stringify({
+                        sourceMap: DEBUG,
+
+                        // CSS Modules https://github.com/css-modules/css-modules
+                        modules: true,
+                        localIdentName: DEBUG ? '[name]_[local]_[hash:base64:3]' : '[hash:base64:4]',
+
+                        // CSS Nano http://cssnano.co/options/
+                        minimize: !DEBUG,
+                    })}`,
+                    'postcss-loader?parser=postcss-scss',
+                ],
+            },
+            {
+                test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
+                loader: 'url-loader',
+                query: {
+                    name: DEBUG ? '[path][name].[ext]?[hash]' : '[hash].[ext]',
+                    limit: 10000,
+                },
+            },
+
+        ]
+    },
+
+    postcss(bundler) {
+        return [
+            require('postcss-import')({addDependencyTo: bundler}),
+            require('precss')(),
+            require('autoprefixer')({browsers: AUTOPREFIXER_BROWSERS}),
+        ];
+    },
+
+    plugins: DEBUG ? [] : [
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                screw_ie8: true, // jscs:ignore requireCamelCaseOrUpperCaseIdentifiers
+                warnings: false,
+            },
+        })]
+}
+
+module.exports = [config, configNode];

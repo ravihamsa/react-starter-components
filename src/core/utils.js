@@ -3,6 +3,8 @@
  */
 
 
-export const identity = function(arg1){
+const identity = function(arg1){
     return arg1;
 }
+
+export default {identity}
