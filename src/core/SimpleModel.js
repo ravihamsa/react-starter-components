@@ -45,6 +45,10 @@ class SimpleModel extends EventEmitter {
         this.emit('change', changed, allData);
     }
 
+    off(event, handler){
+        this.removeListener(event, handler)
+    }
+
 
 }
 

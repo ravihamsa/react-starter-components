@@ -34,6 +34,7 @@ class DataLoader {
 
     getRequestDef(requestId, payload) {
         var config = this._resourceConfigIndex[requestId];
+        var self = this;
 
         return new Promise(function (resolve, reject) {
             if (config.type === 'static') {
@@ -51,11 +52,11 @@ class DataLoader {
             var requestUrl = config.url;
             var requestConfig = {
                 method: config.method || 'get',
-                headers: this._commonHeaders,
+                headers: self._commonHeaders,
                 credentials: 'include'
             }
 
-            config.method === 'post' ? requestConfig.body = JSON.stringify(payload) : requestUrl = this.generateGetUrl(requestUrl, payload);
+            config.method === 'post' ? requestConfig.body = JSON.stringify(payload) : requestUrl = self.generateGetUrl(requestUrl, payload);
             var fetchPromise = fetch(requestUrl, requestConfig);
             fetchPromise
                 .then(function (response) {

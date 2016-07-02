@@ -6,6 +6,11 @@ import {SimpleStore} from '../../core';
 
 class Form extends Component {
 
+    constructor(){
+        super(...arguments);
+        this._valueChangeHandler = this.onValueChange.bind(this);
+    }
+
     render(){
         return <form>
             {this.props.children}
@@ -19,7 +24,8 @@ class Form extends Component {
     getChildContext(){
 
         let store = this.props.valueStore || new SimpleStore();
-        store.on('change', this.onValueChange.bind(this));
+        store.off('change', this._valueChangeHandler)
+        store.on('change', this._valueChangeHandler);
 
         return {
             valueStore: store

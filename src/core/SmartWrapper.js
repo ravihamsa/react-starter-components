@@ -25,27 +25,55 @@ class SmartWrapper extends Component {
         if (stores) {
             for (let i = 0; i < stores.length; i++) {
                 let storeConfig = stores[i];
-                let getParams = storeConfig.getDataParams || identity;
-                this.addRequest(storeConfig.propKey, storeConfig.requestId, getParams.call(this, storeConfig))
+                let getParams = storeConfig.getParams;
+                let params = getParams ? getParams.call(this, this.props) : this.props
+                this.addRequest(storeConfig.propKey, storeConfig.requestId, params)
                 // this.loadStore(storeConfig.propKey, storeConfig.store, getParams.call(this, storeConfig), true)
             }
         }
 
-        if (this.props.activeRules) {
-            let activeRules = this.props.activeRules, active = true;
-            for (var i=0; i<activeRules.length;i++) {
-                active = this.evaluateActiveRule(activeRules[i]);
+        this.checkActiveRules(this.props);
+
+    }
+
+    componentWillReceiveProps(newProps) {
+        this.checkActiveRules(newProps);
+        this.checkPropDependencies(newProps);
+    }
+
+    checkPropDependencies(newProps){
+        let stores = this.props.dataRequests;
+        if (stores) {
+            for (let i = 0; i < stores.length; i++) {
+                let storeConfig = stores[i];
+                let getParams = storeConfig.getParams;
+                if(storeConfig.propDependency!==undefined && newProps[storeConfig.propDependency]){
+                    let params = getParams ? getParams.call(this, newProps) : newProps
+                    this.addRequest(storeConfig.propKey, storeConfig.requestId, params)
+                }
+                // this.loadStore(storeConfig.propKey, storeConfig.store, getParams.call(this, storeConfig), true)
+            }
+        }
+
+    }
+
+
+    checkActiveRules(props) {
+        if (props.activeRules) {
+            let activeRules = props.activeRules, active = true;
+            for (var i = 0; i < activeRules.length; i++) {
+                active = this.evaluateActiveRule(activeRules[i], props);
                 if (!active) {
                     break;
                 }
             }
             this.setState({active: active});
         }
-
     }
 
-    evaluateActiveRule(rule) {
-        let stateValue = this.props[rule.prop];
+    evaluateActiveRule(rule, props) {
+
+        let stateValue = props[rule.prop];
         let ruleValue = rule.value;
         switch (rule.expr) {
             case 'equal':
@@ -62,7 +90,7 @@ class SmartWrapper extends Component {
                 break;
             default:
                 return true;
-            break;
+                break;
         }
     }
 
@@ -92,8 +120,16 @@ class SmartWrapper extends Component {
     }
 
     render() {
-        return this.state.active ?
-            this.state.loading ? <Loader/> : React.cloneElement(this.props.children, {...this.dataIndex}) : null
+        if (this.state.active) {
+            if (this.state.loading) {
+                return <Loader/>
+            } else {
+                return React.cloneElement(this.props.children, {...this.dataIndex})
+            }
+        } else {
+            return null;
+        }
+
     }
 
 }

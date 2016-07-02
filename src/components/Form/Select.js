@@ -10,11 +10,13 @@ class Select extends FormElement {
     render() {
 
         let defaultValue = this.getDefaultValue();
+        let selectText = this.props.selectText || 'Select';
 
         return <fieldset className="form-group">
             <label>{this.props.label}</label>
             <select className="form-control" name={this.props.name}
                    placeholder={this.props.placeholder} onChange={this.onChange.bind(this)}  defaultValue={defaultValue}>
+                    <option value="-1">{selectText}</option>
                 {this.props.options.map(function(option, index){
                     return <option value={option.id} key={index}>{option.name}</option>
                 },this)}
