@@ -2,7 +2,7 @@
  * Created by ravi.hamsa on 6/30/16.
  */
 import React, {PropTypes, Component} from "react";
-import {SimpleStore} from '../../core';
+import {SimpleModel} from '../../core';
 
 
 class FormCollection extends Component {
@@ -20,7 +20,7 @@ class FormCollection extends Component {
 
 
         let forms = this._dataCollection.map(function(formItem, index){
-            let valueStore = new SimpleStore(formItem);
+            let valueStore = new SimpleModel(formItem);
             valueStore.on('change', this.onFormChange.bind(this, index));
             return React.cloneElement(this.props.children, {key:index, valueStore: valueStore})
         },this)

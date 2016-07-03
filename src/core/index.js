@@ -3,8 +3,8 @@
  */
 
 import dataLoader from './dataLoader'
-import SimpleStore from './SimpleModel'
+import SimpleModel from './SimpleModel'
 import SmartWrapper from './SmartWrapper'
 import utils from './utils'
 
-export default {dataLoader, SimpleStore, SmartWrapper, utils}
+export default {dataLoader, SimpleModel, SmartWrapper, utils}

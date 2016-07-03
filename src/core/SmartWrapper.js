@@ -19,37 +19,41 @@ class SmartWrapper extends Component {
         }
     }
 
-
     componentWillMount() {
-        let stores = this.props.dataRequests;
-        if (stores) {
-            for (let i = 0; i < stores.length; i++) {
-                let storeConfig = stores[i];
-                let getParams = storeConfig.getParams;
-                let params = getParams ? getParams.call(this, this.props) : this.props
-                this.addRequest(storeConfig.propKey, storeConfig.requestId, params)
-                // this.loadStore(storeConfig.propKey, storeConfig.store, getParams.call(this, storeConfig), true)
+        if (this.checkActiveRules(this.props)) {
+            let stores = this.props.dataRequests;
+            if (stores) {
+                for (let i = 0; i < stores.length; i++) {
+                    let storeConfig = stores[i];
+                    let getParams = storeConfig.getParams;
+                    let params = getParams ? getParams.call(this, this.props) : this.props
+                    this.addRequest(storeConfig.propKey, storeConfig.requestId, params)
+                    // this.loadStore(storeConfig.propKey, storeConfig.store, getParams.call(this, storeConfig), true)
+                }
             }
         }
-
-        this.checkActiveRules(this.props);
-
     }
 
     componentWillReceiveProps(newProps) {
-        this.checkActiveRules(newProps);
-        this.checkPropDependencies(newProps);
+        let prevProps = this.props;
+        if (this.checkActiveRules(newProps, prevProps)) {
+            this.checkPropDependencies(newProps, prevProps);
+        }
     }
 
-    checkPropDependencies(newProps){
-        let stores = this.props.dataRequests;
+    checkPropDependencies(newProps, prevProps) {
+        let stores = newProps.dataRequests;
         if (stores) {
             for (let i = 0; i < stores.length; i++) {
                 let storeConfig = stores[i];
-                let getParams = storeConfig.getParams;
-                if(storeConfig.propDependency!==undefined && newProps[storeConfig.propDependency]){
-                    let params = getParams ? getParams.call(this, newProps) : newProps
-                    this.addRequest(storeConfig.propKey, storeConfig.requestId, params)
+                if (storeConfig.propDependency !== undefined) {
+                    let getParams = storeConfig.getParams;
+                    let newPropValue = newProps[storeConfig.propDependency];
+                    let oldPropValue = prevProps[storeConfig.propDependency];
+                    if (newPropValue && newPropValue !== oldPropValue) {
+                        let params = getParams ? getParams.call(this, newProps) : newProps
+                        this.addRequest(storeConfig.propKey, storeConfig.requestId, params)
+                    }
                 }
                 // this.loadStore(storeConfig.propKey, storeConfig.store, getParams.call(this, storeConfig), true)
             }
@@ -59,8 +63,8 @@ class SmartWrapper extends Component {
 
 
     checkActiveRules(props) {
+        let activeRules = props.activeRules, active = true;
         if (props.activeRules) {
-            let activeRules = props.activeRules, active = true;
             for (var i = 0; i < activeRules.length; i++) {
                 active = this.evaluateActiveRule(activeRules[i], props);
                 if (!active) {
@@ -69,10 +73,10 @@ class SmartWrapper extends Component {
             }
             this.setState({active: active});
         }
+        return active;
     }
 
     evaluateActiveRule(rule, props) {
-
         let stateValue = props[rule.prop];
         let ruleValue = rule.value;
         switch (rule.expr) {
@@ -96,26 +100,35 @@ class SmartWrapper extends Component {
 
     addRequest(propName, requestId, payload) {
         var self = this;
+        delete this.dataIndex.errors;
         let def = dataLoader.getRequestDef(requestId, payload);
 
         def.done(function (data) {
             self.dataIndex[propName] = data;
         })
 
+        def.catch(function (e) {
+            self.dataIndex['errors'] = e;
+        })
+
         def.finally(function () {
             self.bumpAndCheckLoading(-1)
         })
 
-        def.catch(function (e) {
-            console.log(e);
-        })
-
         self.bumpAndCheckLoading(1)
+
+        return def;
     }
 
 
     bumpAndCheckLoading(diff) {
         this._loadingCount += diff;
+        let loadingDone = this._loadingCount === 0;
+        if (loadingDone) {
+            if (this.props.onDataUpdate) {
+                this.props.onDataUpdate(this.dataIndex);
+            }
+        }
         this.setState({loading: this._loadingCount > 0})
     }
 
@@ -127,7 +140,7 @@ class SmartWrapper extends Component {
                 return React.cloneElement(this.props.children, {...this.dataIndex})
             }
         } else {
-            return null;
+            return <div></div>;
         }
 
     }

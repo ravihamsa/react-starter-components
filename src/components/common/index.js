@@ -4,5 +4,6 @@
 
 import List from './List';
 import FormCollection from './FormCollection';
+import InlinePopupGroup from './InlinePopupGroup';
 
-export default {List, FormCollection}
+export default {List, FormCollection, InlinePopupGroup}

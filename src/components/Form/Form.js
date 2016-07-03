@@ -2,40 +2,44 @@
  * Created by ravi.hamsa on 6/29/16.
  */
 import React, {PropTypes, Component} from "react";
-import {SimpleStore} from '../../core';
+import core from '../../core';
+const {SimpleModel}=core;
 
 class Form extends Component {
 
-    constructor(){
+    constructor() {
         super(...arguments);
         this._valueChangeHandler = this.onValueChange.bind(this);
     }
 
-    render(){
+    render() {
         return <form>
             {this.props.children}
         </form>
     }
 
-    onValueChange(changed, allData){
+    onValueChange(changed, allData) {
         console.log(allData)
     }
 
-    getChildContext(){
+    getChildContext() {
 
-        let store = this.props.valueStore || new SimpleStore();
+        let store = this.props.valueStore || new SimpleModel();
+        let detailStore = this.props.valueDetailStore || new SimpleModel();
         store.off('change', this._valueChangeHandler)
         store.on('change', this._valueChangeHandler);
-
+        store.detailStore = detailStore;
         return {
-            valueStore: store
+            valueStore: store,
+            valueDetailStore: detailStore
         }
 
     }
 }
 
 Form.childContextTypes = {
-    valueStore: PropTypes.object.isRequired
+    valueStore: PropTypes.object.isRequired,
+    valueDetailStore: PropTypes.object.isRequired
 }
 
 

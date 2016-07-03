@@ -4,12 +4,25 @@
 
 import fetch from './fetch/fetch.client';
 import Promise from 'bluebird';
+import {identity} from './utils'
 
 class DataLoader {
-    constructor(){
+    constructor() {
         this._resourceConfigIndex = {}
 
         this._commonHeaders = {}
+
+        this._responseParser = function (resp) {
+            return {
+                data: resp,
+                errors: null,
+                warnings: null
+            }
+        };
+    }
+
+    setResponseParser(fun) {
+        this._responseParser = fun;
     }
 
     generateGetUrl(url, data) {
@@ -38,7 +51,9 @@ class DataLoader {
 
         return new Promise(function (resolve, reject) {
             if (config.type === 'static') {
-                resolve(config.data);
+                setTimeout(function(){
+                    resolve(config.data);
+                },100)
                 return;
             }
 
@@ -63,13 +78,22 @@ class DataLoader {
                     return response.json();
                 })
                 .then(function (body) {
-                    if (config.parser) {
-                        body = config.parser(body);
+
+
+                    let parsedResponse = self._responseParser(body);
+                    if (parsedResponse.data) {
+                        if (config.parser) {
+                            parsedResponse.data = config.parser(parsedResponse.data);
+                        }
+                        resolve(parsedResponse.data, parsedResponse.warnings, body);
+                    } else {
+                        reject(parsedResponse.errors, parsedResponse.warnings, body);
                     }
-                    resolve(body);
-                }).catch(function (ex) {
-                console.log('parsing failed', ex)
-            })
+
+                })
+                .catch(function (ex) {
+                    reject(ex, null, ex);
+                })
         });
     }
 }

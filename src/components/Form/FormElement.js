@@ -7,7 +7,16 @@ class FormElement extends Component {
 
     onChange(event) {
         let name = this.props.name;
-        this.context.valueStore.set({[name]: event.target.value})
+        let value = this.getValueFromNode(event.target);
+        this.context.valueStore.set({[name]: value});
+        if(this.props.options){
+            this.context.valueDetailStore.set({[name]: this.props.options.find((item)=> item.id===value)})
+        }
+        this.setState({defaultValue:value})
+    }
+
+    getValueFromNode(node){
+        return node.value;
     }
 
     componentWillMount(){
@@ -19,10 +28,19 @@ class FormElement extends Component {
     getDefaultValue(){
         return this.context.valueStore.get(this.props.name);
     }
+
+    getFormClasses(){
+        let classArray = ['form-group'];
+        if(this.props.errors !== undefined){
+            classArray.push('has-error');
+        }
+        return classArray.join(' ')
+    }
 }
 
 FormElement.contextTypes = {
-    valueStore: PropTypes.object.isRequired
+    valueStore: PropTypes.object.isRequired,
+    valueDetailStore: PropTypes.object.isRequired,
 }
 
 FormElement.propTypes = {

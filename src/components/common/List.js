@@ -6,7 +6,7 @@ import React, {Component, PropTypes} from "react";
 class ListItem extends Component {
     render(){
         var itemData = this.props.itemData;
-        var ContainerTag = this.props.tagName || 'li';
+        var ContainerTag = 'li';
         return (<ContainerTag {...this.props} className="list-item">{itemData.name}</ContainerTag>);
     }
 }
