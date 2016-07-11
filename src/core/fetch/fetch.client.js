@@ -9,7 +9,14 @@
 
 import 'whatwg-fetch';
 
-let globalObj = typeof self !== 'undefined' && self || this;
+let  _this = this;
+let globalObj = null;
+if(typeof self !== 'undefined'){
+    globalObj = self;
+}else{
+    globalObj = _this;
+}
+
 export default globalObj.fetch.bind(globalObj);
 export const Headers = self.Headers;
 export const Request = self.Request;

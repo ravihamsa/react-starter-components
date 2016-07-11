@@ -2,7 +2,7 @@
  * Created by ravi.hamsa on 6/28/16.
  */
 
-import fetch from './fetch/fetch.client';
+import 'whatwg-fetch';
 import Promise from 'bluebird';
 import {identity} from './utils'
 
