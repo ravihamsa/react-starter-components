@@ -1,5 +1,0 @@
-{
-  "private": true,
-  "name": "fetch",
-  "main": "./fetch.client.js"
-}
