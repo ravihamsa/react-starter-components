@@ -10,7 +10,9 @@
     "lodash": "^4.13.1",
     "moment": "^2.13.0",
     "node-fetch": "^1.5.3",
-    "whatwg-fetch": "^1.0.0"
+    "whatwg-fetch": "^1.0.0",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.6",
@@ -28,9 +30,6 @@
     "postcss-loader": "^0.9.1",
     "postcss-scss": "^0.1.8",
     "precss": "^1.4.0",
-    "react": "^15.1.0",
-    "react-dom": "^15.1.0",
-    "reflux": "^0.4.1",
     "url-loader": "^0.5.7",
     "webpack": "^1.13.1"
   },
