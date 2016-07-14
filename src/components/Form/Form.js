@@ -13,7 +13,7 @@ class Form extends Component {
     }
 
     render() {
-        return <form>
+        return <form {...this.props}>
             {this.props.children}
         </form>
     }
