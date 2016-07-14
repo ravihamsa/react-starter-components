@@ -13,7 +13,7 @@ class Form extends Component {
     }
 
     render() {
-        return <form {...this.props}>
+        return <form onSubmit={this.props.onSubmitHandler}>
             {this.props.children}
         </form>
     }
