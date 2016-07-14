@@ -52,8 +52,12 @@ class DataLoader {
         return new Promise(function (resolve, reject) {
             if (config.type === 'static') {
                 setTimeout(function(){
-                    resolve(config.data);
-                },100)
+                    if(config.errors){
+                        reject(config.errors, config.warnings, {errors:config.errors});
+                    }else{
+                        resolve(config.data, config.warnings, {data:config.data});
+                    }
+                },config.responseDelay || 100)
                 return;
             }
 
@@ -78,7 +82,6 @@ class DataLoader {
                     return response.json();
                 })
                 .then(function (body) {
-
 
                     let parsedResponse = self._responseParser(body);
                     if (parsedResponse.data) {
