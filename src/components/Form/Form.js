@@ -12,8 +12,16 @@ class Form extends Component {
         this._valueChangeHandler = this.onValueChange.bind(this);
     }
 
+    onSubmitHandler(event){
+        event.preventDefault();
+        let context = this.getChildContext();
+        let {valueStore, valueDetailStore} = context;
+        this.props.onSubmitHandler(valueStore.getAll(), valueStore);
+    }
+
+
     render() {
-        return <form onSubmit={this.props.onSubmitHandler.bind(this.props.valueStore)}>
+        return <form onSubmit={this.onSubmitHandler.bind(this)}>
             {this.props.children}
         </form>
     }
