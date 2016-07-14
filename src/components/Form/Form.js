@@ -16,7 +16,7 @@ class Form extends Component {
         event.preventDefault();
         let context = this.getChildContext();
         let {valueStore, valueDetailStore} = context;
-        this.props.onSubmitHandler(valueStore.getAll(), context);
+        this.props.onSubmitHandler(valueStore.getAll(), valueStore);
     }
 
 
@@ -32,14 +32,17 @@ class Form extends Component {
 
     getChildContext() {
 
-        let store = this.props.valueStore || new SimpleModel();
-        let detailStore = this.props.valueDetailStore || new SimpleModel();
-        store.off('change', this._valueChangeHandler)
-        store.on('change', this._valueChangeHandler);
-        store.detailStore = detailStore;
+        if(!this.store){
+            let store = this.store = this.props.valueStore || new SimpleModel();
+            let detailStore = new SimpleModel();
+            store.off('change', this._valueChangeHandler)
+            store.on('change', this._valueChangeHandler);
+            store.detailStore = detailStore;
+        }
+
         return {
-            valueStore: store,
-            valueDetailStore: detailStore
+            valueStore: this.store,
+            valueDetailStore:this.store.detailStore
         }
 
     }
