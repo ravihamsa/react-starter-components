@@ -13,7 +13,7 @@ class Form extends Component {
     }
 
     render() {
-        return <form onSubmit={this.props.onSubmitHandler}>
+        return <form onSubmit={this.props.onSubmitHandler.bind(this.props.valueStore)}>
             {this.props.children}
         </form>
     }
