@@ -16,7 +16,7 @@ class Form extends Component {
         event.preventDefault();
         let context = this.getChildContext();
         let {valueStore, valueDetailStore} = context;
-        this.props.onSubmitHandler(valueStore.getAll(), valueStore);
+        this.props.onSubmitHandler(valueStore.getAll(), context);
     }
 
 
