@@ -5,6 +5,7 @@
 import React, {Component} from "react";
 import dataLoader from './dataLoader';
 import Loader from './Loader';
+import MessageStack from './MessageStack';
 import {identity} from './utils';
 
 class SmartWrapper extends Component {
@@ -136,7 +137,9 @@ class SmartWrapper extends Component {
         if (this.state.active) {
             if (this.state.loading) {
                 return <Loader/>
-            } else {
+            } else if(this.dataIndex.errors && this.props.showError !== false){
+                return <MessageStack messages={this.dataIndex.errors}/>
+            }else{
                 return React.cloneElement(this.props.children, {...this.dataIndex})
             }
         } else {
