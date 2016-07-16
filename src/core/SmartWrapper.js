@@ -140,7 +140,7 @@ class SmartWrapper extends Component {
             } else if(this.dataIndex.errors && this.props.showError !== false){
                 return <MessageStack messages={this.dataIndex.errors}/>
             }else{
-                return React.cloneElement(this.props.children, {...this.dataIndex})
+                return React.cloneElement(this.props.children, {...this.dataIndex, addRequest:this.addRequest.bind(this)} )
             }
         } else {
             return <div></div>;

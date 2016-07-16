@@ -10,7 +10,7 @@ export default function navigate(pageId, params){
     for(let key in params){
         paramString.push(`${key}=${params[key]}`)
     }
-    
+
     history.push({
         pathname:'/',
         hash:'#/'+pageId + (paramString.length ? '/'+paramString.join(';') : '')
