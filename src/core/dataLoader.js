@@ -11,6 +11,7 @@ class DataLoader {
         this._resourceConfigIndex = {}
 
         this._commonHeaders = {}
+        this._sessionHeaders = {}
 
         this._responseParser = function (resp) {
             return {
@@ -45,6 +46,14 @@ class DataLoader {
         this._commonHeaders = headers
     }
 
+    clearSessionHeaders(){
+        this._sessionHeaders = {};
+    }
+
+    setSessionHeaders(headers){
+        this._sessionHeaders = headers;
+    }
+
     getRequestDef(requestId, payload) {
         var config = this._resourceConfigIndex[requestId];
         var self = this;
@@ -71,7 +80,7 @@ class DataLoader {
             var requestUrl = config.url;
             var requestConfig = {
                 method: config.method || 'get',
-                headers: self._commonHeaders,
+                headers: Object.assign({}, self._commonHeaders, self._sessionHeaders),
                 credentials: 'include'
             }
 
