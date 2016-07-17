@@ -84,7 +84,8 @@ class DataLoader {
                 credentials: 'include'
             }
 
-            config.method.toLowerCase() === 'post' ? requestConfig.body = JSON.stringify(payload) : requestUrl = self.generateGetUrl(requestUrl, payload);
+            let method = config.method.toLowerCase();
+            (method === 'post' || method === 'put') ? requestConfig.body = JSON.stringify(payload) : requestUrl = self.generateGetUrl(requestUrl, payload);
             var fetchPromise = fetch(requestUrl, requestConfig);
             fetchPromise
                 .then(function (response) {
