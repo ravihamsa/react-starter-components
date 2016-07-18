@@ -3,9 +3,11 @@
  */
 
 import Form from './Form';
+import Table from './Table';
 import common from './common';
 
 export default{
     Form,
+    Table,
     common
 }
