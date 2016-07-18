@@ -7,8 +7,8 @@ import React, {Component} from "react";
 class MessageStack extends Component {
     render(){
         return <div className="messages">
-            {this.props.messages.map(function(item){
-                return <li className={'bg-'+item.type}>{item.message}</li>
+            {this.props.messages.map(function(item, index){
+                return <li className={'bg-'+item.type} key={index}>{item.message}</li>
             })}
         </div>
     }
