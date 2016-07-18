@@ -2,7 +2,7 @@
  * Created by ravi.hamsa on 7/4/16.
  */
 import React, {PropTypes, Component} from "react";
-import core from '../core';
+import core from '../../core';
 const {cloneChildren} = core.utils
 
 
