@@ -1,19 +1,29 @@
 /**
- * Created by ravi.hamsa on 7/20/16.
+ * React Starter Kit (https://www.reactstarterkit.com/)
+ *
+ * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.txt file in the root directory of this source tree.
  */
-"use strict";
 
-var realFetch = require('node-fetch');
-module.exports = function(url, options) {
-    if (/^\/\//.test(url)) {
-        url = 'https:' + url;
-    }
-    return realFetch.call(this, url, options);
-};
+import fetch, { Request, Headers, Response } from 'node-fetch';
+import { host } from '../../config';
 
-if (!global.fetch) {
-    global.fetch = module.exports;
-    global.Response = realFetch.Response;
-    global.Headers = realFetch.Headers;
-    global.Request = realFetch.Request;
+function localUrl(url) {
+  if (url.startsWith('//')) {
+    return 'https:' + url;
+  }
+
+  if (url.startsWith('http')) {
+    return url;
+  }
+
+  return `http://${host}${url}`;
 }
+
+function localFetch(url, options) {
+	return fetch(localUrl(url), options);
+}
+
+export { localFetch as default, Request, Headers, Response };
