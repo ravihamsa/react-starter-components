@@ -7,23 +7,26 @@ import React, {Component, PropTypes} from "react";
 
 
 class NoStateView extends Component {
-    render(){
+    render() {
         <div className="no-state">State Not Defined</div>
     }
 }
 
 
-
 class ViewStateManager extends Component {
-    render(){
+    render() {
         let currentState = this.props.currentState;
-        let stateChild = this.props.children.filter(function(child){
+        let children = this.props.children;
+        if (!children.filter) {
+            children = [children];
+        }
+        let stateChild = children.filter(function (child) {
             let stateArray = child.props.stateNames.replace(/\s/g, '').split(',')
             return stateArray.indexOf(currentState) > -1;
         })
-        if(stateChild){
+        if (stateChild) {
             return <div className="state-wrapper">{stateChild}</div>;
-        }else{
+        } else {
             return <NoStateView/>
         }
 
@@ -31,11 +34,11 @@ class ViewStateManager extends Component {
 }
 
 ViewStateManager.propTypes = {
-    currentState:PropTypes.string.isRequired
+    currentState: PropTypes.string.isRequired
 }
 
 ViewStateManager.defaultProps = {
-    currentState:'default'
+    currentState: 'default'
 }
 
 export default ViewStateManager;
