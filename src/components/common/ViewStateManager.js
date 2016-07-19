@@ -12,6 +12,12 @@ class NoStateView extends Component {
     }
 }
 
+export class ViewState extends Component {
+    render(){
+        return <div {...this.props}>{this.props.children}</div>
+    }
+}
+
 
 class ViewStateManager extends Component {
     render() {
@@ -42,3 +48,4 @@ ViewStateManager.defaultProps = {
 }
 
 export default ViewStateManager;
+
