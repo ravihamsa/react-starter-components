@@ -8,7 +8,8 @@ import SmartWrapper from './SmartWrapper'
 import Loader from './Loader'
 import MessageStack from './MessageStack'
 import utils from './utils'
+import fetch from './fetch';
 // import navigate from './navigate'
 // import history from './history'
 
-export default {dataLoader, SimpleModel, SmartWrapper,Loader, MessageStack, utils}
+export default {dataLoader, SimpleModel, SmartWrapper,Loader, MessageStack, fetch, utils}
