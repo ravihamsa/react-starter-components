@@ -15,18 +15,11 @@ class NoStateView extends Component {
 
 
 class ViewStateManager extends Component {
-    constructor(){
-        super(...arguments);
-        this.state = {
-            viewState:this.props.viewState
-        }
-
-    }
-
     render(){
-        let currentState = this.state.viewState;
+        let currentState = this.props.currentState;
         let stateChild = this.props.children.filter(function(child){
-            return child.props.viewStateName === currentState;
+            let stateArray = child.props.stateNames.replace(/\s/g, '').split(',')
+            return stateArray.indexOf(currentState) > -1;
         })
         if(stateChild){
             return <div className="state-wrapper">{stateChild}</div>;
@@ -38,11 +31,11 @@ class ViewStateManager extends Component {
 }
 
 ViewStateManager.propTypes = {
-    viewState:PropTypes.string.isRequired
+    currentState:PropTypes.string.isRequired
 }
 
 ViewStateManager.defaultProps = {
-    viewState:'default'
+    currentState:'default'
 }
 
 export default ViewStateManager;
