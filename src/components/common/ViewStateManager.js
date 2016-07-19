@@ -25,7 +25,7 @@ class ViewStateManager extends Component {
 
     render(){
         let currentState = this.state.viewState;
-        let stateChild = this.props.children.find(function(child){
+        let stateChild = this.props.children.filter(function(child){
             return child.props.viewStateName === currentState;
         })
         if(stateChild){
