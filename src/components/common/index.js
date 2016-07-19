@@ -3,8 +3,8 @@
  */
 
 import List from './List';
-import ViewStateManager from './ViewStateManager';
+import ViewStateManager, {ViewState} from './ViewStateManager';
 import FormCollection from './FormCollection';
 import InlinePopupGroup from './InlinePopupGroup';
 
-export default {List, ViewStateManager, FormCollection, InlinePopupGroup}
+export default {List, ViewState, ViewStateManager, FormCollection, InlinePopupGroup}
