@@ -29,7 +29,7 @@ class ViewStateManager extends Component {
             return child.props.viewStateName === currentState;
         })
         if(stateChild){
-            return stateChild;
+            return <div className="state-wrapper">{stateChild}</div>;
         }else{
             return <NoStateView/>
         }
