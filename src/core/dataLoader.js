@@ -4,7 +4,8 @@
 
 import 'whatwg-fetch';
 import Promise from 'bluebird';
-import {identity} from './utils'
+import {identity} from './utils';
+import _ from 'lodash';
 
 class DataLoader {
     constructor() {
