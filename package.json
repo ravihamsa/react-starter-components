@@ -35,7 +35,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf lib && babel --presets react,es2015,stage-0 src --watch -d lib "
+    "build": "babel --presets react,es2015,stage-0 src --watch -d lib "
   },
   "author": "Ravi Hamsa",
   "license": "ISC"
