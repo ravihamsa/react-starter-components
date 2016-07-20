@@ -4,18 +4,10 @@ react-starter
 
 # setup
 
-`git clone git@github.com:ravihamsa/react-starter.git myReactProject`
-
-`cd myReactProject`
-
-`npm install`
-
-`npm install webpack -g`
-
-`webpack --watch`
+`npm install https://github.com/ravihamsa/react-starter`
 
 
+# usage
 
-# run
+`import {core,components} from 'react-starter';
 
-serve index.html from any web-server
