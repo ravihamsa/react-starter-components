@@ -2,8 +2,8 @@
  * Created by ravi.hamsa on 6/28/16.
  */
 
-import 'whatwg-fetch';
 import Promise from 'bluebird';
+import fetch from './fetch';
 import {identity} from './utils';
 import _ from 'lodash';
 
