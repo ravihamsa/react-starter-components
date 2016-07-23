@@ -70,7 +70,8 @@ class Table extends Component {
         if(errors){
             return <div>{errors.message}</div>
         }else if(zeroLength){
-            return <div>Not Fields Returned, Select another App</div>
+            let NoRecordsItemProp = self.props.NoRecordsItem;
+            return <NoRecordsItemProp/>
         }
 
         let children = cloneChildren(this.props.children, { records})
@@ -79,10 +80,22 @@ class Table extends Component {
 }
 
 Table.propTypes = {
-    records: PropTypes.array.isRequired
+    records: PropTypes.array.isRequired,
+    noRecordsItem:PropTypes.object.isRequired
 }
 
 
+class NoRecordsItem extends Component {
+    render(){
+        <div>No Records Returned</div>
+    }
+}
+
+
+Table.defaultProps = {
+    records:[],
+    noRecordsItem:NoRecordsItem
+}
 
 
 export default {
