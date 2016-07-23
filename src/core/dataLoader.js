@@ -106,7 +106,12 @@ class DataLoader {
 
                 })
                 .catch(function (ex) {
-                    reject(ex, null, ex);
+                    let errors = [];
+                    let error = {
+                        type:'error',
+                        message:ex.message
+                    }
+                    reject(errors, null, ex);
                 })
         });
     }
