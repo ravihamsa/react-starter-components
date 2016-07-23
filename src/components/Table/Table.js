@@ -94,7 +94,7 @@ class NoRecordsItem extends Component {
 
 Table.defaultProps = {
     records:[],
-    noRecordsItem:NoRecordsItem
+    NoRecordsItem:NoRecordsItem
 }
 
 
