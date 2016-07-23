@@ -14,7 +14,7 @@ class TextInput extends FormElement {
         let value = defaultValue || '';
 
         return <fieldset className={formClasses}>
-            <label>{this.props.label}</label>
+            {this.props.showLabel ? <label>{this.props.label}</label> : null}
             <input type={this.props.type} className="form-control" name={this.props.name}
                    placeholder={this.props.placeholder} onChange={this.onChange.bind(this)}
                    value={value}/>

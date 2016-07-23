@@ -15,7 +15,7 @@ class Select extends FormElement {
         let formClasses = this.getFormClasses();
 
         return <fieldset className={formClasses}>
-            <label>{this.props.label}</label>
+            {this.props.showLabel ? <label>{this.props.label}</label> : null}
             <select className="form-control" name={this.props.name}
                    placeholder={this.props.placeholder} onChange={this.onChange.bind(this)}  value={defaultValue}>
                     <option value="-1">{selectText}</option>

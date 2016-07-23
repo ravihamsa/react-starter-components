@@ -48,13 +48,16 @@ FormElement.propTypes = {
     placeholder: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
     defaultValue:PropTypes.string,
-    options:PropTypes.array
+    options:PropTypes.array,
+    showLabel:PropTypes.bool.isRequired
 }
 
 FormElement.defaultProps = {
     type: 'text',
     placeholder: 'Enter Text',
-    label: 'Text Input'
+    label: 'Text Input',
+    showLabel:true
+
 }
 
 
