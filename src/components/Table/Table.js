@@ -80,8 +80,8 @@ class Table extends Component {
 }
 
 Table.propTypes = {
-    records: PropTypes.array.isRequired,
-    noRecordsItem:PropTypes.object.isRequired
+    records: PropTypes.array,
+    noRecordsItem:PropTypes.object
 }
 
 
