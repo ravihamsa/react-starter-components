@@ -87,7 +87,7 @@ Table.propTypes = {
 
 class NoRecordsItem extends Component {
     render(){
-        <div>No Records Returned</div>
+        return <div>No Records Returned</div>
     }
 }
 
