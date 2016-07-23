@@ -27,6 +27,7 @@ class DataLoader {
         this._responseParser = fun;
     }
 
+
     generateGetUrl(url, data) {
         if (!data) {
             return url;
@@ -106,7 +107,7 @@ class DataLoader {
 
                 })
                 .catch(function (ex) {
-                    reject({error:ex.message}, null, ex);
+                    reject([{type:'error', message:ex.message}], null, ex);
                 })
         });
     }
