@@ -27,7 +27,9 @@ class Form extends Component {
     }
 
     onValueChange(changed, allData) {
-        console.log(allData)
+        if(this.props.onValueChange){
+            this.props.onValueChange(changed, allData);
+        }
     }
 
     getChildContext() {
