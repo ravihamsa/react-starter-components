@@ -19,8 +19,9 @@ class TD extends Component {
     render() {
         let self = this;
         let props = self.props;
+        let attributes =  props.attributes;
         let {record, recordIndex, dataKey} = props;
-        return <td {...this.props}>{record[dataKey]}</td>
+        return <td {...attributes}>{record[dataKey]}</td>
 
     }
 }
@@ -33,8 +34,9 @@ class TR extends Component {
         let self = this;
         let props = self.props;
         let {records, record} = props;
+        let attributes =  props.attributes;
         let children = cloneChildren(this.props.children, {records, record})
-        return <tr {...this.props}>{children}</tr>;
+        return <tr {...attributes}>{children}</tr>;
     }
 }
 
@@ -42,7 +44,7 @@ class THEAD extends Component {
     render() {
         let self = this;
         let children = cloneChildren(this.props.children, {})
-        return <thead {...this.props}>{children}</thead>;
+        return <thead>{children}</thead>;
     }
 }
 
@@ -54,7 +56,7 @@ class TBODY extends Component {
         let children = records.map(function (record, recordIndex) {
             return cloneChildren(this.props.children, {records, record, recordIndex, key:recordIndex})
         },this)
-        return <tbody {...this.props}>{children}</tbody>;
+        return <tbody>{children}</tbody>;
     }
 }
 
@@ -64,6 +66,7 @@ class Table extends Component {
     render() {
         let self = this;
         let props = self.props;
+        let attributes =  props.attributes;
         let {records, errors} = props;
         let zeroLength = records.length === 0;
 
@@ -75,7 +78,7 @@ class Table extends Component {
         }
 
         let children = cloneChildren(this.props.children, { records})
-        return <table className="table" {...this.props}>{children}</table>;
+        return <table className="table" {...attributes}>{children}</table>;
     }
 }
 
