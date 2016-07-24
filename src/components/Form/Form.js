@@ -37,8 +37,10 @@ class Form extends Component {
         if(!this.store){
             let store = this.store = this.props.valueStore || new SimpleModel();
             let detailStore = new SimpleModel();
-            store.off('change', this._valueChangeHandler)
-            store.on('change', this._valueChangeHandler);
+            if(this._unsubscribeChange){
+                this._unsubscribeChange();
+            }
+            this._unsubscribeChange = store.on('change', this._valueChangeHandler);
             store.detailStore = detailStore;
         }
 
