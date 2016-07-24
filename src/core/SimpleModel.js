@@ -49,6 +49,17 @@ class SimpleModel extends EventEmitter {
         this.removeListener(event, handler)
     }
 
+    on(event, callback){
+        super.on(event, callback);
+        return function(){
+            super.removeListener(event, callback);
+        }
+    }
+
+    trigger (){
+        this.emit.apply(this, arguments)
+    }
+
 
 }
 
