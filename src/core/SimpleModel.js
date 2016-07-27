@@ -51,8 +51,9 @@ class SimpleModel extends EventEmitter {
 
     on(event, callback){
         super.on(event, callback);
+        let self = this;
         return function(){
-            super.removeListener(event, callback);
+            self.removeListener(event, callback);
         }
     }
 
