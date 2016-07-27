@@ -80,6 +80,9 @@ class DataLoader {
             var cache = config.cache || 'session';
 
             var requestUrl = config.url;
+            if(typeof  requestUrl ==='function'){
+                requestUrl =  requestUrl(payload);
+            }
             var requestConfig = {
                 method: config.method || 'get',
                 headers: Object.assign({}, self._commonHeaders, self._sessionHeaders),
