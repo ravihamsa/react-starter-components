@@ -72,18 +72,17 @@ class DataLoader {
                 return;
             }
 
-            var requestUrl = config.url;
-            if(typeof  requestUrl ==='function'){
-                requestUrl =  requestUrl(payload);
-            }
-
+            var payLoadToServer = payload;
             if (config.paramParser) {
-                payload = config.paramParser(payload);
+                payLoadToServer = config.paramParser(payload);
             }
 
             var cache = config.cache || 'session';
 
-
+            var requestUrl = config.url;
+            if(typeof  requestUrl ==='function'){
+                requestUrl =  requestUrl(payload, payLoadToServer);
+            }
             var requestConfig = {
                 method: config.method || 'get',
                 headers: Object.assign({}, self._commonHeaders, self._sessionHeaders),
@@ -93,7 +92,7 @@ class DataLoader {
 
             let method = config.method || 'get';
             method = method.toLowerCase();
-            (method === 'post' || method === 'put') ? requestConfig.body = JSON.stringify(payload) : requestUrl = self.generateGetUrl(requestUrl, payload);
+            (method === 'post' || method === 'put') ? requestConfig.body = JSON.stringify(payLoadToServer) : requestUrl = self.generateGetUrl(requestUrl, payLoadToServer);
             var fetchPromise = fetch(requestUrl, requestConfig);
             fetchPromise
                 .then(function (response) {
