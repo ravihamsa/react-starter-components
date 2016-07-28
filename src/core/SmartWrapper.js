@@ -51,7 +51,7 @@ class SmartWrapper extends Component {
                     let getParams = storeConfig.getParams;
                     let newPropValue = newProps[storeConfig.propDependency];
                     let oldPropValue = prevProps[storeConfig.propDependency];
-                    if (newPropValue && newPropValue !== oldPropValue) {
+                    if (newPropValue !== oldPropValue) {
                         let params = getParams ? getParams.call(this, newProps) : newProps
                         this.addRequest(storeConfig.propKey, storeConfig.requestId, params)
                     }
