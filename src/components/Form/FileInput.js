@@ -15,7 +15,7 @@ class FileInput extends FormElement {
 
         return <fieldset className={formClasses}>
             {this.props.showLabel ? <label>{this.props.label}</label> : null}
-            <input type={this.props.type} className="form-control" name={this.props.name}
+            <input type="file" className="form-control" name={this.props.name}
                    placeholder={this.props.placeholder} onChange={this.onChange.bind(this)}
                    value={value} ref="input"/>
             {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
