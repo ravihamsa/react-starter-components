@@ -14,4 +14,8 @@ class MessageStack extends Component {
     }
 }
 
+MessageStack.defaultProps = {
+    messages:[]
+}
+
 export default MessageStack;
