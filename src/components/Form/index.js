@@ -5,6 +5,7 @@
 import Form from './Form';
 import FormElement from './FormElement';
 import TextInput from './TextInput'
+import TextArea from './TextArea'
 import FileInput from './FileInput'
 import Select from './Select'
 import CheckBox from './CheckBox'
@@ -14,6 +15,7 @@ export default{
     Form,
     FormElement,
     TextInput,
+    TextArea,
     FileInput,
     Select,
     CheckBox,
