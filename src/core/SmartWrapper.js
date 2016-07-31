@@ -133,14 +133,26 @@ class SmartWrapper extends Component {
         this.setState({loading: this._loadingCount > 0})
     }
 
+    renderLoading(){
+        return <Loader/>
+    }
+
+    renderErrors(){
+        return <MessageStack messages={this.dataIndex.errors}/>
+    }
+
+    renderChildren(){
+        return React.cloneElement(this.props.children, {...this.dataIndex, addRequest:this.addRequest.bind(this)} )
+    }
+
     render() {
         if (this.state.active) {
             if (this.state.loading) {
-                return <Loader/>
+                return this.renderLoading()
             } else if(this.dataIndex.errors && this.props.showError !== false){
-                return <MessageStack messages={this.dataIndex.errors}/>
+                return this.renderErrors()
             }else{
-                return React.cloneElement(this.props.children, {...this.dataIndex, addRequest:this.addRequest.bind(this)} )
+                return this.renderChildren()
             }
         } else {
             return <div></div>;
