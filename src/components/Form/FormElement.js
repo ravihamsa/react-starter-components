@@ -92,6 +92,7 @@ class FormElement extends Component {
             this.context.valueDetailStore.set({[name]: this.props.options.find((item)=> item.id===value)})
         }
         let errors = this.validateValue(value);
+        this.context.errorStore.set({[name]:errors[0]})
         this.setState({defaultValue:value, error:errors[0]})
     }
 
