@@ -106,17 +106,21 @@ class FormElement extends Component {
         if(this.props.options){
             this.context.valueDetailStore.set({[name]: this.props.options.find((item)=> item.id===value)})
         }
-        let errors = this.validateValue(value);
-        this.context.errorStore.set({[name]:errors})
-        this.setState({defaultValue:value, errors:errors})
+        this.setState({defaultValue:value})
+        this.validateValue();
     }
 
-    validateValue(value){
+    validateValue(setState){
+        let value = this.state.defaultValue;
         let name = this.props.name;
         let errors = this.validations.filter(function(item){
             return item.func(item, value) === false;
         })
-        return errors;
+        this.context.errorStore.set({[name]:errors})
+        if(setState){
+            this.setState({errors:errors})
+        }
+
     }
 
     getValueFromNode(node){
@@ -124,10 +128,11 @@ class FormElement extends Component {
     }
 
     componentWillMount(){
-
-        if(this.props.defaultValue){
+        let self = this;
+        if(this.props.defaultValue !== undefined){
             this.context.valueStore.set({[this.props.name]: this.props.defaultValue})
         }
+        self.validateValue(false);
     }
 
     getDefaultValue(){
