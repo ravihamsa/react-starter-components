@@ -21,7 +21,7 @@ class TextInput extends FormElement {
                    placeholder={this.props.placeholder} onChange={this.onChange.bind(this)}
                    value={value}/>
             {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
-            {errors.length > 0 ? <small className="text-muted">{errors[0].message}</small> : '' }
+            {errors.length > 0 ? <small className="text-danger">{errors[0].message}</small> : '' }
         </fieldset>
     }
 }
