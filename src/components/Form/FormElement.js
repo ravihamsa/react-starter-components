@@ -137,7 +137,7 @@ class FormElement extends Component {
         })
     }
 
-    componentDidUnmount(){
+    componentWillUnmount(){
         if(this.unsubscribeErrorStore){
             this.unsubscribeErrorStore();
         }
