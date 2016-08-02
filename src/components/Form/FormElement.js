@@ -127,13 +127,10 @@ class FormElement extends Component {
     componentWillMount(){
 
         let self = this;
-
-        if(this.props.defaultValue !== undefined){
-            this.context.valueStore.set({[this.props.name]: this.props.defaultValue})
-        }
-
+        let name = self.props.name;
+        self.context.valueStore.set({[name]: self.props.defaultValue})
         this.unsubscribeErrorStore = this.context.errorStore.on('forceValidate', function(){
-            self.validateValue(self.props.defaultValue);
+            self.validateValue(self.context.valueStore.get(name));
         })
     }
 
