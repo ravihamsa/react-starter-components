@@ -110,14 +110,14 @@ class FormElement extends Component {
         this.validateValue();
     }
 
-    validateValue(setState){
+    validateValue(skipSetState){
         let value = this.state.defaultValue;
         let name = this.props.name;
         let errors = this.validations.filter(function(item){
             return item.func(item, value) === false;
         })
         this.context.errorStore.set({[name]:errors})
-        if(setState){
+        if(!skipSetState){
             this.setState({errors:errors})
         }
 
@@ -132,7 +132,7 @@ class FormElement extends Component {
         if(this.props.defaultValue !== undefined){
             this.context.valueStore.set({[this.props.name]: this.props.defaultValue})
         }
-        self.validateValue(false);
+        self.validateValue(true);
     }
 
     getDefaultValue(){
