@@ -74,10 +74,11 @@ let validatorMap = {
     }
 }
 
-let getRuleValue = function(type){
+let getRuleValue = function(item){
     return  {
-        type:type,
-        func:validatorMap[type]
+        type:item.expr,
+        func:validatorMap[item.expr],
+        message:item.message || item.expr
     }
 }
 
