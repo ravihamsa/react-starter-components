@@ -17,6 +17,7 @@ class Form extends Component {
         event.preventDefault();
         let context = this.getChildContext();
         let {valueStore, errorStore} = context;
+        errorStore.trigger('forceValidate')
         let hasErrors = Object.values(errorStore.getAll()).filter(function(item){return item.length > 0}).length > 0;
         if(hasErrors){
             return;
