@@ -102,7 +102,7 @@ class FormElement extends Component {
         }
         let errors = this.validateValue(value);
         this.context.errorStore.set({[name]:errors})
-        this.setState({defaultValue:value, errors:errors[0]})
+        this.setState({defaultValue:value, errors:errors})
     }
 
     validateValue(value){
