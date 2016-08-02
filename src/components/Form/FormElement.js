@@ -87,7 +87,7 @@ class FormElement extends Component {
     constructor(){
         super(...arguments);
         let validations = this.props.validations || [];
-        this.validations = validations.forEach(function(rule, index){
+        this.validations = validations.map(function(rule, index){
             return getRuleValue(rule);
         });
 
