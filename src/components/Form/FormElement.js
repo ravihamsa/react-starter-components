@@ -107,20 +107,23 @@ class FormElement extends Component {
             this.context.valueDetailStore.set({[name]: this.props.options.find((item)=> item.id===value)})
         }
         this.setState({defaultValue:value})
-        this.validateValue();
+        this.validateWithValue(value);
     }
 
-    validateValue(skipSetState){
-        let value = this.state.defaultValue;
+    validateWithValue(value, skipState){
         let name = this.props.name;
         let errors = this.validations.filter(function(item){
             return item.func(item, value) === false;
         })
         this.context.errorStore.set({[name]:errors})
-        if(!skipSetState){
+        if(!skipState){
             this.setState({errors:errors})
         }
+    }
 
+    validateValue(){
+        let value = this.state.defaultValue;
+        this.validateWithValue(value, true)
     }
 
     getValueFromNode(node){
