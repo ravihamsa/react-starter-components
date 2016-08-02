@@ -106,9 +106,9 @@ class FormElement extends Component {
         if(this.props.options){
             this.context.valueDetailStore.set({[name]: this.props.options.find((item)=> item.id===value)})
         }
-
-        this.setState({defaultValue:value})
         this.validateValue(value);
+        this.setState({defaultValue:value})
+
     }
 
     validateValue(value){
