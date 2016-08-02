@@ -5,7 +5,6 @@ import React, {PropTypes, Component} from "react";
 import _ from 'lodash';
 
 
-
 let validatorMap = {
     'req': function(rule, value) {
         return !_.isEmpty(value);
@@ -87,6 +86,9 @@ class FormElement extends Component {
     constructor(){
         super(...arguments);
         let validations = this.props.validations || [];
+        this.state= {
+            errors:[]
+        }
         this.validations = validations.map(function(rule, index){
             return getRuleValue(rule);
         });
@@ -130,7 +132,7 @@ class FormElement extends Component {
 
     getFormClasses(){
         let classArray = ['form-group'];
-        if(this.props.errors !== undefined){
+        if(this.state.errors.length > 0){
             classArray.push('has-error');
         }
         return classArray.join(' ')

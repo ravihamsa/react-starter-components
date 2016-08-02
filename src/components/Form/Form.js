@@ -16,7 +16,11 @@ class Form extends Component {
     onSubmitHandler(event){
         event.preventDefault();
         let context = this.getChildContext();
-        let {valueStore, valueDetailStore} = context;
+        let {valueStore, errorStore} = context;
+        let hasErrors = Object.values(errorStore.getAll()).filter(function(item){return item.length > 0}).length > 0;
+        if(hasErrors){
+            return;
+        }
         this.props.onSubmitHandler(valueStore.getAll(), valueStore);
     }
 
@@ -34,9 +38,7 @@ class Form extends Component {
     }
 
     onError(error){
-        if(this.props.onError){
-            this.props.onError(error)
-        }
+        console.log(error);
     }
 
     getChildContext() {
