@@ -84,6 +84,15 @@ let getRuleValue = function(type){
 
 class FormElement extends Component {
 
+    constructor(){
+        super(...arguments);
+        let validations = this.props.validations || [];
+        this.validations = validations.forEach(function(rule, index){
+            return getRuleValue(rule);
+        });
+
+    }
+
     onChange(event) {
         let name = this.props.name;
         let value = this.getValueFromNode(event.target);
@@ -109,10 +118,6 @@ class FormElement extends Component {
     }
 
     componentWillMount(){
-        let validations = this.props.validations || [];
-        this.validations = validations.forEach(function(rule, index){
-            return getRuleValue(rule);
-        });
 
         if(this.props.defaultValue){
             this.context.valueStore.set({[this.props.name]: this.props.defaultValue})
