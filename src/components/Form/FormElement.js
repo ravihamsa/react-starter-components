@@ -10,7 +10,7 @@ let validatorMap = {
         return !_.isEmpty(value);
     },
     'selReq': function(rule, value){
-        return value !== -1;
+        return value !== '-1';
     },
     'digits': function(rule, value) {
         return (/^\d{5}$/).test(value);
