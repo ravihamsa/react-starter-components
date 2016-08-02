@@ -132,9 +132,15 @@ class FormElement extends Component {
             this.context.valueStore.set({[this.props.name]: this.props.defaultValue})
         }
 
-        this.context.errorStore.on('forceValidate', function(){
-            self.validateValue(this.props.defaultValue);
+        this.unsubscribeErrorStore = this.context.errorStore.on('forceValidate', function(){
+            self.validateValue(self.props.defaultValue);
         })
+    }
+
+    componentDidUnmount(){
+        if(this.unsubscribeErrorStore){
+            this.unsubscribeErrorStore();
+        }
     }
 
     getDefaultValue(){
