@@ -10,6 +10,7 @@ class Form extends Component {
     constructor() {
         super(...arguments);
         this._valueChangeHandler = this.onValueChange.bind(this);
+        this._errorHandler = this.onError.bind(this);
     }
 
     onSubmitHandler(event){
@@ -32,6 +33,12 @@ class Form extends Component {
         }
     }
 
+    onError(error){
+        if(this.props.onError){
+            this.props.onError(error)
+        }
+    }
+
     getChildContext() {
 
         if(!this.store){
@@ -42,10 +49,21 @@ class Form extends Component {
             }
             this._unsubscribeChange = store.on('change', this._valueChangeHandler);
             store.detailStore = detailStore;
+
+
+            let errorStore = this.errorStore = this.props.errorStore || new SimpleModel();
+            if(this._unsubscribeErrorChange){
+                this._unsubscribeErrorChange();
+            }
+
+            this._unsubscribeErrorChange = errorStore.on('change', this._errorHandler);
         }
+
+
 
         return {
             valueStore: this.store,
+            errorStore: this.errorStore,
             valueDetailStore:this.store.detailStore
         }
 
@@ -54,6 +72,7 @@ class Form extends Component {
 
 Form.childContextTypes = {
     valueStore: PropTypes.object.isRequired,
+    errorStore: PropTypes.object.isRequired,
     valueDetailStore: PropTypes.object.isRequired
 }
 
