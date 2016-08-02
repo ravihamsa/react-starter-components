@@ -137,6 +137,16 @@ class FormElement extends Component {
         }
         return classArray.join(' ')
     }
+
+    getErrors (){
+        let errors = this.state && this.state.errors || [];
+        let errorMessages = this.props.errorMessages || {};
+        errors.forEach(function(item){
+            item.message = errorMessages[item.type] || 'error '+ item.type
+        })
+        return errors;
+    }
+
 }
 
 FormElement.contextTypes = {

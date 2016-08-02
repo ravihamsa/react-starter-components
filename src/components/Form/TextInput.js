@@ -13,7 +13,7 @@ class TextInput extends FormElement {
         let defaultValue = this.getDefaultValue();
         let formClasses = this.getFormClasses();
         let value = defaultValue || '';
-        let errors = this.state && this.state.errors || [];
+        let errors = this.getErrors();
 
         return <fieldset className={formClasses}>
             {this.props.showLabel ? <label>{this.props.label}</label> : null}

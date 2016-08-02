@@ -13,6 +13,7 @@ class Select extends FormElement {
         let selectText = this.props.selectText || 'Select';
         let options = this.props.options || [];
         let formClasses = this.getFormClasses();
+        let errors = this.getErrors();
 
         return <fieldset className={formClasses}>
             {this.props.showLabel ? <label>{this.props.label}</label> : null}
@@ -24,7 +25,7 @@ class Select extends FormElement {
                 },this)}
             </select>
             {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
-            {this.props.errors ? <small className="text-muted">{this.props.errors}</small> : '' }
+            {errors.length > 0 ? <small className="text-muted">{errors[0].message}</small> : '' }
         </fieldset>
     }
 }

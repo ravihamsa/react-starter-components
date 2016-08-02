@@ -12,6 +12,7 @@ class FileInput extends FormElement {
         let defaultValue = this.getDefaultValue();
         let formClasses = this.getFormClasses();
         let value = defaultValue || '';
+        let errors = this.getErrors();
 
         return <fieldset className={formClasses}>
             {this.props.showLabel ? <label>{this.props.label}</label> : null}
@@ -19,7 +20,7 @@ class FileInput extends FormElement {
                    placeholder={this.props.placeholder} onChange={this.onChange.bind(this)}
                    value={value} ref="input"/>
             {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
-            {this.props.errors ? <small className="text-muted">{this.props.errors}</small> : '' }
+            {errors.length > 0 ? <small className="text-muted">{errors[0].message}</small> : '' }
         </fieldset>
     }
 

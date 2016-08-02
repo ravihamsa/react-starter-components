@@ -16,6 +16,7 @@ class CheckBox extends FormElement {
 
         let defaultValue = this.getDefaultValue();
         let formClasses = this.getFormClasses();
+        let errors = this.getErrors();
 
         return <fieldset className={formClasses}>
 
@@ -26,7 +27,7 @@ class CheckBox extends FormElement {
                            defaultChecked={defaultValue}/> {this.props.label}
                 </label>
                 {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
-                {this.props.errors ? <small className="text-muted">{this.props.errors}</small> : '' }
+                {errors.length > 0 ? <small className="text-muted">{errors[0].message}</small> : '' }
             </div>
         </fieldset>
     }
