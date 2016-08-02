@@ -108,7 +108,7 @@ class FormElement extends Component {
     validateValue(value){
         let name = this.props.name;
         let errors = this.validations.filter(function(item){
-            return item.func(value) === false;
+            return item.func(item, value) === false;
         })
         return errors;
     }
