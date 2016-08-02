@@ -3,7 +3,8 @@
  */
 
 import React, {PropTypes, Component} from "react";
-import FormElement from './FormElement'
+import FormElement from './FormElement';
+
 
 
 class TextInput extends FormElement {
@@ -12,6 +13,7 @@ class TextInput extends FormElement {
         let defaultValue = this.getDefaultValue();
         let formClasses = this.getFormClasses();
         let value = defaultValue || '';
+        let errors = this.state.errors || this.prop.errors || [];
 
         return <fieldset className={formClasses}>
             {this.props.showLabel ? <label>{this.props.label}</label> : null}
@@ -19,7 +21,7 @@ class TextInput extends FormElement {
                    placeholder={this.props.placeholder} onChange={this.onChange.bind(this)}
                    value={value}/>
             {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
-            {this.props.errors ? <small className="text-muted">{this.props.errors}</small> : '' }
+            {errors.length > 0 ? <small className="text-muted">{errors[0].message}</small> : '' }
         </fieldset>
     }
 }
