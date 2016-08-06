@@ -45,7 +45,7 @@ class DataLoader {
     }
 
     setCommonHeaders(headers) {
-        this._commonHeaders = headers
+        this._commonHeaders = _.extend({},this._commonHeaders, headers)
     }
 
     clearSessionHeaders(){
@@ -53,7 +53,7 @@ class DataLoader {
     }
 
     setSessionHeaders(headers){
-        this._sessionHeaders = headers;
+        this._sessionHeaders = _.extend({},this._sessionHeaders, headers)
     }
 
     getRequestDef(requestId, payload) {
