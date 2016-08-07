@@ -92,7 +92,10 @@ class DataLoader {
 
             let method = config.method || 'get';
             method = method.toLowerCase();
-            (method === 'post' || method === 'put') ? requestConfig.body = JSON.stringify(payLoadToServer) : requestUrl = self.generateGetUrl(requestUrl, payLoadToServer);
+            requestUrl = self.generateGetUrl(requestUrl, payLoadToServer)
+            if(method === 'post' || method === 'put'){
+                requestConfig.body = JSON.stringify(payLoadToServer)
+            }
             var fetchPromise = fetch(requestUrl, requestConfig);
             fetchPromise
                 .then(function (response) {
