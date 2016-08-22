@@ -20,7 +20,7 @@ class CheckBox extends FormElement {
 
         return <fieldset className={formClasses}>
 
-            <div class="checkbox">
+            <div className="checkbox">
                 <label>
                     <input type="checkbox" name={this.props.name}
                            placeholder={this.props.placeholder} onChange={this.onChange.bind(this)}
