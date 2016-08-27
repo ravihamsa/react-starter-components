@@ -4,18 +4,26 @@
 import React, {Component, PropTypes} from "react";
 import _ from 'lodash';
 
-class ListItem extends Component {
-    render(){
+export class ListItem extends Component {
+    render() {
+        return this.renderContent();
+    }
+
+    renderContent() {
         var itemData = this.props.itemData;
         var ContainerTag = this.props.tagName
-        var tagProps = _.pick(this.props, 'className', 'style')
-        return (<ContainerTag {...tagProps} className="list-item">{itemData.name}</ContainerTag>);
+        var tagProps = this.getTagProps();
+        return (<ContainerTag {...tagProps}>{itemData.name}</ContainerTag>);
+    }
+
+
+    getTagProps() {
+        return _.pick(this.props, 'className', 'style')
     }
 }
 
 
-class List extends Component {
-
+export default class List extends Component {
 
 
     render() {
@@ -26,7 +34,7 @@ class List extends Component {
         var ListItemClass = self.props.ListItem || ListItem;
 
         var tagProps = _.pick(this.props, 'className', 'style')
-        var otherProps = _.omit(this.props, 'className', 'style', 'tagName', 'noDataMessage', 'ListItem', 'items');
+        var otherProps = _.omit(this.props, 'className', 'style', 'tagName', 'noDataMessage', 'ListItem', 'items', 'itemClassName', 'itemTagName');
         otherProps.tagName = this.props.itemTagName || 'li';
         otherProps.className = this.props.itemClassName || 'list-item';
 
@@ -38,10 +46,10 @@ class List extends Component {
         if (listItems.length > 0) {
             return (<ContainerTag {...tagProps}>{listItems}</ContainerTag>);
         } else {
-            return (<ContainerTag {...tagProps}><li className="no-data">{noItemMessage}</li></ContainerTag>)
+            return (<ContainerTag {...tagProps}>
+                <li className="no-data">{noItemMessage}</li>
+            </ContainerTag>)
         }
 
     }
 }
-
-export default List;
