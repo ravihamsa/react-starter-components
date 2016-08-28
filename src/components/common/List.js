@@ -23,6 +23,38 @@ export class ListItem extends Component {
 }
 
 
+export class LayoutList extends Component {
+
+
+    render() {
+
+        var columns = this.props.columns;
+        var colClassName = 'col-md-' + Math.round(12 / columns);
+        var itemClassName = this.props.itemClassName || 'list-item';
+        var items = this.props.items;
+        var ListItemClass = this.props.ListItem || ListItem;
+        var children = [];
+        for (var i = 0; i < items.length; i += columns) {
+            var colChildren = [];
+            for (var j = 0; j < columns; j++) {
+                var item = items[i + j];
+                if (item) {
+                    colChildren.push(<ListItemClass key={item.id} itemData={item}
+                                                    className={colClassName + ' ' + itemClassName} tagName="div"/>)
+                }
+            }
+
+            children.push(<div className="row" key={i}>
+                {colChildren}
+            </div>)
+        }
+
+        return <div>{children}</div>;
+
+    }
+}
+
+
 export default class List extends Component {
 
 
