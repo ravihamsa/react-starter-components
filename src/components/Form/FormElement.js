@@ -128,7 +128,8 @@ class FormElement extends Component {
 
         let self = this;
         let name = self.props.name;
-        self.context.valueStore.set({[name]: self.getDefaultValue()})
+        let valueStoreValue = this.context.valueStore.get(this.props.name);
+        self.context.valueStore.set({[name]: valueStoreValue || self.props.defaultValue})
         this.unsubscribeErrorStore = this.context.errorStore.on('forceValidate', function(){
             self.validateValue(self.context.valueStore.get(name));
         })
@@ -141,7 +142,7 @@ class FormElement extends Component {
     }
 
     getDefaultValue(){
-        return this.props.defaultValue || this.context.valueStore.get(this.props.name);
+        return this.context.valueStore.get(this.props.name);
     }
 
     getFormClasses(){
