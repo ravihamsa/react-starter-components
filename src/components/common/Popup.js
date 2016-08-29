@@ -70,8 +70,6 @@ class Popup extends Component {
             isModal: this.props.isModal
         }
 
-        console.log(this.state.open, '*****122')
-
         return <div styles={popupStyles} {...this.props}>
             {this.props.children.map(function (children, index) {
                 return React.cloneElement(children, {...childProps, key: index})
@@ -99,15 +97,15 @@ class PopupBody extends Component {
     }
 
     render() {
-        console.log(this.props.isOpen, '******')
 
+        let className=this.props.className || 'default'
 
         if(this.props.isOpen){
-            return <div style={popupContainerStyles}>
-                <div style={maskStyles} onClick={this.maskClick.bind(this)}>
+            return <div style={popupContainerStyles} className={"popup-container " + className}>
+                <div style={maskStyles} onClick={this.maskClick.bind(this)} className={"popup-mask " + className} >
                 </div>
                 <div
-                    style={bodyStyles}> { React.cloneElement(this.props.children, {closePopup: this.props.closePopup}) }</div>
+                    style={bodyStyles} className={"popup-body " + className}> { React.cloneElement(this.props.children, {closePopup: this.props.closePopup}) }</div>
             </div>
         }else{
             return <div></div>
