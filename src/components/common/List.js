@@ -40,7 +40,7 @@ export class LayoutList extends Component {
             for (var j = 0; j < columns; j++) {
                 var item = items[i + j];
                 if (item) {
-                    colChildren.push(<ListItemClass key={item.id} itemData={item}
+                    colChildren.push(<ListItemClass key={item.id} itemData={item}  itemIndex={i+j}
                                                     className={colClassName + ' ' + itemClassName} tagName="div"/>)
                 }
             }
