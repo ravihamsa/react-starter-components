@@ -56,6 +56,52 @@ export class LayoutList extends Component {
 }
 
 
+export class PaginatedLayoutList extends Component {
+
+    constructor(){
+        super(...arguments);
+        this.state = {
+            curPage : this.props.curPage | 0,
+            perPage: this.props.perPage || 9
+        }
+    }
+
+    render() {
+
+        var columns = this.props.columns;
+        var colClassName = 'col-md-' + Math.round(12 / columns);
+        var itemClassName = this.props.itemClassName || 'list-item';
+        var rowClassName = this.props.rowClassName || ''
+        var items = this.props.items;
+        var ListItemClass = this.props.ListItem || ListItem;
+        var children = [];
+
+        let {curPage, perPage} = this.state;
+        let start = curPage * perPage;
+        let end = start + perPage;
+        end = Math.max(end, items.length);
+        let paginatedItems = items.slice(start, perPage);
+
+        for (var i = 0; i < paginatedItems.length; i += columns) {
+            var colChildren = [];
+            for (var j = 0; j < columns; j++) {
+                var item = paginatedItems[i + j];
+                if (item) {
+                    colChildren.push(<ListItemClass key={item.id} itemData={item} itemIndex={i+j}
+                                                    className={colClassName + ' ' + itemClassName} tagName="div"/>)
+                }
+            }
+
+            children.push(<div className={'row ' + rowClassName}  key={i}>
+                {colChildren}
+            </div>)
+        }
+
+        return <div className={this.props.className}>{children}</div>;
+
+    }
+}
+
 export default class List extends Component {
 
 
@@ -72,8 +118,8 @@ export default class List extends Component {
         otherProps.className = this.props.itemClassName || 'list-item';
 
 
-        var listItems = itemArray.map(function (item) {
-            return <ListItemClass key={item.id} id={item.id} itemData={item} {...otherProps}/>
+        var listItems = itemArray.map(function (item, index) {
+            return <ListItemClass key={item.id} id={item.id}  itemIndex={index} itemData={item} {...otherProps}/>
         });
 
         if (listItems.length > 0) {
