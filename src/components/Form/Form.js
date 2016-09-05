@@ -3,6 +3,7 @@
  */
 import React, {PropTypes, Component} from "react";
 import core from '../../core';
+import _ from 'lodash';
 const {SimpleModel}=core;
 
 class Form extends Component {
@@ -18,7 +19,7 @@ class Form extends Component {
         let context = this.getChildContext();
         let {valueStore, errorStore} = context;
         errorStore.trigger('forceValidate')
-        let hasErrors = Object.values(errorStore.getAll()).filter(function(item){return item.length > 0}).length > 0;
+        let hasErrors = _.values(errorStore.getAll()).filter(function(item){return item.length > 0}).length > 0;
         if(hasErrors){
             return;
         }

@@ -70,7 +70,9 @@ class Popup extends Component {
             isModal: this.props.isModal
         }
 
-        return <div styles={popupStyles} {...this.props}>
+        let className = this.props.className || 'popup'
+
+        return <div styles={popupStyles} {...this.props} className={className}>
             {this.props.children.map(function (children, index) {
                 return React.cloneElement(children, {...childProps, key: index})
             })}
@@ -108,7 +110,7 @@ class PopupBody extends Component {
                     style={bodyStyles} className={"popup-body " + className}> { React.cloneElement(this.props.children, {closePopup: this.props.closePopup}) }</div>
             </div>
         }else{
-            return <div></div>
+            return <span></span>
         }
     }
 }
