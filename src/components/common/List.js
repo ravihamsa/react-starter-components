@@ -33,6 +33,7 @@ export class LayoutList extends Component {
         var itemClassName = this.props.itemClassName || 'list-item';
         var rowClassName = this.props.rowClassName || ''
         var items = this.props.items;
+        var otherProps = _.omit(this.props, 'className', 'style', 'tagName', 'noDataMessage', 'ListItem', 'items', 'itemClassName', 'itemTagName');
         var ListItemClass = this.props.ListItem || ListItem;
         var children = [];
         for (var i = 0; i < items.length; i += columns) {
@@ -41,7 +42,7 @@ export class LayoutList extends Component {
                 var item = items[i + j];
                 if (item) {
                     colChildren.push(<ListItemClass key={item.id} itemData={item}  itemIndex={i+j}
-                                                    className={colClassName + ' ' + itemClassName} tagName="div"/>)
+                                                    className={colClassName + ' ' + itemClassName} tagName="div"  {...otherProps} />)
                 }
             }
 
@@ -72,7 +73,7 @@ export class PaginatedLayoutList extends Component {
         var colClassName = 'col-md-' + Math.round(12 / columns);
         var itemClassName = this.props.itemClassName || 'list-item';
         var rowClassName = this.props.rowClassName || ''
-        var items = this.props.items;
+        var otherProps = _.omit(this.props, 'className', 'style', 'tagName', 'noDataMessage', 'ListItem', 'items', 'itemClassName', 'itemTagName');
         var ListItemClass = this.props.ListItem || ListItem;
         var children = [];
 
@@ -88,7 +89,7 @@ export class PaginatedLayoutList extends Component {
                 var item = paginatedItems[i + j];
                 if (item) {
                     colChildren.push(<ListItemClass key={item.id} itemData={item} itemIndex={i+j}
-                                                    className={colClassName + ' ' + itemClassName} tagName="div"/>)
+                                                    className={colClassName + ' ' + itemClassName} tagName="div" {...otherProps}/>)
                 }
             }
 

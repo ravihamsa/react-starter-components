@@ -4,6 +4,7 @@
 import React, {PropTypes, Component} from 'react';
 
 let popupStyles = {
+    display:'inline-block'
 }
 
 let bodyStyles = {
@@ -72,7 +73,7 @@ class Popup extends Component {
 
         let className = this.props.className || 'popup'
 
-        return <div styles={popupStyles} {...this.props} className={className}>
+        return <div style={popupStyles} className={className}>
             {this.props.children.map(function (children, index) {
                 return React.cloneElement(children, {...childProps, key: index})
             })}
