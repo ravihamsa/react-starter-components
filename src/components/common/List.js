@@ -33,7 +33,7 @@ export class LayoutList extends Component {
         var itemClassName = this.props.itemClassName || 'list-item';
         var rowClassName = this.props.rowClassName || ''
         var items = this.props.items;
-        var otherProps = _.omit(this.props, 'className', 'style', 'tagName', 'noDataMessage', 'ListItem', 'items', 'itemClassName', 'itemTagName');
+        var otherProps = _.omit(this.props, 'className', 'style', 'tagName', 'noDataMessage', 'ListItem', 'itemClassName', 'itemTagName');
         var ListItemClass = this.props.ListItem || ListItem;
         var children = [];
         for (var i = 0; i < items.length; i += columns) {
@@ -114,7 +114,7 @@ export default class List extends Component {
         var ListItemClass = self.props.ListItem || ListItem;
 
         var tagProps = _.pick(this.props, 'className', 'style')
-        var otherProps = _.omit(this.props, 'className', 'style', 'tagName', 'noDataMessage', 'ListItem', 'items', 'itemClassName', 'itemTagName');
+        var otherProps = _.omit(this.props, 'className', 'style', 'tagName', 'noDataMessage', 'ListItem', 'itemClassName', 'itemTagName');
         otherProps.tagName = this.props.itemTagName || 'li';
         otherProps.className = this.props.itemClassName || 'list-item';
 
