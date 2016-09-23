@@ -1,9 +1,9 @@
 {
-  "name": "react-starter",
+  "name": "react-starter-components",
   "version": "1.0.0",
   "description": "",
   "main": "lib/index.js",
-  "repository": "https://github.com/ravihamsa/react-starter",
+  "repository": "https://github.com/ravihamsa/react-starter-components",
   "dependencies": {
     "bluebird": "^3.4.1",
     "history": "^3.0.0",
