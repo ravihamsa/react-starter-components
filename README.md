@@ -1,13 +1,13 @@
-# react-starter
-react-starter
+# react-starter-components
+react-starter-components
 
 
 # setup
 
-`npm install https://github.com/ravihamsa/react-starter`
+`npm install react-starter-components`
 
 
 # usage
 
-`import {core,components} from 'react-starter';
+`import {core,components} from 'react-starter-components';
 
