@@ -28,7 +28,7 @@ class Form extends Component {
 
 
     render() {
-        return <form onSubmit={this.onSubmitHandler.bind(this)}>
+        return <form onSubmit={this.onSubmitHandler.bind(this)} className={this.props.className}>
             {this.props.children}
         </form>
     }

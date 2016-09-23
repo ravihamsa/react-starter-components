@@ -102,10 +102,10 @@ class FormElement extends Component {
     onChange(event) {
         let name = this.props.name;
         let value = this.getValueFromNode(event.target);
-        this.context.valueStore.set({[name]: value});
         if(this.props.options){
             this.context.valueDetailStore.set({[name]: this.props.options.find((item)=> item.id===value)})
         }
+        this.context.valueStore.set({[name]: value});
         this.validateValue(value);
         this.setState({defaultValue:value})
 

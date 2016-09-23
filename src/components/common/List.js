@@ -73,7 +73,7 @@ export class PaginatedLayoutList extends Component {
         var colClassName = 'col-md-' + Math.round(12 / columns);
         var itemClassName = this.props.itemClassName || 'list-item';
         var rowClassName = this.props.rowClassName || ''
-        var otherProps = _.omit(this.props, 'className', 'style', 'tagName', 'noDataMessage', 'ListItem', 'items', 'itemClassName', 'itemTagName');
+        var otherProps = _.omit(this.props, 'className', 'style', 'tagName', 'noDataMessage', 'ListItem', 'itemClassName', 'itemTagName');
         var ListItemClass = this.props.ListItem || ListItem;
         var children = [];
 
