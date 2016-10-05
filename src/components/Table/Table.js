@@ -43,7 +43,8 @@ class TR extends Component {
 class THEAD extends Component {
     render() {
         let self = this;
-        let children = cloneChildren(this.props.children, {})
+        let {records} = this.props;
+        let children = cloneChildren(this.props.children, {records:records})
         return <thead>{children}</thead>;
     }
 }

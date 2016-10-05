@@ -93,32 +93,44 @@ class SmartWrapper extends Component {
             case 'false':
                 return stateValue === false;
                 break;
+            case 'defined':
+                return (stateValue !== undefined) && stateValue !== null;
+                break;
             default:
                 return true;
                 break;
         }
     }
 
-    addRequest(propName, requestId, payload) {
-        var self = this;
-        delete this.dataIndex.errors;
+    _addRequest(requestId, payload, handlers) {
+        let self = this;
         let def = dataLoader.getRequestDef(requestId, payload);
-
-        def.done(function (data) {
-            self.dataIndex[propName] = data;
-        })
-
-        def.catch(function (e) {
-            self.dataIndex['errors'] = e;
-        })
-
+        def.done(handlers.done || identity)
+        def.catch(handlers.catch || identity)
         def.finally(function () {
             self.bumpAndCheckLoading(-1)
         })
-
         self.bumpAndCheckLoading(1)
-
         return def;
+    }
+
+    addRequest(propName, requestId, payload) {
+        delete this.dataIndex.errors;
+        return this._addRequest(requestId, payload, {
+            done: (data)=>this.dataIndex[propName] = data,
+            catch: (error)=>this.dataIndex[errors] = error
+        })
+    }
+
+    addStateRequest(stateName, requestId, payload, defaultValue) {
+        if(defaultValue === undefined){
+            defaultValue = null
+        }
+        this.setState({[stateName]:defaultValue})
+        return this._addRequest(requestId, payload, {
+            done: (data)=>this.setState({[stateName]:data}),
+            catch: (error)=>this.setState({[stateName]:defaultValue,[`${stateName}Error`]:error})
+        })
     }
 
 
@@ -133,25 +145,25 @@ class SmartWrapper extends Component {
         this.setState({loading: this._loadingCount > 0})
     }
 
-    renderLoading(){
+    renderLoading() {
         return <Loader/>
     }
 
-    renderErrors(){
+    renderErrors() {
         return <MessageStack messages={this.dataIndex.errors}/>
     }
 
-    renderChildren(){
-        return React.cloneElement(this.props.children, {...this.dataIndex, addRequest:this.addRequest.bind(this)} )
+    renderChildren() {
+        return React.cloneElement(this.props.children, {...this.dataIndex, addRequest: this.addRequest.bind(this)})
     }
 
     render() {
         if (this.state.active) {
             if (this.state.loading) {
                 return this.renderLoading()
-            } else if(this.dataIndex.errors && this.props.showError !== false){
+            } else if (this.dataIndex.errors && this.props.showError !== false) {
                 return this.renderErrors()
-            }else{
+            } else {
                 return this.renderChildren()
             }
         } else {
