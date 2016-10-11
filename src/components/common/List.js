@@ -41,7 +41,7 @@ export class LayoutList extends Component {
             for (var j = 0; j < columns; j++) {
                 var item = items[i + j];
                 if (item) {
-                    colChildren.push(<ListItemClass key={item.id} itemData={item}  itemIndex={i+j}
+                    colChildren.push(<ListItemClass key={item.id} ref={item.id} itemData={item}  itemIndex={i+j}
                                                     className={colClassName + ' ' + itemClassName} tagName="div"  {...otherProps} />)
                 }
             }
@@ -88,7 +88,7 @@ export class PaginatedLayoutList extends Component {
             for (var j = 0; j < columns; j++) {
                 var item = paginatedItems[i + j];
                 if (item) {
-                    colChildren.push(<ListItemClass key={item.id} itemData={item} itemIndex={i+j}
+                    colChildren.push(<ListItemClass key={item.id} ref={item.id} itemData={item} itemIndex={i+j}
                                                     className={colClassName + ' ' + itemClassName} tagName="div" {...otherProps}/>)
                 }
             }
@@ -106,6 +106,7 @@ export class PaginatedLayoutList extends Component {
 export default class List extends Component {
 
 
+
     render() {
         var self = this;
         var itemArray = self.props.items;
@@ -118,10 +119,11 @@ export default class List extends Component {
         otherProps.tagName = this.props.itemTagName || 'li';
         otherProps.className = this.props.itemClassName || 'list-item';
 
-
         var listItems = itemArray.map(function (item, index) {
-            return <ListItemClass key={item.id} id={item.id}  itemIndex={index} itemData={item} {...otherProps}/>
+            return  <ListItemClass key={item.id} ref={item.id}  itemIndex={index} itemData={item} {...otherProps}/>
         });
+
+
 
         if (listItems.length > 0) {
             return (<ContainerTag {...tagProps}>{listItems}</ContainerTag>);
@@ -131,5 +133,74 @@ export default class List extends Component {
             </ContainerTag>)
         }
 
+    }
+}
+
+
+export class SelectableItem extends ListItem {
+
+    constructor() {
+        super(...arguments);
+        let {itemData, selectionManager} = this.props;
+        this.state = {
+            selected: selectionManager.isSelected(itemData)
+        }
+
+    }
+
+    updateSelectionState(){
+        let {itemData, selectionManager} = this.props;
+        this.setState({
+            selected:selectionManager.isSelected(itemData)
+        })
+    }
+
+    selectItem(event){
+        event.preventDefault();
+        let {itemData, selectionManager} = this.props;
+        if(selectionManager._multiSelect){
+            selectionManager.toggle(itemData);
+        }else{
+            selectionManager.select(itemData);
+        }
+    }
+
+    renderContent() {
+        var itemData = this.props.itemData;
+        var ContainerTag = this.props.tagName
+        var tagProps = this.getTagProps();
+        return (<ContainerTag {...tagProps} >
+            <a href="#select" onClick={this.selectItem.bind(this)}>{itemData.name}</a>
+        </ContainerTag>);
+    }
+
+    getTagProps() {
+        return {
+            className: this.state.selected ? 'active list-item' : 'list-item'
+        }
+    }
+
+}
+
+export class SelectableList extends List {
+    componentDidMount(){
+        let selectionManager = this.props.selectionManager;
+        let self = this;
+        if(selectionManager){
+            this.unsubscribeSelection = selectionManager.on('change', function(selection, prevSelection){
+                let fullList = _.flatten([selection, prevSelection]);
+                _.each(fullList, function(item){
+                    if(item){
+                        self.refs[item.id].updateSelectionState();
+                    }
+                })
+            })
+        }
+    }
+
+    componentWillUnmount(){
+        if(this.unsubscribeSelection){
+            this.unsubscribeSelection();
+        }
     }
 }
