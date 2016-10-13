@@ -118,7 +118,7 @@ class SmartWrapper extends Component {
         delete this.dataIndex.errors;
         return this._addRequest(requestId, payload, {
             done: (data)=>this.dataIndex[propName] = data,
-            catch: (error)=>this.dataIndex[errors] = error
+            catch: (error)=>this.dataIndex['errors'] = error
         })
     }
 
