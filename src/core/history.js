@@ -4,4 +4,8 @@
 
 import { createHistory } from 'history'
 
-export default createHistory();
+if(global._history === undefined){
+    global._history = createHistory()
+}
+
+export default global._history;

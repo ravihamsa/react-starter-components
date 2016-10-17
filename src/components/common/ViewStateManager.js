@@ -8,7 +8,7 @@ import React, {Component, PropTypes} from "react";
 
 class NoStateView extends Component {
     render() {
-        <div className="no-state">State Not Defined</div>
+        return <div className="no-state">State Not Defined</div>
     }
 }
 
@@ -23,10 +23,10 @@ class ViewStateManager extends Component {
     render() {
         let currentState = this.props.currentState;
         let children = this.props.children;
-        if (!children.filter) {
+        if (!children.find) {
             children = [children];
         }
-        let stateChild = children.filter(function (child) {
+        let stateChild = children.find(function (child) {
             let stateArray = child.props.stateNames.replace(/\s/g, '').split(',')
             return stateArray.indexOf(currentState) > -1;
         })

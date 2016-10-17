@@ -23,6 +23,14 @@ class DataLoader {
         };
     }
 
+    getRequestConfig(requestId, propKey, propDependency) {
+        return {
+            requestId: requestId,
+            propKey: propKey,
+            propDependency: propDependency
+        }
+    }
+
     setResponseParser(fun) {
         this._responseParser = fun;
     }
@@ -45,15 +53,15 @@ class DataLoader {
     }
 
     setCommonHeaders(headers) {
-        this._commonHeaders = _.extend({},this._commonHeaders, headers)
+        this._commonHeaders = _.extend({}, this._commonHeaders, headers)
     }
 
-    clearSessionHeaders(){
+    clearSessionHeaders() {
         this._sessionHeaders = {};
     }
 
-    setSessionHeaders(headers){
-        this._sessionHeaders = _.extend({},this._sessionHeaders, headers)
+    setSessionHeaders(headers) {
+        this._sessionHeaders = _.extend({}, this._sessionHeaders, headers)
     }
 
     getRequestDef(requestId, payload) {
@@ -62,13 +70,13 @@ class DataLoader {
 
         return new Promise(function (resolve, reject) {
             if (config.type === 'static') {
-                setTimeout(function(){
-                    if(config.errors){
-                        reject(config.errors, config.warnings, {errors:config.errors});
-                    }else{
-                        resolve(config.data, config.warnings, {data:config.data});
+                setTimeout(function () {
+                    if (config.errors) {
+                        reject(config.errors, config.warnings, {errors: config.errors});
+                    } else {
+                        resolve(config.data, config.warnings, {data: config.data});
                     }
-                },config.responseDelay || 100)
+                }, config.responseDelay || 100)
                 return;
             }
 
@@ -80,8 +88,8 @@ class DataLoader {
             var cache = config.cache || 'session';
 
             var requestUrl = config.url;
-            if(typeof  requestUrl ==='function'){
-                requestUrl =  requestUrl(payload, payLoadToServer);
+            if (typeof  requestUrl === 'function') {
+                requestUrl = requestUrl(payload, payLoadToServer);
             }
             var requestConfig = {
                 method: config.method || 'get',
@@ -93,7 +101,7 @@ class DataLoader {
             let method = config.method || 'get';
             method = method.toLowerCase();
             requestUrl = self.generateGetUrl(requestUrl, payLoadToServer)
-            if(method === 'post' || method === 'put'){
+            if (method === 'post' || method === 'put') {
                 requestConfig.body = JSON.stringify(payLoadToServer)
             }
             var fetchPromise = fetch(requestUrl, requestConfig);
@@ -115,7 +123,7 @@ class DataLoader {
 
                 })
                 .catch(function (ex) {
-                    reject([{type:'error', message:ex.message}], null, ex);
+                    reject([{type: 'error', message: ex.message}], null, ex);
                 })
         });
     }
