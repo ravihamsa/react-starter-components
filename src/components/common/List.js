@@ -41,12 +41,13 @@ export class LayoutList extends Component {
             for (var j = 0; j < columns; j++) {
                 var item = items[i + j];
                 if (item) {
-                    colChildren.push(<ListItemClass key={item.id} ref={item.id} itemData={item}  itemIndex={i+j}
-                                                    className={colClassName + ' ' + itemClassName} tagName="div"  {...otherProps} />)
+                    colChildren.push(<ListItemClass key={item.id} ref={item.id} itemData={item} itemIndex={i + j}
+                                                    className={colClassName + ' ' + itemClassName}
+                                                    tagName="div"  {...otherProps} />)
                 }
             }
 
-            children.push(<div className={'row ' + rowClassName}  key={i}>
+            children.push(<div className={'row ' + rowClassName} key={i}>
                 {colChildren}
             </div>)
         }
@@ -59,10 +60,10 @@ export class LayoutList extends Component {
 
 export class PaginatedLayoutList extends Component {
 
-    constructor(){
+    constructor() {
         super(...arguments);
         this.state = {
-            curPage : this.props.curPage | 0,
+            curPage: this.props.curPage | 0,
             perPage: this.props.perPage || 9
         }
     }
@@ -88,12 +89,13 @@ export class PaginatedLayoutList extends Component {
             for (var j = 0; j < columns; j++) {
                 var item = paginatedItems[i + j];
                 if (item) {
-                    colChildren.push(<ListItemClass key={item.id} ref={item.id} itemData={item} itemIndex={i+j}
-                                                    className={colClassName + ' ' + itemClassName} tagName="div" {...otherProps}/>)
+                    colChildren.push(<ListItemClass key={item.id} ref={item.id} itemData={item} itemIndex={i + j}
+                                                    className={colClassName + ' ' + itemClassName}
+                                                    tagName="div" {...otherProps}/>)
                 }
             }
 
-            children.push(<div className={'row ' + rowClassName}  key={i}>
+            children.push(<div className={'row ' + rowClassName} key={i}>
                 {colChildren}
             </div>)
         }
@@ -106,32 +108,46 @@ export class PaginatedLayoutList extends Component {
 export default class List extends Component {
 
 
+    renderNoItems() {
+        var noItemMessage = this.props.noDataMessage || 'No Items Found'
+        return <li className="no-data">{noItemMessage}</li>
+    }
+
+    renderItems(items) {
+        return items;
+    }
+
+    renderChildren(items) {
+        var tagProps = this.getTagProps();
+        tagProps.className = tagProps.className || 'list';
+        tagProps.className += ' zero-length';
+        var ContainerTag = this.props.tagName || 'ul';
+
+        return <ContainerTag {...tagProps}>
+            {items.length > 0 ? this.renderItems(items) : this.renderNoItems()}
+        </ContainerTag>
+    }
+
+    getTagProps() {
+        return _.pick(this.props, 'className', 'style')
+    }
 
     render() {
         var self = this;
         var itemArray = self.props.items;
-        var ContainerTag = self.props.tagName || 'ul';
-        var noItemMessage = self.props.noDataMessage || 'No Items Found'
+
+
         var ListItemClass = self.props.ListItem || ListItem;
 
-        var tagProps = _.pick(this.props, 'className', 'style')
         var otherProps = _.omit(this.props, 'className', 'style', 'tagName', 'noDataMessage', 'ListItem', 'itemClassName', 'itemTagName');
         otherProps.tagName = this.props.itemTagName || 'li';
         otherProps.className = this.props.itemClassName || 'list-item';
 
         var listItems = itemArray.map(function (item, index) {
-            return  <ListItemClass key={item.id} ref={item.id}  itemIndex={index} itemData={item} {...otherProps}/>
+            return <ListItemClass key={item.id} ref={item.id} itemIndex={index} itemData={item} {...otherProps}/>
         });
 
-
-
-        if (listItems.length > 0) {
-            return (<ContainerTag {...tagProps}>{listItems}</ContainerTag>);
-        } else {
-            return (<ContainerTag {...tagProps}>
-                <li className="no-data">{noItemMessage}</li>
-            </ContainerTag>)
-        }
+        return this.renderChildren(listItems);
 
     }
 }
@@ -148,19 +164,19 @@ export class SelectableItem extends ListItem {
 
     }
 
-    updateSelectionState(){
+    updateSelectionState() {
         let {itemData, selectionManager} = this.props;
         this.setState({
-            selected:selectionManager.isSelected(itemData)
+            selected: selectionManager.isSelected(itemData)
         })
     }
 
-    selectItem(event){
+    selectItem(event) {
         event.preventDefault();
         let {itemData, selectionManager} = this.props;
-        if(selectionManager._multiSelect){
+        if (selectionManager._multiSelect) {
             selectionManager.toggle(itemData);
-        }else{
+        } else {
             selectionManager.select(itemData);
         }
     }
@@ -183,14 +199,14 @@ export class SelectableItem extends ListItem {
 }
 
 export class SelectableList extends List {
-    componentDidMount(){
+    componentDidMount() {
         let selectionManager = this.props.selectionManager;
         let self = this;
-        if(selectionManager){
-            this.unsubscribeSelection = selectionManager.on('change', function(selection, prevSelection){
+        if (selectionManager) {
+            this.unsubscribeSelection = selectionManager.on('change', function (selection, prevSelection) {
                 let fullList = _.flatten([selection, prevSelection]);
-                _.each(fullList, function(item){
-                    if(item){
+                _.each(fullList, function (item) {
+                    if (item) {
                         self.refs[item.id].updateSelectionState();
                     }
                 })
@@ -198,8 +214,8 @@ export class SelectableList extends List {
         }
     }
 
-    componentWillUnmount(){
-        if(this.unsubscribeSelection){
+    componentWillUnmount() {
+        if (this.unsubscribeSelection) {
             this.unsubscribeSelection();
         }
     }
