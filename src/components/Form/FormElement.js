@@ -100,15 +100,17 @@ class FormElement extends Component {
     }
 
     onChange(event) {
+        this.setValue(this.getValueFromNode(event.target));
+    }
+
+    setValue(value){
         let name = this.props.name;
-        let value = this.getValueFromNode(event.target);
         if(this.props.options){
             this.context.valueDetailStore.set({[name]: this.props.options.find((item)=> item.id===value)})
         }
         this.context.valueStore.set({[name]: value});
         this.validateValue(value);
         this.setState({defaultValue:value})
-
     }
 
     validateValue(value){
@@ -130,6 +132,7 @@ class FormElement extends Component {
         let name = self.props.name;
         let valueStoreValue = this.context.valueStore.get(this.props.name);
         self.context.valueStore.set({[name]: valueStoreValue || self.props.defaultValue})
+        self.context.elementIndex[name]=self;
         this.unsubscribeErrorStore = this.context.errorStore.on('forceValidate', function(){
             self.validateValue(self.context.valueStore.get(name));
         })
@@ -164,6 +167,7 @@ FormElement.contextTypes = {
     valueStore: PropTypes.object.isRequired,
     valueDetailStore: PropTypes.object.isRequired,
     errorStore: PropTypes.object.isRequired,
+    elementIndex: PropTypes.object.isRequired,
 }
 
 FormElement.propTypes = {
