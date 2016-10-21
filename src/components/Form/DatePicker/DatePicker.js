@@ -26,7 +26,7 @@ class DatePicker extends FormElement {
 
         return <fieldset className={formClasses}>
             {this.props.showLabel ? <label>{this.props.label}</label> : null}
-            <InlinePopup itemClick={function(){console.log(arguments)}}>
+            <InlinePopup>
                    <InlineButton>
                        <input type={this.props.type} className="form-control" name={this.props.name}
                               placeholder={this.props.placeholder} onChange={this.onChange.bind(this)} defaultValue={defaultValue}
