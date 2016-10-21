@@ -52,7 +52,7 @@ class InlinePopup extends Component{
             isOpen:this.state.open
         }
 
-        return <div styles={popupStyles} {...this.props}>
+        return <div style={popupStyles} {...this.props}>
             {this.props.children.map(function(children, index){
                 return React.cloneElement(children, {...childProps, key:index})
             })}

@@ -47,11 +47,15 @@ class Form extends Component {
     }
 
     setValues(map) {
-        _.each(_.keys(map), (elementName)=> {
-            if(this.elementIndex[elementName]){
-                this.elementIndex[elementName].setValue(map[elementName])
-            }
-        });
+        _.each(_.keys(map), (elementName)=> this.setValue(elementName, map[elementName]));
+    }
+
+    setValue(elementName, value){
+        if(this.elementIndex[elementName]){
+            this.elementIndex[elementName].setValue(value)
+        }else{
+            console.log('no element by name', elementName, value);
+        }
     }
 
     getChildContext() {

@@ -16,18 +16,23 @@ class SimpleModel extends EventEmitter {
         }
     }
 
-    set(map){
+    set(map, options){
         this._changed = {};
+        options = options || {};
+        let isSilent = options.silent || false;
         for(let prop in map){
             let oldValue = this._dataIndex[prop];
             let value = map[prop];
             if(oldValue !== value){
                 this._dataIndex[prop] = value;
-                this.triggerPropChange(prop, value, oldValue)
+                if(!isSilent){
+                    this.triggerPropChange(prop, value, oldValue)
+                }
+
             }
         }
 
-        if(Object.keys(this._changed).length !== 0){
+        if(Object.keys(this._changed).length !== 0 && !isSilent){
             this.triggerChange(this._changed, this._dataIndex);
         }
     }
