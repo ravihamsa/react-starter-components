@@ -7,5 +7,6 @@ import ViewStateManager, {ViewState} from './ViewStateManager';
 import FormCollection from './FormCollection';
 import InlinePopupGroup from './InlinePopupGroup';
 import PopupGroup from './Popup';
+import AnchorLink from './AnchorLink';
 
-export default {List,ListItem,SelectableList, SelectableItem, LayoutList,ViewState, ViewStateManager, FormCollection, InlinePopupGroup, PopupGroup}
+export default {List,ListItem,SelectableList, SelectableItem, LayoutList,ViewState, ViewStateManager, FormCollection, InlinePopupGroup, PopupGroup, AnchorLink}
