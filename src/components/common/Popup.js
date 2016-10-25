@@ -72,9 +72,13 @@ class Popup extends Component {
         }
 
         let className = this.props.className || 'popup'
+        let children = this.props.children;
+        if(!children.map){
+            children = [children]
+        }
 
         return <div style={popupStyles} className={className}>
-            {this.props.children.map(function (children, index) {
+            {children.map(function (children, index) {
                 return React.cloneElement(children, {...childProps, key: index})
             })}
         </div>
