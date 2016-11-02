@@ -120,7 +120,9 @@ export default class List extends Component {
     renderChildren(items) {
         var tagProps = this.getTagProps();
         tagProps.className = tagProps.className || 'list';
-        tagProps.className += ' zero-length';
+        if(items.length === 0){
+            tagProps.className += ' zero-length';
+        }
         var ContainerTag = this.props.tagName || 'ul';
 
         return <ContainerTag {...tagProps}>
