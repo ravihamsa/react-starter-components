@@ -146,7 +146,7 @@ export default class List extends Component {
         otherProps.className = this.props.itemClassName || 'list-item';
 
         var listItems = itemArray.map(function (item, index) {
-            return <ListItemClass key={item.id} ref={item.id} itemIndex={index} itemData={item} {...otherProps}/>
+            return <ListItemClass key={item.id} itemIndex={index} itemData={item} {...otherProps}/>
         });
 
         return this.renderChildren(listItems);
@@ -220,5 +220,24 @@ export class SelectableList extends List {
         if (this.unsubscribeSelection) {
             this.unsubscribeSelection();
         }
+    }
+
+    render() {
+        var self = this;
+        var itemArray = self.props.items;
+
+
+        var ListItemClass = self.props.ListItem || ListItem;
+
+        var otherProps = _.omit(this.props, 'className', 'style', 'tagName', 'noDataMessage', 'ListItem', 'itemClassName', 'itemTagName');
+        otherProps.tagName = this.props.itemTagName || 'li';
+        otherProps.className = this.props.itemClassName || 'list-item';
+
+        var listItems = itemArray.map(function (item, index) {
+            return <ListItemClass key={item.id} ref={item.id} itemIndex={index} itemData={item} {...otherProps}/>
+        });
+
+        return this.renderChildren(listItems);
+
     }
 }
