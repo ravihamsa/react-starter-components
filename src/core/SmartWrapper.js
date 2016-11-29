@@ -102,6 +102,10 @@ class SmartWrapper extends Component {
         }
     }
 
+    getRequestDef(requestId, payload){
+        return dataLoader.getRequestDef(requestId, payload);
+    }
+
     _addRequest(requestId, payload, handlers) {
         let self = this;
         let def = dataLoader.getRequestDef(requestId, payload);

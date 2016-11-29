@@ -109,8 +109,13 @@ export default class List extends Component {
 
 
     renderNoItems() {
-        var noItemMessage = this.props.noDataMessage || 'No Items Found'
-        return <li className="no-data">{noItemMessage}</li>
+        if(!this.props.hideNoItems){
+            var noItemMessage = this.props.noDataMessage || 'No Items Found'
+            return <li className="no-data">{noItemMessage}</li>
+        }else{
+            return null;
+        }
+
     }
 
     renderItems(items) {
@@ -136,7 +141,7 @@ export default class List extends Component {
 
     render() {
         var self = this;
-        var itemArray = self.props.items;
+        var itemArray = self.props.items || [];
 
 
         var ListItemClass = self.props.ListItem || ListItem;

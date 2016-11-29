@@ -8,5 +8,6 @@ import FormCollection from './FormCollection';
 import InlinePopupGroup from './InlinePopupGroup';
 import PopupGroup from './Popup';
 import AnchorLink from './AnchorLink';
+import ActionLink from './ActionLink';
 
-export default {List,ListItem,SelectableList, SelectableItem, LayoutList,ViewState, ViewStateManager, FormCollection, InlinePopupGroup, PopupGroup, AnchorLink}
+export default {List,ListItem,SelectableList, SelectableItem, LayoutList,ViewState, ViewStateManager, FormCollection, InlinePopupGroup, PopupGroup, AnchorLink, ActionLink}
