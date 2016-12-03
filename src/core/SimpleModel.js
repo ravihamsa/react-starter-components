@@ -1,11 +1,11 @@
 /**
  * Created by ravi.hamsa on 6/29/16.
  */
-import {EventEmitter} from 'events';
+import SimpleEmitter from './SimpleEmitter';
 
 let modelCounter = 0;
 
-class SimpleModel extends EventEmitter {
+class SimpleModel extends SimpleEmitter {
     constructor(attributes){
         super(...arguments);
         this._dataIndex = {};
@@ -83,25 +83,10 @@ class SimpleModel extends EventEmitter {
         this.emit('change', changed, allData);
     }
 
-    off(event, handler){
-        this.removeListener(event, handler)
-    }
-
-    on(event, callback){
-        super.on(event, callback);
-        let self = this;
-        return function(){
-            self.removeListener(event, callback);
-        }
-    }
 
     clearData(){
         this._dataIndex = {};
         this.triggerChange()
-    }
-
-    trigger (){
-        this.emit.apply(this, arguments)
     }
 
 
