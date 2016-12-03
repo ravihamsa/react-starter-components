@@ -129,5 +129,6 @@ class DataLoader {
     }
 }
 
+let instance = new DataLoader();
 
-export default new DataLoader();
+export default instance;

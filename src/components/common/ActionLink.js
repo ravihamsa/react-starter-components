@@ -12,6 +12,7 @@ export default class ActionLink extends Component {
 
     render(){
         let href = this.props.href || '#';
-        return <a className={this.props.className} href={href} onClick={this.onClick.bind(this)}>{this.props.children}</a>
+        let ContainerTag = this.props.tagName || 'a'
+        return <ContainerTag className={this.props.className} href={href} onClick={this.onClick.bind(this)}>{this.props.children}</ContainerTag>
     }
 }
