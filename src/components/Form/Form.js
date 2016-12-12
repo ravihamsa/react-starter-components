@@ -26,7 +26,7 @@ class Form extends Component {
         if (hasErrors) {
             return;
         }
-        this.props.onSubmitHandler(valueStore.getAll(), valueStore);
+        this.props.onSubmitHandler.apply(this,[valueStore.getAll(), valueStore]);
     }
 
 
