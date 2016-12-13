@@ -8,6 +8,8 @@ import Loader from './Loader';
 import MessageStack from './MessageStack';
 import {identity} from './utils';
 
+const NATIVE_PROPS=['children', 'dataRequests', 'onDataUpdate', 'activeRules']
+
 class SmartWrapper extends Component {
 
     constructor() {
@@ -27,7 +29,8 @@ class SmartWrapper extends Component {
                 for (let i = 0; i < stores.length; i++) {
                     let storeConfig = stores[i];
                     let getParams = storeConfig.getParams;
-                    let params = getParams ? getParams.call(this, this.props) : this.props
+                    let filteredProps = _.omit(this.props, NATIVE_PROPS)
+                    let params = getParams ? getParams.call(this, filteredProps) : filteredProps
                     this.addRequest(storeConfig.propKey, storeConfig.requestId, params)
                     // this.loadStore(storeConfig.propKey, storeConfig.store, getParams.call(this, storeConfig), true)
                 }
@@ -52,7 +55,8 @@ class SmartWrapper extends Component {
                     let newPropValue = newProps[storeConfig.propDependency];
                     let oldPropValue = prevProps[storeConfig.propDependency];
                     if (newPropValue !== oldPropValue) {
-                        let params = getParams ? getParams.call(this, newProps) : newProps
+                        let filteredProps = _.omit(newProps, NATIVE_PROPS)
+                        let params = getParams ? getParams.call(this, filteredProps) : filteredProps
                         this.addRequest(storeConfig.propKey, storeConfig.requestId, params)
                     }
                 }

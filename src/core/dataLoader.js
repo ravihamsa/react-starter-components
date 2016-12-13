@@ -13,6 +13,8 @@ class DataLoader {
 
         this._commonHeaders = {}
         this._sessionHeaders = {}
+        this._requestQue = {}
+        this._dataCache = {}
 
         this._responseParser = function (resp) {
             return {
@@ -49,6 +51,7 @@ class DataLoader {
 
 
     addResource(requestId, config) {
+        config = _.defaults(config, {cache:'session', queue:'queue', method:'get'})
         this._resourceConfigIndex[requestId] = config;
     }
 
@@ -64,57 +67,72 @@ class DataLoader {
         this._sessionHeaders = _.extend({}, this._sessionHeaders, headers)
     }
 
-    getRequestDef(requestId, payload) {
-        var config = this._resourceConfigIndex[requestId];
-        var self = this;
-
+    _getStaticPromise(config){
         return new Promise(function (resolve, reject) {
-            if (config.type === 'static') {
-                setTimeout(function () {
-                    if (config.errors) {
-                        reject(config.errors, config.warnings, {errors: config.errors});
-                    } else {
-                        resolve(config.data, config.warnings, {data: config.data});
-                    }
-                }, config.responseDelay || 100)
-                return;
-            }
+            setTimeout(function () {
+                if (config.errors) {
+                    reject(config.errors, config.warnings, {errors: config.errors});
+                } else {
+                    resolve(config.data, config.warnings, {data: config.data});
+                }
+            }, config.responseDelay || 100)
+        })
+    }
 
-            var payLoadToServer = payload;
-            if (config.paramParser) {
-                payLoadToServer = config.paramParser(payload);
-            }
+    _getCachedDataPromise(requestHash){
+        let cachedData = this._dataCache[requestHash];
+        if(cachedData){
+            return new Promise((resolve, reject)=>{
+                resolve(cachedData.data, cachedData.warnings);
+            })
+        }
+    }
 
-            var cache = config.cache || 'session';
+    _getQueuedPromise(requestHash){
+        let promise = this._requestQue[requestHash];
+        if(promise){
+            return promise;
+        }
+    }
 
-            var requestUrl = config.url;
-            if (typeof  requestUrl === 'function') {
-                requestUrl = requestUrl(payload, payLoadToServer);
-            }
-            var requestConfig = {
-                method: config.method || 'get',
-                headers: Object.assign({}, self._commonHeaders, self._sessionHeaders),
-                credentials: 'include'
-            }
+    _getFetchPromise(config, payload, requestHash){
+        let self = this;
+        let {url, method, queue, cache, paramParser} = config;
+        method = method.toLowerCase();
 
+        var payLoadToServer = payload;
+        if (paramParser) {
+            payLoadToServer = paramParser(payload);
+        }
 
-            let method = config.method || 'get';
-            method = method.toLowerCase();
-            requestUrl = self.generateGetUrl(requestUrl, payLoadToServer)
-            if (method === 'post' || method === 'put') {
-                requestConfig.body = JSON.stringify(payLoadToServer)
-            }
-            var fetchPromise = fetch(requestUrl, requestConfig);
+        if (typeof  url === 'function') {
+            url = url(payload, payLoadToServer);
+        }
+        var requestConfig = {
+            method:method,
+            headers: Object.assign({}, self._commonHeaders, self._sessionHeaders),
+            credentials: 'include'
+        }
+
+        url = self.generateGetUrl(url, payLoadToServer)
+        if (method === 'post' || method === 'put') {
+            requestConfig.body = JSON.stringify(payLoadToServer)
+        }
+
+        return new Promise((resolve, reject)=>{
+            var fetchPromise = fetch(url, requestConfig);
             fetchPromise
                 .then(function (response) {
                     return response.json();
                 })
                 .then(function (body) {
-
                     let parsedResponse = self._responseParser(body);
                     if (parsedResponse.data) {
                         if (config.parser) {
                             parsedResponse.data = config.parser(parsedResponse.data);
+                        }
+                        if(cache !== 'none'){
+                            self._dataCache[requestHash] = {...parsedResponse, body}
                         }
                         resolve(parsedResponse.data, parsedResponse.warnings, body);
                     } else {
@@ -125,7 +143,47 @@ class DataLoader {
                 .catch(function (ex) {
                     reject([{type: 'error', message: ex.message}], null, ex);
                 })
-        });
+        })
+    }
+
+    getRequestDef(requestId, payload) {
+        var config = this._resourceConfigIndex[requestId];
+        var self = this;
+
+        switch(config.type){
+            case 'static':
+                return self._getStaticPromise(config);
+                break;
+
+            case 'url':
+                let {url, method, queue, cache, paramParser} = config;
+                method = method.toLowerCase();
+                var payLoadToServer = payload;
+                if (paramParser) {
+                    payLoadToServer = paramParser(payload);
+                }
+                let requestHash = requestId + JSON.stringify(payLoadToServer);
+                let cachedDataPromise = this._getCachedDataPromise(requestHash)
+                if(cachedDataPromise){
+                    return cachedDataPromise;
+                }
+                let queuePromise = this._getQueuedPromise(requestHash)
+                if(queuePromise){
+                    return queuePromise;
+                }
+
+                let fetchPromise = this._getFetchPromise(config, payload, requestHash);
+                if(queue!=='none'){
+                    self._requestQue[requestHash]=fetchPromise;
+                    fetchPromise.done(()=>{
+                        delete self._requestQue[requestHash];
+                    })
+                }
+                return fetchPromise;
+                break;
+        }
+
+
     }
 }
 
