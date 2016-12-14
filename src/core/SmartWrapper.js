@@ -15,6 +15,7 @@ class SmartWrapper extends Component {
     constructor() {
         super(...arguments);
         this._loadingCount = 0;
+        this._pendingRequests = [];
         this.dataIndex = {};
         this.state = {
             loading: false,
@@ -36,6 +37,10 @@ class SmartWrapper extends Component {
                 }
             }
         }
+    }
+
+    componentWillUnmount(){
+
     }
 
     componentWillReceiveProps(newProps) {

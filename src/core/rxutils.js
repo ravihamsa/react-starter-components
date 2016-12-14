@@ -4,14 +4,22 @@
 
 import Rx from 'rxjs';
 
-export var bodyClick$ = Rx.Observable.of(true);
+var bodyClick$ = Rx.Observable.of(true);
 
-if(global.document) {
+var windowResize$ = Rx.Observable.of(true);
+
+if (global.document) {
     bodyClick$ = Rx.Observable.fromEvent(document, 'click');
+    windowResize$ = Rx.Observable.fromEvent(window, 'resize');
 }
 
 
-
-export function createEventStream(element, event){
+function createEventStream(element, event) {
     return Rx.Observable.fromEvent(element, event);
+}
+
+export default {
+    bodyClick$,
+    windowResize$,
+    createEventStream
 }

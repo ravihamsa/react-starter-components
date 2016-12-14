@@ -9,8 +9,9 @@ import SimpleEmitter from './SimpleEmitter'
 import Loader from './Loader'
 import MessageStack from './MessageStack'
 import utils from './utils'
+import rxutils from './rxutils'
 import fetch from './fetch';
 // import navigate from './navigate'
 // import history from './history'
 
-export default {dataLoader, SimpleModel, SimpleEmitter, SmartWrapper,Loader, MessageStack, fetch, utils}
+export default {dataLoader, SimpleModel, SimpleEmitter, SmartWrapper,Loader, MessageStack, fetch, utils, rxutils}
