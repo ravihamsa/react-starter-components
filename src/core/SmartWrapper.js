@@ -50,20 +50,38 @@ class SmartWrapper extends Component {
         }
     }
 
+
+
     checkPropDependencies(newProps, prevProps) {
         let stores = newProps.dataRequests;
+        let self = this;
         if (stores) {
             for (let i = 0; i < stores.length; i++) {
                 let storeConfig = stores[i];
-                if (storeConfig.propDependency !== undefined) {
-                    let getParams = storeConfig.getParams;
-                    let newPropValue = newProps[storeConfig.propDependency];
-                    let oldPropValue = prevProps[storeConfig.propDependency];
+                let getParams = storeConfig.getParams;
+                let propDependency = storeConfig.propDependency
+                if (propDependency !== undefined) {
+                    let newPropValue = newProps[propDependency];
+                    let oldPropValue = prevProps[propDependency];
                     if (newPropValue !== oldPropValue) {
                         let filteredProps = _.omit(newProps, NATIVE_PROPS)
-                        let params = getParams ? getParams.call(this, filteredProps) : filteredProps
-                        this.addRequest(storeConfig.propKey, storeConfig.requestId, params)
+                        let params = getParams ? getParams.call(self, filteredProps) : filteredProps
+                        self.addRequest(storeConfig.propKey, storeConfig.requestId, params)
                     }
+                }
+
+
+                let propDependencies = storeConfig.propDependencies;
+                if(propDependencies !== undefined && propDependencies.length !== undefined && propDependencies.length > 0){
+                    _.each(propDependencies, (propDependency)=>{
+                        let newPropValue = newProps[propDependency];
+                        let oldPropValue = prevProps[propDependency];
+                        if (newPropValue !== oldPropValue) {
+                            let filteredProps = _.omit(newProps, NATIVE_PROPS)
+                            let params = getParams ? getParams.call(self, filteredProps) : filteredProps
+                            self.addRequest(storeConfig.propKey, storeConfig.requestId, params)
+                        }
+                    })
                 }
                 // this.loadStore(storeConfig.propKey, storeConfig.store, getParams.call(this, storeConfig), true)
             }

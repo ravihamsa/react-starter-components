@@ -114,8 +114,10 @@ class DataLoader {
             credentials: 'include'
         }
 
+        requestConfig.method = requestConfig.method.toUpperCase();
+
         url = self.generateGetUrl(url, payLoadToServer)
-        if (method === 'post' || method === 'put') {
+        if (method === 'post' || method === 'put' || method==='patch' ) {
             requestConfig.body = JSON.stringify(payLoadToServer)
         }
 
