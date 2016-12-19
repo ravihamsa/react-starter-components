@@ -11,7 +11,8 @@ let popupStyles = {
 
 let bodyStyles = {
     position: 'absolute',
-    zIndex: 999
+    zIndex: 999,
+    width:'100%'
 }
 
 let openPopup;
