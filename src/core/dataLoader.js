@@ -11,7 +11,7 @@ class DataLoader {
     constructor() {
         this._resourceConfigIndex = {}
 
-        this._commonHeaders = {}
+        this._commonHeaders = {'X-Requested-With': 'XMLHttpRequest'}
         this._sessionHeaders = {}
         this._requestQue = {}
         this._dataCache = {}
