@@ -177,7 +177,7 @@ class DataLoader {
                 let fetchPromise = this._getFetchPromise(config, payload, requestHash);
                 if(queue!=='none'){
                     self._requestQue[requestHash]=fetchPromise;
-                    fetchPromise.done(()=>{
+                    fetchPromise.finally(()=>{
                         delete self._requestQue[requestHash];
                     })
                 }
