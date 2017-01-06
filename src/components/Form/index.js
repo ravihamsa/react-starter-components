@@ -10,6 +10,7 @@ import FileInput from './FileInput'
 import Select from './Select'
 import CheckBox from './CheckBox'
 import HiddenInput from './HiddenInput'
+import AutoComplete from './AutoComplete'
 import DatePicker from './DatePicker/DatePicker'
 
 export default{
@@ -21,5 +22,6 @@ export default{
     Select,
     CheckBox,
     HiddenInput,
+    AutoComplete,
     DatePicker
 }

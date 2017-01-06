@@ -53,6 +53,9 @@ class InlinePopup extends Component {
         if (clickSubscription) {
             clickSubscription.unsubscribe();
         }
+        if(this.props.onClosePopup){
+            this.props.onClosePopup();
+        }
         this.setState({open: false})
     }
 
@@ -92,7 +95,7 @@ class InlineButton extends Component {
 class InlineBody extends Component {
     render() {
         return this.props.isOpen ? <div
-            style={bodyStyles}> { React.cloneElement(this.props.children, {closePopup: this.props.closePopup}) }</div> : null;
+            style={bodyStyles} className="inline-popup-body"> { React.cloneElement(this.props.children, {closePopup: this.props.closePopup}) }</div> : null;
     }
 }
 
