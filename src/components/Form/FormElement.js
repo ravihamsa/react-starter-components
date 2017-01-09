@@ -80,6 +80,7 @@ let validatorMap = {
 let getRuleValue = function(item){
     return  {
         type:item.expr,
+        value:item.value,
         func:validatorMap[item.expr],
         message:item.message || item.expr
     }
@@ -103,13 +104,15 @@ class FormElement extends Component {
         this.setValue(this.getValueFromNode(event.target));
     }
 
-    setValue(value){
+    setValue(value, skipValidate){
         let name = this.props.name;
         if(this.props.options){
             this.context.valueDetailStore.set({[name]: this.props.options.find((item)=> item.id===value)})
         }
         this.context.valueStore.set({[name]: value});
-        this.validateValue(value);
+        if(skipValidate !== true){
+            this.validateValue(value);
+        }
         this.setState({defaultValue:value})
     }
 

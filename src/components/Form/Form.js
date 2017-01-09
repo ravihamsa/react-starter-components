@@ -17,16 +17,19 @@ class Form extends Component {
 
     onSubmitHandler(event) {
         event.preventDefault();
+        this.validateForm();
+        this.props.onSubmitHandler(valueStore.getAll(), valueStore);
+    }
+
+    isFormValid(){
         let context = this.getChildContext();
         let {valueStore, errorStore} = context;
         errorStore.trigger('forceValidate')
         let hasErrors = _.values(errorStore.getAll()).filter(function (item) {
                 return item.length > 0
             }).length > 0;
-        if (hasErrors) {
-            return;
-        }
-        this.props.onSubmitHandler(valueStore.getAll(), valueStore);
+
+        return !hasErrors
     }
 
 
@@ -46,13 +49,13 @@ class Form extends Component {
         // console.log(error);
     }
 
-    setValues(map) {
-        _.each(_.keys(map), (elementName)=> this.setValue(elementName, map[elementName]));
+    setValues(map, skipValidate) {
+        _.each(_.keys(map), (elementName)=> this.setValue(elementName, map[elementName], skipValidate));
     }
 
-    setValue(elementName, value){
+    setValue(elementName, value, skipValidate){
         if(this.elementIndex[elementName]){
-            this.elementIndex[elementName].setValue(value)
+            this.elementIndex[elementName].setValue(value, skipValidate)
         }else{
             console.log('no element by name', elementName, value);
         }
