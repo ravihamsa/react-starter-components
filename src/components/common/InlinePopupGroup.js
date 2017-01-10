@@ -69,6 +69,12 @@ class InlinePopup extends Component {
         }
     }
 
+    componentWillUnmount(){
+        if (openPopup && openPopup === this) {
+            openPopup = null;
+        }
+    }
+
     render() {
         let childProps = {
             togglePopup: this.togglePopup.bind(this),

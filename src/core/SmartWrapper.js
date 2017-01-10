@@ -16,6 +16,7 @@ class SmartWrapper extends Component {
         super(...arguments);
         this._loadingCount = 0;
         this._pendingRequests = [];
+        this.isInDom = false;
         this.dataIndex = {};
         this.state = {
             loading: false,
@@ -37,10 +38,11 @@ class SmartWrapper extends Component {
                 }
             }
         }
+        this.isInDom = true;
     }
 
     componentWillUnmount(){
-
+        this.isInDom = false;
     }
 
     componentWillReceiveProps(newProps) {
@@ -136,13 +138,25 @@ class SmartWrapper extends Component {
     _addRequest(requestId, payload, handlers) {
         let self = this;
         let def = dataLoader.getRequestDef(requestId, payload);
-        def.done(handlers.done || identity)
-        def.catch(handlers.catch || identity)
-        def.finally(function () {
+        def.done(self.wrapCallBack(handlers.done))
+        def.catch(self.wrapCallBack(handlers.catch))
+        def.finally(self.wrapCallBack(function () {
             self.bumpAndCheckLoading(-1)
-        })
+        }))
         self.bumpAndCheckLoading(1)
         return def;
+    }
+
+    wrapCallBack(fn){
+        if(!fn){
+            return identity;
+        }
+        let self = this;
+        return function(){
+            if(self.isInDom){
+                fn.apply(null, arguments)
+            }
+        }
     }
 
     addRequest(propName, requestId, payload) {
@@ -200,7 +214,6 @@ class SmartWrapper extends Component {
                 }else{
                     return this.renderChildren()
                 }
-
             }
         } else {
             return <div></div>;

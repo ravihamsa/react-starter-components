@@ -56,7 +56,13 @@ class AutoComplete extends FormElement {
     }
 
     onClosePopup(){
-        this.setState({searchString:this.selection.getSelected().name})
+        let selected = this.selection.getSelected();
+        if(selected.id !== '-1'){
+            this.setState({searchString:selected.name})
+        }else{
+            this.setState({searchString:''})
+        }
+
     }
 
     render() {
@@ -75,7 +81,7 @@ class AutoComplete extends FormElement {
                 <InlineButton>
                     <div style={{position:'relative'}}>
                         {/*<span>{selectedOption.name}</span>*/}
-                        <input className="form-control" name={this.props.name} disabled={this.props.disabled}
+                        <input className="form-control" name={this.props.name} disabled={this.props.disabled} autoComplete="off"
                                placeholder={this.props.placeholder} onChange={this.localOnChange.bind(this)} value={this.state.searchString}>
                         </input>
                     </div>
