@@ -77,7 +77,9 @@ class InlinePopup extends Component {
             isOpen: this.state.open
         }
 
-        return <div style={popupStyles} {...this.props} ref="rootEl">
+        let domProps = _.pick(this.props, 'className');
+
+        return <div style={popupStyles}  ref="rootEl" {...domProps}>
             {this.props.children.map(function (children, index) {
                 return React.cloneElement(children, {...childProps, key: index})
             })}

@@ -17,7 +17,9 @@ class Form extends Component {
 
     onSubmitHandler(event) {
         event.preventDefault();
-        this.validateForm();
+        this.isFormValid();
+        let context = this.getChildContext();
+        let {valueStore, errorStore} = context;
         this.props.onSubmitHandler(valueStore.getAll(), valueStore);
     }
 
@@ -89,6 +91,15 @@ class Form extends Component {
             elementIndex: this.elementIndex
         }
 
+    }
+
+    componentUnmount(){
+        if(this._unsubscribeChange){
+            this._unsubscribeChange();
+        }
+        if(this._unsubscribeErrorChange){
+            this._unsubscribeErrorChange();
+        }
     }
 }
 
