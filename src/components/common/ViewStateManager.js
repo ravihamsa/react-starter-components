@@ -33,7 +33,7 @@ class ViewStateManager extends Component {
         if (stateChild) {
             return <div className="state-wrapper">{stateChild}</div>;
         } else {
-            return <NoStateView/>
+            return <div>{currentState} Not Defined</div>
         }
 
     }
