@@ -1,6 +1,6 @@
 {
   "name": "react-starter-components",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "",
   "main": "lib/index.js",
   "repository": "https://github.com/ravihamsa/react-starter-components",
@@ -14,7 +14,7 @@
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "rxjs": "^5.0.0-rc.1",
-    "selection-manager": "^1.0.25",
+    "selection-manager": "1.0.26",
     "whatwg-fetch": "^1.0.0"
   },
   "devDependencies": {
