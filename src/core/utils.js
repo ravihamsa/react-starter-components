@@ -3,9 +3,44 @@
  */
 
 import React from "react";
+import _ from 'lodash';
 
 const identity = function(arg1){
     return arg1;
+}
+
+
+
+let connectToStore = function(Component, stores){
+    class ComponentWrapper extends React.Component {
+        constructor(props){
+            super(props);
+            this.state = {
+
+            }
+        }
+        componentWillMount(){
+            let self = this;
+            this.unsubscribeStore = [];
+            _.each(stores, (item)=>{
+                let {stateName, event='change', store, parser=identity} =  item;
+                this.unsubscribeStore.push(store.on(event, (args)=>{
+                    self.setState({stateName:parser(args)})
+                }))
+            })
+        }
+
+        componentWillUnmount(){
+            if(this.unsubscribeStore ){
+                _.each(this.unsubscribeStore, (unsubscribe) => unsubscribe())
+            }
+        }
+
+        render(){
+            return <Component {...this.props} {...this.state} />
+        }
+    }
+    return ComponentWrapper;
 }
 
 let cloneChildren = function(children, props){
@@ -22,4 +57,4 @@ let cloneChildren = function(children, props){
     }
 }
 
-export default {identity, cloneChildren}
+export default {identity, cloneChildren, connectToStore}

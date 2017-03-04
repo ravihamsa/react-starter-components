@@ -106,10 +106,19 @@ class FormElement extends Component {
 
     setValue(value, skipValidate){
         let name = this.props.name;
+        let toSet = {[name]: value};
+
         if(this.props.options){
-            this.context.valueDetailStore.set({[name]: this.props.options.find((item)=> item.id===value)})
+            var selectedOption =  this.props.options.find((item)=> item.id===value);
+            this.context.valueDetailStore.set({[name]: selectedOption});
+            if(this.props.exposeSelection){
+                toSet[name + '_details'] = selectedOption
+            }
+            if(this.props.exposeName){
+                toSet[name + '_name'] = selectedOption.name
+            }
         }
-        this.context.valueStore.set({[name]: value});
+        this.context.valueStore.set(toSet);
         if(skipValidate !== true){
             this.validateValue(value);
         }
@@ -179,6 +188,8 @@ FormElement.propTypes = {
     label: PropTypes.string.isRequired,
     defaultValue:PropTypes.string,
     options:PropTypes.array,
+    exposeSelection:PropTypes.bool,
+    exposeName:PropTypes.bool,
     showLabel:PropTypes.bool.isRequired
 }
 
@@ -186,7 +197,9 @@ FormElement.defaultProps = {
     type: 'text',
     placeholder: 'Enter Text',
     label: 'Text Input',
-    showLabel:true
+    showLabel:true,
+    exposeSelection:false,
+    exposeName:false,
 }
 
 
