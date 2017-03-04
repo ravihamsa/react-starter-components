@@ -112,7 +112,7 @@ class FormElement extends Component {
             var selectedOption =  this.props.options.find((item)=> item.id===value);
             this.context.valueDetailStore.set({[name]: selectedOption});
             if(this.props.exposeSelection){
-                toSet[name + '_details'] = selectedOption
+                toSet[name + '_selection'] = selectedOption
             }
             if(this.props.exposeName){
                 toSet[name + '_name'] = selectedOption.name
