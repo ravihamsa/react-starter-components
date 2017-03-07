@@ -30,11 +30,9 @@ class SmartWrapper extends Component {
             if (stores) {
                 for (let i = 0; i < stores.length; i++) {
                     let storeConfig = stores[i];
-                    let getParams = storeConfig.getParams;
-                    let filteredProps = _.omit(this.props, NATIVE_PROPS)
-                    let params = getParams ? getParams.call(this, filteredProps) : filteredProps
-                    this.addRequest(storeConfig.propKey, storeConfig.requestId, params)
-                    // this.loadStore(storeConfig.propKey, storeConfig.store, getParams.call(this, storeConfig), true)
+                    let filteredProps = _.omit(this.props, NATIVE_PROPS);
+                    this.addRequestIfValid(storeConfig.propKey, storeConfig.requestId, filteredProps, storeConfig)
+
                 }
             }
         }
@@ -60,15 +58,13 @@ class SmartWrapper extends Component {
         if (stores) {
             for (let i = 0; i < stores.length; i++) {
                 let storeConfig = stores[i];
-                let getParams = storeConfig.getParams;
                 let propDependency = storeConfig.propDependency
                 if (propDependency !== undefined) {
                     let newPropValue = newProps[propDependency];
                     let oldPropValue = prevProps[propDependency];
                     if (newPropValue !== oldPropValue) {
                         let filteredProps = _.omit(newProps, NATIVE_PROPS)
-                        let params = getParams ? getParams.call(self, filteredProps) : filteredProps
-                        self.addRequest(storeConfig.propKey, storeConfig.requestId, params)
+                        self.addRequestIfValid(storeConfig.propKey, storeConfig.requestId, filteredProps, storeConfig)
                     }
                 }
 
@@ -80,8 +76,7 @@ class SmartWrapper extends Component {
                         let oldPropValue = prevProps[propDependency];
                         if (newPropValue !== oldPropValue) {
                             let filteredProps = _.omit(newProps, NATIVE_PROPS)
-                            let params = getParams ? getParams.call(self, filteredProps) : filteredProps
-                            self.addRequest(storeConfig.propKey, storeConfig.requestId, params)
+                            self.addRequestIfValid(storeConfig.propKey, storeConfig.requestId, filteredProps, storeConfig)
                         }
                     })
                 }
@@ -157,6 +152,34 @@ class SmartWrapper extends Component {
                 fn.apply(null, arguments)
             }
         }
+    }
+
+    addRequestIfValid(propName, requestId, filteredProps, storeConfig){
+        let self = this;
+        let isRequestValid = storeConfig.validateRequest !== undefined ? storeConfig.validateRequest(filteredProps) : true;
+        let getParams = storeConfig.getParams;
+        if(isRequestValid){
+            let params = getParams ? getParams.call(self, filteredProps) : filteredProps
+            this.addRequest(propName, requestId, params)
+        }else{
+            let fallbackResponse = storeConfig.staticFallback  !== undefined  ? storeConfig.staticFallback(filteredProps) : {data:[]};
+            let def =  dataLoader.getStaticPromise(fallbackResponse);
+            def.done((data)=>this.dataIndex[propName] = data)
+            def.catch((error)=>this.dataIndex['errors'] = error)
+            def.finally(self.wrapCallBack(function () {
+                self.bumpAndCheckLoading(-1)
+            }))
+            self.bumpAndCheckLoading(1)
+            return def;
+        }
+    }
+
+    addDummyRequest(propName, requestId, payload, storeConfig){
+        delete this.dataIndex.errors;
+        return this._addRequest(requestId, payload, {
+            done: (data)=>this.dataIndex[propName] = data,
+            catch: (error)=>this.dataIndex['errors'] = error
+        })
     }
 
     addRequest(propName, requestId, payload) {

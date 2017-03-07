@@ -78,6 +78,10 @@ class DataLoader {
         })
     }
 
+    getStaticPromise(config){
+        return this._getStaticPromise(config)
+    }
+
     _getCachedDataPromise(requestHash){
         let cachedData = this._dataCache[requestHash];
         if(cachedData){
