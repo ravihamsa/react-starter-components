@@ -114,7 +114,7 @@ class FormElement extends Component {
             if(this.props.exposeSelection){
                 toSet[name + '_selection'] = selectedOption
             }
-            if(this.props.exposeName){
+            if(this.props.exposeName && selectedOption){
                 toSet[name + '_name'] = selectedOption.name
             }
         }
