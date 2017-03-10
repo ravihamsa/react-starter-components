@@ -34,7 +34,7 @@ class InlinePopup extends Component {
         this.setState({open: true})
         openPopup = this;
         clickSubscription = bodyClick$
-            .filter(event=> {
+            .filter(event => {
                 let isWithinPopup = false;
                 let target = event.target;
                 while (target.parentNode && !isWithinPopup) {
@@ -45,7 +45,7 @@ class InlinePopup extends Component {
                 }
                 return !isWithinPopup;
             }).take(1)
-            .subscribe(event=>this.closePopup());
+            .subscribe(event => this.closePopup());
 
     }
 
@@ -53,7 +53,7 @@ class InlinePopup extends Component {
         if (clickSubscription) {
             clickSubscription.unsubscribe();
         }
-        if(this.props.onClosePopup){
+        if (this.props.onClosePopup) {
             this.props.onClosePopup();
         }
         this.setState({open: false})
@@ -69,7 +69,7 @@ class InlinePopup extends Component {
         }
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         if (openPopup && openPopup === this) {
             openPopup = null;
         }
@@ -85,7 +85,7 @@ class InlinePopup extends Component {
 
         let domProps = _.pick(this.props, 'className');
 
-        return <div style={popupStyles}  ref="rootEl" {...domProps}>
+        return <div style={popupStyles} ref="rootEl" {...domProps}>
             {this.props.children.map(function (children, index) {
                 return React.cloneElement(children, {...childProps, key: index})
             })}
@@ -102,8 +102,39 @@ class InlineButton extends Component {
 
 class InlineBody extends Component {
     render() {
-        return this.props.isOpen ? <div
-            style={bodyStyles} className="inline-popup-body"> { React.cloneElement(this.props.children, {closePopup: this.props.closePopup}) }</div> : null;
+        return <div className="inline-popop-body"></div>;
+    }
+
+    componentDidMount() {
+        if (!this.portalElement) {
+            var p = document.createElement('div');
+            document.body.appendChild(p);
+            this.portalElement = p;
+        }
+        this.componentDidUpdate();
+    }
+
+    componentWillReceiveProps(){
+        this.componentDidUpdate();
+    }
+
+    componentWillUnmount() {
+        document.body.removeChild(this.portalElement);
+    }
+
+    componentDidUpdate() {
+        if (this.props.isOpen) {
+            let refEl = ReactDOM.findDOMNode(this);
+            let bounds = refEl.getBoundingClientRect();
+            let style = {position: 'absolute', overflow: 'auto', maxHeight: 200};
+            style.left = bounds.left;
+            style.top = bounds.top;
+            style.width = bounds.width;
+            ReactDOM.render(<div className="inline-popup-body"
+                                 style={style}>{this.props.children}</div>, this.portalElement);
+        }else{
+            ReactDOM.render(<div></div>, this.portalElement);
+        }
     }
 }
 
