@@ -19,6 +19,7 @@ class TextInput extends FormElement {
             {this.props.showLabel ? <label>{this.props.label}</label> : null}
             <input type={this.props.type} className="form-control" name={this.props.name}
                    placeholder={this.props.placeholder} onChange={this.onChange.bind(this)}
+                   disabled={this.props.disabled}
                    value={value}/>
             {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
             {errors.length > 0 ? <small className="text-danger">{errors[0].message}</small> : '' }

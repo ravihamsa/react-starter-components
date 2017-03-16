@@ -118,6 +118,16 @@ class FormElement extends Component {
                 toSet[name + '_name'] = selectedOption.name
             }
         }
+
+        if(value === null){
+            if(this.props.exposeSelection){
+                toSet[name + '_selection'] = undefined
+            }
+            if(this.props.exposeName){
+                toSet[name + '_name'] = undefined
+            }
+        }
+
         this.context.valueStore.set(toSet);
         if(skipValidate !== true){
             this.validateValue(value);
