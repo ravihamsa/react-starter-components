@@ -19,7 +19,7 @@ class DatePicker extends FormElement {
     }
 
     closePopup() {
-        this.refs['month'].props.closePopup();
+        this.refs['month-body'].props.closePopup();
     }
 
     render() {
@@ -36,7 +36,7 @@ class DatePicker extends FormElement {
                               placeholder={this.props.placeholder} onChange={this.onChange.bind(this)} defaultValue={defaultValue}
                               readOnly="true" ref="inputField"/>
                    </InlineButton>
-                    <InlineBody ref="month">
+                    <InlineBody ref="month-body">
                         <Month onDateSelect={this.onDateSelect.bind(this)} closePopup={this.closePopup.bind(this)} selectedDate={defaultValue}></Month>
                     </InlineBody>
             </InlinePopup>
