@@ -109,7 +109,8 @@ class FormElement extends Component {
         let toSet = {[name]: value};
 
         if(this.props.options){
-            var selectedOption =  this.props.options.find((item)=> item.id===value);
+            var multiSelect = this.multiSelect;
+            var selectedOption =  multiSelect ? _.filter(this.props.options,(item)=> value.indexOf(item.id)>-1) : this.props.options.find((item)=> item.id===value);
             this.context.valueDetailStore.set({[name]: selectedOption});
             if(this.props.exposeSelection){
                 toSet[name + '_selection'] = selectedOption
