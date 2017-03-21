@@ -37,8 +37,9 @@ class InlinePopup extends Component {
             .filter(event => {
                 let isWithinPopup = false;
                 let target = event.target;
+                let bodyRoot = this.refs.inlineBody.portalElement;
                 while (target.parentNode && !isWithinPopup) {
-                    if (target === this.refs.rootEl) {
+                    if (target === bodyRoot) {
                         isWithinPopup = true;
                     }
                     target = target.parentNode;
@@ -84,10 +85,11 @@ class InlinePopup extends Component {
         }
 
         let domProps = _.pick(this.props, 'className');
+        let refMap = ['inlineButton', 'inlineBody']
 
         return <div style={popupStyles} ref="rootEl" {...domProps}>
             {this.props.children.map(function (children, index) {
-                return React.cloneElement(children, {...childProps, key: index})
+                return React.cloneElement(children, {...childProps, key: index, ref:refMap[index]})
             })}
         </div>
     }
@@ -131,7 +133,7 @@ class InlineBody extends Component {
             style.top = bounds.top;
             style.width = bounds.width;
             ReactDOM.render(<div className="inline-popup-body"
-                                 style={style}>{this.props.children}</div>, this.portalElement);
+                                 style={style}>{React.cloneElement(this.props.children, {closePopup:this.props.closePopup})}</div>, this.portalElement);
         }else{
             ReactDOM.render(<div></div>, this.portalElement);
         }

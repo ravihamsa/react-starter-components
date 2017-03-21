@@ -71,6 +71,7 @@ export default class Dropdown extends FormElement {
                     this.setValue(_.map(selection, 'id'));
                 } else {
                     this.setValue(selection.id);
+                    this.refs['inlinePopup'].closePopup();
                 }
             }else{
                 if (this.multiSelect) {
@@ -110,7 +111,6 @@ export default class Dropdown extends FormElement {
                 this.selectionManager.toggle(toSelectItem)
             } else {
                 this.selectionManager.select(toSelectItem)
-                this.refs['popup-body'].props.closePopup();
             }
         }
     }
@@ -178,11 +178,11 @@ export default class Dropdown extends FormElement {
         return <fieldset className={formClasses}>
             {this.props.showLabel ? <label>{this.props.label}</label> : null}
             <div className="form-control drop-down">
-                <InlinePopup >
+                <InlinePopup ref="inlinePopup" >
                     <InlineButton>
                         {this.renderButton()}
                     </InlineButton>
-                    <InlineBody ref="popup-body">
+                    <InlineBody>
                         <div className="drop-down-body">
                             <input type="text" autoFocus defaultValue={this.state.query} ref="searchBox" onChange={this.onKeyPressHandler} className="drop-down-input" placeholder={placeholder}/>
                             <div onClick={this.clickHandler.bind(this)}>

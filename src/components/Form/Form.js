@@ -111,4 +111,12 @@ Form.childContextTypes = {
 }
 
 
+export class ElementGroup extends Form {
+    render() {
+        return <div className={this.props.className}>
+            {this.props.children}
+        </div>
+    }
+}
+
 export default Form;

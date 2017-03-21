@@ -2,7 +2,7 @@
  * Created by ravi.hamsa on 6/29/16.
  */
 
-import Form from './Form';
+import Form, {ElementGroup} from './Form';
 import FormElement from './FormElement';
 import TextInput from './TextInput'
 import TextArea from './TextArea'
@@ -17,6 +17,7 @@ import Dropdown from './Dropdown'
 
 export default{
     Form,
+    ElementGroup,
     FormElement,
     TextInput,
     TextArea,
