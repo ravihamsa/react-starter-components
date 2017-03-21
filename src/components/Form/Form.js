@@ -67,6 +67,8 @@ class Form extends Component {
 
         if (!this.store) {
             let store = this.store = this.props.valueStore || new SimpleModel();
+            let defaultValues=this.props.defaultValues || {};
+            store.set(defaultValues);
             let detailStore = new SimpleModel();
             if (this._unsubscribeChange) {
                 this._unsubscribeChange();

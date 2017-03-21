@@ -71,7 +71,10 @@ export default class Dropdown extends FormElement {
                     this.setValue(_.map(selection, 'id'));
                 } else {
                     this.setValue(selection.id);
-                    this.refs['inlinePopup'].closePopup();
+                    if(this.refs['inlinePopup']){
+                        this.refs['inlinePopup'].closePopup();
+                    }
+
                 }
             }else{
                 if (this.multiSelect) {
