@@ -8,11 +8,7 @@ import FormElement from './FormElement';
 
 
 class TextInput extends FormElement {
-    onChange() {
-        this.props.onChange();
-    }
     render() {
-
         let defaultValue = this.getDefaultValue();
         let formClasses = this.getFormClasses();
         let value = defaultValue || '';
