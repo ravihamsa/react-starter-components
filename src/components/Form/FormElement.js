@@ -116,7 +116,7 @@ class FormElement extends Component {
                 toSet[name + '_selection'] = selectedOption
             }
             if(this.props.exposeName && selectedOption){
-                toSet[name + '_name'] = selectedOption.name
+                toSet[name + '_name'] = multiSelect ? _.map(selectedOption, 'name') : selectedOption.name
             }
         }
 
