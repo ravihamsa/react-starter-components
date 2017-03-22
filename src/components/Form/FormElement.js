@@ -3,6 +3,7 @@
  */
 import React, {PropTypes, Component} from "react";
 import _ from 'lodash';
+import Rx from 'rxjs';
 
 
 let validatorMap = {
@@ -91,6 +92,7 @@ class FormElement extends Component {
     constructor(){
         super(...arguments);
         let validations = this.props.validations || [];
+        this.change$ = new Rx.Subject();
         this.state= {
             errors:[]
         }
@@ -100,8 +102,12 @@ class FormElement extends Component {
 
     }
 
+    subscribeToChange(){
+        this.changeSubscription = this.change$.subscribe((value)=>this.setValue(value))
+    }
+
     onChange(event) {
-        this.setValue(this.getValueFromNode(event.target));
+        this.change$.next(this.getValueFromNode(event.target));
     }
 
     setValue(value, skipValidate){
@@ -159,11 +165,15 @@ class FormElement extends Component {
         this.unsubscribeErrorStore = this.context.errorStore.on('forceValidate', function(){
             self.validateValue(self.context.valueStore.get(name));
         })
+        this.subscribeToChange();
     }
 
     componentWillUnmount(){
         if(this.unsubscribeErrorStore){
             this.unsubscribeErrorStore();
+        }
+        if(this.changeSubscription){
+            this.changeSubscription.unsubscribe()
         }
     }
 
