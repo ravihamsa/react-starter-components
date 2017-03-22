@@ -24,4 +24,6 @@ export const {InlinePopup, InlineButton, InlineBody} = componentsIm.common.Inlin
 
 export const {Popup, PopupButton, PopupBody} = componentsIm.common.PopupGroup
 
+export const {identity, cloneChildren, connectToStore, getUniqueId} = utils;
+
 
