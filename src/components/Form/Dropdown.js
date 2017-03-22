@@ -58,7 +58,7 @@ export default class Dropdown extends FormElement {
     }
 
     componentWillReceiveProps(newProps){
-        if(newProps.options){
+        if(newProps.options && newProps.options !== this.props.options){
             this.selectionManager.clear();
         }
     }
