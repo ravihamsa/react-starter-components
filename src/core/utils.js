@@ -9,6 +9,13 @@ const identity = function(arg1){
     return arg1;
 }
 
+const getUniqueId = (function(){
+    var counter = 1000;
+    return function(){
+        return ''+(++counter);
+    }
+})();
+
 
 
 let connectToStore = function(Component, stores){
@@ -57,4 +64,4 @@ let cloneChildren = function(children, props){
     }
 }
 
-export default {identity, cloneChildren, connectToStore}
+export default {identity, cloneChildren, connectToStore, getUniqueId}
