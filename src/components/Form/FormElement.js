@@ -93,6 +93,7 @@ class FormElement extends Component {
         super(...arguments);
         let validations = this.props.validations || [];
         this.change$ = new Rx.Subject();
+        this._changing = false;
         this.state= {
             errors:[]
         }
@@ -105,7 +106,10 @@ class FormElement extends Component {
     subscribeToChange(){
         let debounceTime = this.props.debounceTime;
         if(debounceTime !==undefined){
-            this.changeSubscription = this.change$.debounceTime(debounceTime).subscribe((value)=>this.setValue(value))
+            this.changeSubscription = this.change$.debounceTime(debounceTime).subscribe((value)=>{
+                this.updateValueStore(value);
+                this._changing = false;
+            })
         }else{
             this.changeSubscription = this.change$.subscribe((value)=>this.setValue(value))
         }
@@ -113,7 +117,8 @@ class FormElement extends Component {
     }
 
     onChange(event) {
-        this.change$.next(this.getValueFromNode(event.target));
+        //this.change$.next(this.getValueFromNode(event.target));
+        this.setValue(this.getValueFromNode(event.target));
     }
 
     setValue(value, skipValidate){
@@ -140,12 +145,18 @@ class FormElement extends Component {
                 toSet[name + '_name'] = undefined
             }
         }
-
-        this.context.valueStore.set(toSet);
+        // this.updateValueStore(toSet);
+        // this.context.valueStore.set(toSet);
+        this._changing = true;
+        this.change$.next(toSet);
         if(skipValidate !== true){
             this.validateValue(value);
         }
         this.setState({defaultValue:value})
+    }
+
+    updateValueStore(toSet){
+        this.context.valueStore.set(toSet);
     }
 
     validateValue(value){
@@ -166,7 +177,9 @@ class FormElement extends Component {
         let self = this;
         let name = self.props.name;
         let valueStoreValue = this.context.valueStore.get(this.props.name);
-        self.context.valueStore.set({[name]: valueStoreValue || self.props.defaultValue})
+        if(valueStoreValue === undefined){
+            self.context.valueStore.set({[name]: self.props.defaultValue})
+        }
         self.context.elementIndex[name]=self;
         this.unsubscribeErrorStore = this.context.errorStore.on('forceValidate', function(){
             self.validateValue(self.context.valueStore.get(name));
@@ -184,7 +197,7 @@ class FormElement extends Component {
     }
 
     getDefaultValue(){
-        return this.context.valueStore.get(this.props.name);
+        return this._changing ?  this.state.defaultValue : this.context.valueStore.get(this.props.name);
     }
 
     getFormClasses(){
