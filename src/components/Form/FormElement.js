@@ -103,7 +103,13 @@ class FormElement extends Component {
     }
 
     subscribeToChange(){
-        this.changeSubscription = this.change$.subscribe((value)=>this.setValue(value))
+        let debounceTime = this.props.debounceTime;
+        if(debounceTime !==undefined){
+            this.changeSubscription = this.change$.debounceTime(debounceTime).subscribe((value)=>this.setValue(value))
+        }else{
+            this.changeSubscription = this.change$.subscribe((value)=>this.setValue(value))
+        }
+
     }
 
     onChange(event) {
