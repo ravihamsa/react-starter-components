@@ -14,6 +14,7 @@ class DataLoader {
         this._sessionHeaders = {}
         this._requestQue = {}
         this._dataCache = {}
+        this._middlewares = {};
 
         this._responseParser = function (resp) {
             return {
@@ -50,7 +51,7 @@ class DataLoader {
 
 
     addResource(requestId, config) {
-        config = _.defaults(config, {cache:'session', queue:'queue', method:'get'})
+        config = _.defaults(config, {cache: 'session', queue: 'queue', method: 'get'})
         this._resourceConfigIndex[requestId] = config;
     }
 
@@ -66,7 +67,7 @@ class DataLoader {
         this._sessionHeaders = _.extend({}, this._sessionHeaders, headers)
     }
 
-    _getStaticPromise(config){
+    _getStaticPromise(config) {
         return new Promise(function (resolve, reject) {
             setTimeout(function () {
                 if (config.errors) {
@@ -78,30 +79,54 @@ class DataLoader {
         })
     }
 
-    getStaticPromise(config){
+    getStaticPromise(config) {
         return this._getStaticPromise(config)
     }
 
-    _getCachedDataPromise(requestHash){
+    _getCachedDataPromise(requestHash) {
         let cachedData = this._dataCache[requestHash];
-        if(cachedData){
-            return new Promise((resolve, reject)=>{
+        if (cachedData) {
+            return new Promise((resolve, reject) => {
                 resolve(cachedData.data, cachedData.warnings);
             })
         }
     }
 
-    _getQueuedPromise(requestHash){
+    _getQueuedPromise(requestHash) {
         let promise = this._requestQue[requestHash];
-        if(promise){
+        if (promise) {
             return promise;
         }
     }
 
-    _getFetchPromise(config, payload, requestHash){
+    _executeBeforeMiddleWares(requestId, payload){
+        let self = this;
+        for(var i in self._middlewares){
+            let middleware = self._middlewares[i];
+            if(middleware.before){
+                payload = middleware.before.call(null, requestId, payload);
+            }
+        }
+        return payload;
+    }
+
+    _executeAfterMiddleWares(requestId, response){
+        let self = this;
+        for(var i in self._middlewares){
+            let middleware = self._middlewares[i];
+            if(middleware.after){
+                response = middleware.after.call(null, requestId, response);
+            }
+        }
+        return response;
+    }
+
+    _getFetchPromise(config, payload,requestId,requestHash) {
         let self = this;
         let {url, method, queue, cache, paramParser} = config;
         method = method.toLowerCase();
+
+        payload = this._executeBeforeMiddleWares(requestId,payload);
 
         var payLoadToServer = payload;
         if (paramParser) {
@@ -112,7 +137,7 @@ class DataLoader {
             url = url(payload, payLoadToServer);
         }
         var requestConfig = {
-            method:method,
+            method: method,
             headers: Object.assign({}, self._commonHeaders, self._sessionHeaders),
             credentials: 'include'
         }
@@ -120,15 +145,15 @@ class DataLoader {
         requestConfig.method = requestConfig.method.toUpperCase();
 
         url = self.generateGetUrl(url, payLoadToServer)
-        if (method === 'post' || method === 'put' || method==='patch' ) {
+        if (method === 'post' || method === 'put' || method === 'patch') {
             requestConfig.body = JSON.stringify(payLoadToServer)
         }
 
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             var fetchPromise = fetch(url, requestConfig);
             fetchPromise
-                .then(function(response){
-                    if(!response.ok){
+                .then(function (response) {
+                    if (!response.ok) {
                         throw new Error(response.statusText)
                     }
                     return response;
@@ -138,11 +163,12 @@ class DataLoader {
                 })
                 .then(function (body) {
                     let parsedResponse = self._responseParser(body);
+                    parsedResponse = self._executeAfterMiddleWares(requestId,parsedResponse);
                     if (parsedResponse.data) {
                         if (config.parser) {
                             parsedResponse.data = config.parser(parsedResponse.data);
                         }
-                        if(cache !== 'none'){
+                        if (cache !== 'none') {
                             self._dataCache[requestHash] = {...parsedResponse, body}
                         }
                         resolve(parsedResponse.data, parsedResponse.warnings, body);
@@ -161,7 +187,7 @@ class DataLoader {
         var config = this._resourceConfigIndex[requestId];
         var self = this;
 
-        switch(config.type){
+        switch (config.type) {
             case 'static':
                 return self._getStaticPromise(config);
                 break;
@@ -175,18 +201,18 @@ class DataLoader {
                 }
                 let requestHash = requestId + JSON.stringify(payLoadToServer);
                 let cachedDataPromise = this._getCachedDataPromise(requestHash)
-                if(cachedDataPromise){
+                if (cachedDataPromise) {
                     return cachedDataPromise;
                 }
                 let queuePromise = this._getQueuedPromise(requestHash)
-                if(queuePromise){
+                if (queuePromise) {
                     return queuePromise;
                 }
 
-                let fetchPromise = this._getFetchPromise(config, payload, requestHash);
-                if(queue!=='none'){
-                    self._requestQue[requestHash]=fetchPromise;
-                    fetchPromise.finally(()=>{
+                let fetchPromise = this._getFetchPromise(config, payload, requestId, requestHash);
+                if (queue !== 'none') {
+                    self._requestQue[requestHash] = fetchPromise;
+                    fetchPromise.finally(() => {
                         delete self._requestQue[requestHash];
                     })
                 }
@@ -195,6 +221,20 @@ class DataLoader {
         }
 
 
+    }
+
+    addMiddleWare(id, paramParser, responseParser) {
+        if (this._middlewares[id] !== undefined) {
+            throw new Error(`Middleware by ${id} already exist`);
+        }
+        this._middlewares[id] = {
+            before:paramParser,
+            after:responseParser
+        };
+    }
+
+    removeMiddleWare(id) {
+        delete this._middlewares[id]
     }
 }
 
