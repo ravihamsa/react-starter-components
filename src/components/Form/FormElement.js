@@ -111,7 +111,7 @@ class FormElement extends Component {
                 this._changing = false;
             })
         }else{
-            this.changeSubscription = this.change$.subscribe((value)=>this.setValue(value))
+            this.changeSubscription = this.change$.subscribe((value)=>this.updateValueStore(value))
         }
 
     }
@@ -173,7 +173,6 @@ class FormElement extends Component {
     }
 
     componentWillMount(){
-
         let self = this;
         let name = self.props.name;
         let valueStoreValue = this.context.valueStore.get(this.props.name);

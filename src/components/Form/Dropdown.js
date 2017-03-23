@@ -54,16 +54,42 @@ export default class Dropdown extends FormElement {
         this.selectionManager = new Selection({multiSelect: this.multiSelect});
         this.onKeyPressHandler =  _.debounce(this._onKeyPressHandler.bind(this), 300)
         this.state.query = '';
+        this.changeSubscription = this.selectionManager.on('change', this.onChange.bind(this));
 
     }
 
+    onChange(selection) {
+        //this.change$.next(this.getValueFromNode(event.target));
+        let valueToSet;
+        if(selection){
+            if (this.multiSelect) {
+                valueToSet = (_.map(selection, 'id'));
+            } else {
+                valueToSet = (selection.id);
+                if(this.refs['inlinePopup']){
+                    this.refs['inlinePopup'].closePopup();
+                }
+
+            }
+        }else{
+            if (this.multiSelect) {
+                valueToSet = []
+            } else {
+                valueToSet = '-1';
+            }
+        }
+        this.setValue(valueToSet);
+    }
+
     componentWillReceiveProps(newProps){
-        if(newProps.options && newProps.options !== this.props.options){
+        let selected = this.selectionManager.getSelected()
+        let isClearSelection = this.multiSelect ? selected.length === 0 : selected === null;
+        if(newProps.options && newProps.options !== this.props.options && !isClearSelection){
             this.selectionManager.clear();
         }
     }
 
-    componentWillMount() {
+    /*componentWillMount() {
         this.unsubscribeSelection = this.selectionManager.on('change', (selection) => {
             this.setState({selection: selection})
             if(selection){
@@ -87,13 +113,10 @@ export default class Dropdown extends FormElement {
         let defaultValue = this.getDefaultValue();
         this.applyValue(defaultValue);
         this.state.selection = defaultValue;
-    }
+        this.subscribeToChange();
+    }*/
 
-    componentWillUnmount() {
-        if (this.unsubscribeSelection) {
-            this.unsubscribeSelection();
-        }
-    }
+
 
     applyValue(value) {
         if (this.multiSelect) {
