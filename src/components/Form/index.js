@@ -14,6 +14,7 @@ import AutoComplete from './AutoComplete'
 import DatePicker from './DatePicker/DatePicker'
 import SelectableList from './SelectableList'
 import Dropdown from './Dropdown'
+import RadioList from './RadioList'
 
 export default{
     Form,
@@ -29,4 +30,5 @@ export default{
     DatePicker,
     Dropdown,
     SelectableList,
+    RadioList
 }
