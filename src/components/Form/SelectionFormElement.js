@@ -27,7 +27,7 @@ export default class SelectionFormElement  extends FormElement {
 
     onChange(selection) {
         let valueToSet;
-        if(selection){
+        if(!this.selectionManager.isEmpty()){
             if (this.multiSelect) {
                 valueToSet = (_.map(selection, 'id'));
             } else {
