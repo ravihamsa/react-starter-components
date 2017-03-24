@@ -18,6 +18,10 @@ class DatePicker extends FormElement {
         this.refs.inputField.value = value;
     }
 
+    closePopup() {
+        this.refs['month-body'].props.closePopup();
+    }
+
     render() {
 
         let defaultValue = this.getDefaultValue();
@@ -32,8 +36,8 @@ class DatePicker extends FormElement {
                               placeholder={this.props.placeholder} onChange={this.onChange.bind(this)} defaultValue={defaultValue}
                               readOnly="true" ref="inputField"/>
                    </InlineButton>
-                    <InlineBody>
-                        <Month onDateSelect={this.onDateSelect.bind(this)} selectedDate={defaultValue}></Month>
+                    <InlineBody ref="month-body">
+                        <Month onDateSelect={this.onDateSelect.bind(this)} closePopup={this.closePopup.bind(this)} selectedDate={defaultValue}></Month>
                     </InlineBody>
             </InlinePopup>
             {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }

@@ -9,7 +9,6 @@ import FormElement from './FormElement';
 
 class TextInput extends FormElement {
     render() {
-
         let defaultValue = this.getDefaultValue();
         let formClasses = this.getFormClasses();
         let value = defaultValue || '';
