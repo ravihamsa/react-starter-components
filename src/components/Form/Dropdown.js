@@ -4,6 +4,7 @@
 import React, {Component, PropTypes} from "react";
 import Selection from 'selection-manager';
 import FormElement from './FormElement';
+import SelectionFormElement from './SelectionFormElement';
 import List from '../common/List';
 import InlinePopupGroup from '../common/InlinePopupGroup'
 const {InlinePopup,InlineButton,  InlineBody} = InlinePopupGroup;
@@ -46,117 +47,20 @@ export class SelectableListItem extends Component {
 }
 
 
-export default class Dropdown extends FormElement {
+export default class Dropdown extends SelectionFormElement {
 
     constructor() {
         super(...arguments);
-        this.multiSelect = this.props.multiSelect === true;
-        this.selectionManager = new Selection({multiSelect: this.multiSelect});
         this.onKeyPressHandler =  _.debounce(this._onKeyPressHandler.bind(this), 300)
         this.state.query = '';
-        this.changeSubscription = this.selectionManager.on('change', this.onChange.bind(this));
-
     }
 
-    onChange(selection) {
-        //this.change$.next(this.getValueFromNode(event.target));
-        let valueToSet;
-        if(selection){
-            if (this.multiSelect) {
-                valueToSet = (_.map(selection, 'id'));
-            } else {
-                valueToSet = (selection.id);
-                if(this.refs['inlinePopup']){
-                    this.refs['inlinePopup'].closePopup();
-                }
-
-            }
-        }else{
-            if (this.multiSelect) {
-                valueToSet = []
-            } else {
-                valueToSet = '-1';
+    onChangeUpdates(value){
+        if(!this.multiSelect){
+            if(this.refs['inlinePopup']){
+                this.refs['inlinePopup'].closePopup();
             }
         }
-        this.setValue(valueToSet);
-    }
-
-    componentWillReceiveProps(newProps){
-        let selected = this.selectionManager.getSelected()
-        let isClearSelection = this.multiSelect ? selected.length === 0 : selected === null;
-        if(newProps.options && newProps.options !== this.props.options && !isClearSelection){
-            this.selectionManager.clear();
-        }
-    }
-
-    /*componentWillMount() {
-        this.unsubscribeSelection = this.selectionManager.on('change', (selection) => {
-            this.setState({selection: selection})
-            if(selection){
-                if (this.multiSelect) {
-                    this.setValue(_.map(selection, 'id'));
-                } else {
-                    this.setValue(selection.id);
-                    if(this.refs['inlinePopup']){
-                        this.refs['inlinePopup'].closePopup();
-                    }
-
-                }
-            }else{
-                if (this.multiSelect) {
-                    this.setValue([]);
-                } else {
-                    this.setValue(null);
-                }
-            }
-        })
-        let defaultValue = this.getDefaultValue();
-        this.applyValue(defaultValue);
-        this.state.selection = defaultValue;
-        this.subscribeToChange();
-    }*/
-
-
-
-    applyValue(value) {
-        if (this.multiSelect) {
-            value = value || [];
-            _.each(value, (valueId) => {
-                this.selectById(valueId)
-            })
-        } else {
-            this.selectById(value)
-        }
-    }
-
-    selectById(value) {
-        let options = this.props.options;
-        let toSelectItem = _.find(options, (item) => item.id === value);
-        if (toSelectItem) {
-            if (this.multiSelect) {
-                this.selectionManager.toggle(toSelectItem)
-            } else {
-                this.selectionManager.select(toSelectItem)
-            }
-        }
-    }
-
-    clickHandler(event) {
-        let target = event.target;
-        if (target.classList.contains('list-item')) {
-            let dataId = target.dataset.id;
-            this.selectById(dataId);
-        }
-    }
-
-
-    getFormClasses() {
-        let classArray = ['form-group'];
-        classArray.push(this.props.className)
-        if (this.state.errors.length > 0) {
-            classArray.push('has-error');
-        }
-        return classArray.join(' ')
     }
 
     _onKeyPressHandler() {
@@ -165,11 +69,11 @@ export default class Dropdown extends FormElement {
         this.setState({query: value});
     }
 
-    getSummaryText(label){
+    getSummaryText(placeholder){
         let {selectionManager, multiSelect} = this;
         let selected = selectionManager.getSelected();
         if(!selected){
-            return  label || '--Select-- ';
+            return  placeholder || '--Select-- ';
         }
         if(!multiSelect){
             return selected.name;
@@ -179,8 +83,7 @@ export default class Dropdown extends FormElement {
     }
 
     renderButton(){
-        let label = this.props.label;
-        let selectionSummary = this.getSummaryText(label);
+        let selectionSummary = this.getSummaryText(this.props.placeholder);
         return <div className="drop-down-button">
             <span className="drop-down-text"> {selectionSummary}</span>
             <span className="glyphicon glyphicon-chevron-down drop-down-icon"></span>

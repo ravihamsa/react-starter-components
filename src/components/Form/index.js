@@ -4,6 +4,7 @@
 
 import Form, {ElementGroup} from './Form';
 import FormElement from './FormElement';
+import SelectionFormElement from './SelectionFormElement';
 import TextInput from './TextInput'
 import TextArea from './TextArea'
 import FileInput from './FileInput'
@@ -20,6 +21,7 @@ export default{
     Form,
     ElementGroup,
     FormElement,
+    SelectionFormElement,
     TextInput,
     TextArea,
     FileInput,

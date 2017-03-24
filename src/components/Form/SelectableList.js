@@ -4,6 +4,7 @@
 import React, {Component, PropTypes} from "react";
 import Selection from "selection-manager";
 import FormElement from './FormElement';
+import SelectionFormElement from './SelectionFormElement';
 import List from '../common/List';
 
 export class SelectableListItem extends Component {
@@ -38,76 +39,7 @@ export class SelectableListItem extends Component {
     }
 }
 
-export default class SelectableList extends FormElement {
-
-    constructor() {
-        super(...arguments);
-        this.multiSelect = this.props.multiSelect === true;
-        this.selectionManager = new Selection({multiSelect: this.multiSelect});
-
-    }
-
-    componentWillMount() {
-        this.unsubscribeSelection = this.selectionManager.on('change', (selection) => {
-            this.setState({selection: selection})
-            if (this.multiSelect) {
-                this.setValue(_.map(selection, 'id'));
-            } else {
-                this.setValue(selection.id);
-            }
-        })
-        let defaultValue = this.getDefaultValue();
-        this.applyValue(defaultValue);
-        this.state.selection = defaultValue;
-    }
-
-    componentWillUnmount() {
-        if (this.unsubscribeSelection) {
-            this.unsubscribeSelection();
-        }
-    }
-
-    applyValue(value) {
-        if (this.multiSelect) {
-            value = value || [];
-            _.each(value, (valueId) => {
-                this.selectById(valueId)
-            })
-        } else {
-            this.selectById(value)
-        }
-    }
-
-    selectById(value) {
-        let options = this.props.options;
-        let toSelectItem = _.find(options, (item) => item.id === value);
-        if (toSelectItem) {
-            if (this.multiSelect) {
-                this.selectionManager.toggle(toSelectItem)
-            } else {
-                this.selectionManager.select(toSelectItem)
-            }
-        }
-    }
-
-    clickHandler(event) {
-        let target = event.target;
-        if (target.classList.contains('list-item')) {
-            let dataId = target.dataset.id;
-            this.selectById(dataId);
-            target.classList.add('active');
-        }
-    }
-
-
-    getFormClasses() {
-        let classArray = ['form-group'];
-        classArray.push(this.props.className)
-        if (this.state.errors.length > 0) {
-            classArray.push('has-error');
-        }
-        return classArray.join(' ')
-    }
+export default class SelectableList extends SelectionFormElement {
 
     render() {
         let formClasses = this.getFormClasses();
