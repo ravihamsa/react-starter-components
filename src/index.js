@@ -13,7 +13,7 @@ export components from './components';
 export const {dataLoader, SimpleModel, SimpleEmitter, SmartWrapper, Loader, MessageStack, utils, rxutils} = coreIm;
 
 export const {Form,ElementGroup, FormElement, SelectionFormElement, TextInput, TextArea, FileInput, Select, CheckBox, HiddenInput, AutoComplete, DatePicker, SelectableList, Dropdown, RadioList} = componentsIm.Form;
-export const {Form2, Form2Element, Select2} = componentsIm.Form2;
+export const {RXForm, RXFormElement, RXSelect, RXTextInput, RXRadioList, RXTextArea, RXCheckList} = componentsIm;
 
 export const {PaginatedTable, Table, THEAD, TBODY, TH, TD, TR} = componentsIm.Table;
 

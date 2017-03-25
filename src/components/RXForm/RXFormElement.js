@@ -1,12 +1,11 @@
 /**
- * Created by ravi.hamsa on 3/25/17.
+ * Created by ravi.hamsa on 3/26/17.
  */
 import React, {PropTypes, Component} from "react";
 import Rx from 'rxjs';
 import _ from 'lodash';
 import validatorMap from './validationRules';
 import activeRulesMap from './activeRules';
-
 
 let getValidationRule = function (item) {
     return {
@@ -28,87 +27,9 @@ let getActiveRule = (item) => {
     }
 }
 
-let ensurePropertyIndex = (obj, prop) => {
-    obj[prop] = obj[prop] || {};
-}
+let propsList = ['active', 'error', 'disabled', 'valid', 'activeRules', 'defaultValue']
 
-
-export default class Form2 extends Component {
-    constructor(props) {
-        super(props);
-        this.elementProps$ = new Rx.Subject();
-        this.elementValue$ = new Rx.Subject();
-        this.elementPropIndex = {};
-        this.valueIndex = {};
-    }
-
-    componentWillMount() {
-        let read$ = this.elementValue$.filter(e => e.type === 'read');
-        let update$ = this.elementValue$.filter(e => e.type === 'update');
-        let register$ = this.elementProps$.filter(e => e.type === 'register');
-        let other$ = this.elementProps$.filter(e => e.type !== 'register');
-
-
-        register$.subscribe(val => {
-            console.log('register', val)
-            ensurePropertyIndex(this.elementPropIndex, val.field);
-        });
-
-        other$.subscribe(val => {
-            ensurePropertyIndex(this.elementPropIndex[val.field], val.type);
-            this.elementPropIndex[val.field][val.type] = val.value;
-        });
-
-        read$.merge(update$).subscribe(val => {
-            this.valueIndex[val.field] = val.value;
-        })
-
-        update$.subscribe(val => {
-            this.valueChangeHandler({[val.field]: val.value}, this.valueIndex);
-        })
-
-        // this.elementProps$.subscribe(e=>console.log(e, 'elementProps$'))
-    }
-
-    valueChangeHandler(changed, fullObject) {
-        // console.log(changed, fullObject);
-        if (this.props.onValueChange) {
-            this.props.onValueChange(changed, fullObject)
-        }
-    }
-
-    getChildContext() {
-        return {
-            elementProps$: this.elementProps$,
-            elementValue$: this.elementValue$,
-            elementPropIndex: this.elementPropIndex,
-            elementValueIndex: this.valueIndex,
-        }
-    }
-
-    onSubmitHandler(e) {
-        e.preventDefault();
-    }
-
-    render() {
-        return <form onSubmit={this.onSubmitHandler.bind(this)} className={this.props.className}>
-            {this.props.children}
-        </form>
-    }
-}
-
-Form2.childContextTypes = {
-    elementProps$: PropTypes.object.isRequired,
-    elementValue$: PropTypes.object.isRequired,
-    elementPropIndex: PropTypes.object.isRequired,
-    elementValueIndex: PropTypes.object.isRequired,
-}
-
-let emptyArray = [];
-
-let propsList = ['active', 'error', 'disabled', 'valid', 'activeRules']
-
-export class Form2Element extends Component {
+export default class RXFormElement extends Component {
 
     constructor(props) {
         super(props);
@@ -130,10 +51,14 @@ export class Form2Element extends Component {
         this.addActiveListeners()
         this.propChangeListeners()
         this.updateProps(null, 'register');
-        this.updateValue(this.refs.inputElement.value, 'read');
+        this.readInputValue();
         _.each(propsList, (prop) => {
             this.updateProps(this.props[prop], prop)
         })
+    }
+
+    readInputValue(){
+        this.updateValue(this.refs.inputElement.value, 'read');
     }
 
     setIfNotEqualState(newStateMap) {
@@ -225,7 +150,6 @@ export class Form2Element extends Component {
     renderElementWithWrapper() {
         let formClasses = this.getFormClasses();
         let elementProps = this.context.elementPropIndex[this.props.name];
-        console.log(elementProps, 'elementProps');
         let error = this.state.error;
         return <fieldset className={formClasses}>
             {this.props.showLabel ? <label>{this.props.label}</label> : null}
@@ -244,28 +168,14 @@ export class Form2Element extends Component {
     }
 }
 
-
-export class Select2 extends Form2Element {
-    renderElement() {
-        let restProps = this.getRestProps();
-        let options = this.props.options;
-        return <select {...restProps} onChange={this.onChange.bind(this)}>
-            <option value="-1">Select</option>
-            {options.map(function (option, index) {
-                return <option value={option.id} key={index}>{option.name}</option>
-            }, this)}
-        </select>
-    }
-}
-
-Form2Element.contextTypes = {
+RXFormElement.contextTypes = {
     elementProps$: PropTypes.object.isRequired,
     elementValue$: PropTypes.object.isRequired,
     elementPropIndex: PropTypes.object.isRequired,
     elementValueIndex: PropTypes.object.isRequired,
 }
 
-Form2Element.propTypes = {
+RXFormElement.propTypes = {
     type: PropTypes.string.isRequired,
     placeholder: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
@@ -280,7 +190,7 @@ Form2Element.propTypes = {
     activeRules: PropTypes.array,
 }
 
-Form2Element.defaultProps = {
+RXFormElement.defaultProps = {
     type: 'text',
     placeholder: 'Enter Text',
     label: 'Text Input',
@@ -294,9 +204,3 @@ Form2Element.defaultProps = {
     validations: [],
     activeRules: []
 }
-
-Select2.defaultProps = {
-    ...Form2Element.defaultProps,
-    defaultValue: '-1'
-}
-

@@ -3,13 +3,19 @@
  */
 
 import Form from './Form';
-import Form2 from './Form2';
+import {RXForm, RXSelect, RXFormElement, RXTextInput, RXTextArea, RXRadioList,RXCheckList} from './RXForm';
 import Table from './Table';
 import common from './common';
 
 export default{
     Form,
-    Form2,
+    RXForm,
+    RXSelect,
+    RXFormElement,
+    RXTextInput,
+    RXTextArea,
+    RXRadioList,
+    RXCheckList,
     Table,
     common
 }
