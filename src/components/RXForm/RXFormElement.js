@@ -112,7 +112,6 @@ export default class RXFormElement extends Component {
     }
 
     onChange(e) {
-        e.preventDefault();
         this.updateValue(e.target.value, 'update');
     }
 

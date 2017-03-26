@@ -11,3 +11,4 @@ export RXRadioList from './RXRadioList';
 export RXCheckList from './RXCheckList';
 export RXSelectionElement from './RXSelectionElement';
 export RXDropdown from './RXDropdown';
+export RXCheckbox from './RXCheckbox';
