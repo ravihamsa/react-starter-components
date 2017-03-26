@@ -6,11 +6,10 @@ import ReactDOM from 'react-dom';
 import _ from 'lodash'
 
 export default class RXCheckboxList extends RXFormElement {
-    readInputValue(){
+    /*readInputValue(){
         let valueRead = this.getSelectedValues();
-        this.updateProps(valueRead, 'defaultValue');
         this.updateValue(valueRead, 'read');
-    }
+    }*/
 
     getSelectedValues(){
         let rootNode = ReactDOM.findDOMNode(this);
@@ -20,7 +19,6 @@ export default class RXCheckboxList extends RXFormElement {
 
     onChange(e) {
         let valueRead = this.getSelectedValues();
-        this.updateProps(valueRead, 'defaultValue');
         this.updateValue(valueRead, 'update');
     }
 
@@ -28,7 +26,8 @@ export default class RXCheckboxList extends RXFormElement {
         let {options, name} = this.props;
         return <div  onChange={this.onChange.bind(this)}>
             {options.map(function (option, index) {
-                let selectedOptions = this.state.defaultValue.split(',')
+                let lastValue = this.getValue();
+                let selectedOptions = lastValue.split(',')
                 let checked = selectedOptions.indexOf(option.id) > -1;
                 return (
                     <label key={index}>

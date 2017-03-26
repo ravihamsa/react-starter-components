@@ -20,8 +20,10 @@ export default class RXForm extends Component {
     componentWillMount() {
         let read$ = this.elementValue$.filter(e => e.type === 'read');
         let update$ = this.elementValue$.filter(e => e.type === 'update');
+        let selection$ = this.elementValue$.filter(e => e.type === 'selection');
+        let name$ = this.elementValue$.filter(e => e.type === 'name');
         let register$ = this.elementProps$.filter(e => e.type === 'register');
-        let other$ = this.elementProps$.filter(e => e.type !== 'register');
+        let other$ = this.elementProps$.filter(e => e.type !== 'register' && e.type !== '__shadowValue');
 
         register$.subscribe(val => {
             ensurePropertyIndex(this.elementPropIndex, val.field);
@@ -32,14 +34,27 @@ export default class RXForm extends Component {
             this.elementPropIndex[val.field][val.type] = val.value;
         });
 
-        read$.merge(update$).subscribe(val => {
+        read$.merge(update$, selection$, name$).subscribe(val => {
             this.valueIndex[val.field] = val.value;
         })
+
 
         update$.subscribe(val => {
             this.valueChangeHandler({[val.field]: val.value}, this.valueIndex);
         })
 
+        other$.subscribe(val => {
+            this.propChangeHandler(val);
+        })
+
+        // selection$.subscribe(e => console.log(e))
+    }
+
+    propChangeHandler(changed) {
+        // console.log(changed, fullObject);
+        if (this.props.onPropChange) {
+            this.props.onPropChange(changed)
+        }
     }
 
     valueChangeHandler(changed, fullObject) {

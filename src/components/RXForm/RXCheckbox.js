@@ -6,10 +6,6 @@ import RXFormElement from './RXFormElement'
 
 export default class RXCheckbox extends RXFormElement {
 
-    readInputValue() {
-        this.updateValue(this.refs.inputElement.checked, 'read');
-    }
-
     onChange(e) {
         this.updateValue(e.target.checked, 'update');
     }
@@ -17,7 +13,7 @@ export default class RXCheckbox extends RXFormElement {
     renderElement() {
         let restProps = this.getRestProps();
         delete restProps.label;
-        restProps.defaultChecked = this.state.defaultValue === true;
+        restProps.defaultChecked = this.getValue() === true;
         return <input  {...restProps} onChange={this.onChange.bind(this)}/>
     }
 }

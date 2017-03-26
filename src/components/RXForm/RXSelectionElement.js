@@ -43,6 +43,7 @@ export default class RXSelectionElement extends RXFormElement {
         this.multiSelect = props.multiSelect;
         this.selectionManager = new Selection({multiSelect: props.multiSelect});
         this.applyDefaultValue()
+        this._value = this.selectionManager.getSelected();
         this.changeSubscription = this.selectionManager.on('change', this.onChange.bind(this));
     }
 
@@ -70,28 +71,44 @@ export default class RXSelectionElement extends RXFormElement {
         }
     }
 
-    stringifySelection(selection) {
+    formatShadowValue(selection) {
         if (this.multiSelect) {
-            return _.map(selection, 'id');
+            return _.map(selection, 'id').join(',');
         } else {
             return selection ? selection.id : ''
         }
     }
 
+    getSelectedAttribute(selection, attribute) {
+        if (this.multiSelect) {
+            return _.map(selection, attribute);
+        } else {
+            return selection ? selection[attribute] : null
+        }
+    }
+
     readInputValue() {
-        let valueRead = this.selectionManager.getSelected();
-        this.updateProps(this.stringifySelection(valueRead), 'defaultValue');
-        this.updateValue(valueRead, 'read');
+        this.updateValue(this.selectionManager.getSelected(), 'read');
+    }
+
+    updateValue(value, type) {
+        let  {exposeSelection, exposeName} = this.props;
+        if(exposeSelection){
+            this.selection$.next({field: this.props.name+'_selection', type: 'selection', value: value});
+        }
+        if(exposeName){
+            this.selection$.next({field: this.props.name+'_name', type: 'name', value:  this.getSelectedAttribute(value, 'name')});
+        }
+        this.value$.next({field: this.props.name, type: type, value: this.getSelectedAttribute(value, 'id')});
+        this.updateProps(this.formatShadowValue(value), '__shadowValue');
     }
 
     onChangeUpdates(){
-        //to be overwritten
+        //to be over
     }
 
     onChange(e) {
-        let valueRead = this.selectionManager.getSelected();
-        this.updateProps(this.stringifySelection(valueRead), 'defaultValue');
-        this.updateValue(valueRead, 'update');
+        this.updateValue(this.selectionManager.getSelected(), 'update');
         this.onChangeUpdates();
     }
 
@@ -110,7 +127,7 @@ export default class RXSelectionElement extends RXFormElement {
     renderElement() {
         return <div onClick={this.onClickHandler.bind(this)} ref="listRoot">
             <List items={this.props.options} selectionManager={this.selectionManager}
-                  selection={this.state.defaultValue} ListItem={RXSelectionItem}/>
+                  selection={this.state.__shadowValue} ListItem={RXSelectionItem}/>
         </div>
     }
 
@@ -130,13 +147,18 @@ export default class RXSelectionElement extends RXFormElement {
 
 RXSelectionElement.propTypes = {
     ...RXFormElement.propTypes,
-    options: PropTypes.array.isRequired
+    options: PropTypes.array.isRequired,
+    exposeName:PropTypes.bool.isRequired,
+    exposeSelection:PropTypes.bool.isRequired,
 }
 
-RXFormElement.defaultProps = {
+RXSelectionElement.defaultProps = {
     ...RXFormElement.defaultProps,
     type: 'text',
     placeholder: 'Select',
     label: 'Select',
-    options: []
+    options: [],
+    valueType:'idString',
+    exposeName:false,
+    exposeSelection:false
 }

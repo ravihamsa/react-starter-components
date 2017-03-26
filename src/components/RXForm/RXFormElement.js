@@ -27,7 +27,7 @@ let getActiveRule = (item) => {
     }
 }
 
-let propsList = ['active', 'error', 'disabled', 'valid', 'activeRules', 'defaultValue']
+let propsList = ['active', 'error', 'disabled', 'valid', 'defaultValue', '__shadowValue']
 
 export default class RXFormElement extends Component {
 
@@ -36,17 +36,37 @@ export default class RXFormElement extends Component {
         let {debounceTime, validations, activeRules} = this.props;
         this.props$ = new Rx.Subject();
         this.value$ = new Rx.Subject().debounceTime(debounceTime);
+        this.selection$ = new Rx.Subject();
         this.state = _.pick(this.props, propsList);
-        this.validations = validations.map(function (rule, index) {
-            return getValidationRule(rule);
-        });
+        this._value = this.props.defaultValue;
+        this.validations = validations.map(rule => getValidationRule(rule));
         this.activeRules = activeRules.map(rule => getActiveRule(rule));
     }
 
-    componentDidMount() {
+    componentWillMount() {
 
-        this.props$.subscribe(value => this.context.elementProps$.next(value));
-        this.value$.subscribe(value => this.context.elementValue$.next(value));
+        let groupedProps$ = this.props$/*.filter(x=>x.type !== '__shadowValue')*/.groupBy(x => x.type + '--' + x.field);
+        groupedProps$.flatMap(group => {
+            return group.distinctUntilChanged((a, b) => {
+                return a.value === b.value
+            });
+        }).subscribe(value => this.context.elementProps$.next(value))
+
+
+        this.selection$.groupBy(x => x.type + '--' + x.field).flatMap(group => {
+            return group.distinctUntilChanged((a, b) => {
+                return a.value === b.value
+            });
+        }).subscribe(value => {
+            return this.context.elementValue$.next(value)
+        });
+
+        this.value$.distinctUntilChanged((a, b) => {
+            return a.value === b.value
+        }).subscribe(value => {
+            return this.context.elementValue$.next(value)
+        });
+
         this.addValidationListeners()
         this.addActiveListeners()
         this.propChangeListeners()
@@ -57,8 +77,8 @@ export default class RXFormElement extends Component {
         })
     }
 
-    readInputValue(){
-        this.updateValue(this.refs.inputElement.value, 'read');
+    readInputValue() {
+        this.updateValue(this.props.defaultValue, 'read');
     }
 
     setIfNotEqualState(newStateMap) {
@@ -102,8 +122,8 @@ export default class RXFormElement extends Component {
         valueChange$
             .filter(value => value.field !== elementName && elementsToWatchForActive.indexOf(value.field) > -1)
             .mergeMap(value => {
-                return Rx.Observable.from(this.activeRules).filter(rule=>{
-                    return rule.func({value:valueIndex[rule.element]}, rule) !== true
+                return Rx.Observable.from(this.activeRules).filter(rule => {
+                    return rule.func({value: valueIndex[rule.element]}, rule) !== true
                 }).mapTo(false).defaultIfEmpty(true)
             })
             .subscribe(e => {
@@ -115,8 +135,13 @@ export default class RXFormElement extends Component {
         this.updateValue(e.target.value, 'update');
     }
 
+    getValue() {
+        return this._value;
+    }
+
     updateValue(value, type) {
         this.value$.next({field: this.props.name, type: type, value: value});
+        this.updateProps(value, '__shadowValue');
     }
 
     updateProps(value, type) {
