@@ -3,7 +3,7 @@
  */
 
 import Form from './Form';
-import {RXForm, RXSelect, RXFormElement, RXTextInput, RXTextArea, RXRadioList,RXCheckList} from './RXForm';
+import {RXForm, RXSelect, RXFormElement, RXTextInput, RXTextArea, RXRadioList,RXCheckList,RXSelectionElement,RXDropdown} from './RXForm';
 import Table from './Table';
 import common from './common';
 
@@ -16,6 +16,8 @@ export default{
     RXTextArea,
     RXRadioList,
     RXCheckList,
+    RXSelectionElement,
+    RXDropdown,
     Table,
     common
 }
