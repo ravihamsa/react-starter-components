@@ -117,7 +117,6 @@ class FormElement extends Component {
     }
 
     onChange(event) {
-        //this.change$.next(this.getValueFromNode(event.target));
         this.setValue(this.getValueFromNode(event.target));
     }
 

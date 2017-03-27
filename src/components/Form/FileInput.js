@@ -7,6 +7,10 @@ import FormElement from './FormElement'
 
 
 class FileInput extends FormElement {
+    getValueFromNode(node){
+        return node.files[0];
+    }
+
     render() {
 
         let defaultValue = this.getDefaultValue();
@@ -18,15 +22,12 @@ class FileInput extends FormElement {
             {this.props.showLabel ? <label>{this.props.label}</label> : null}
             <input type="file" className="form-control" name={this.props.name}
                    placeholder={this.props.placeholder} onChange={this.onChange.bind(this)}
-                   value={value} ref="input"/>
+                   ref="input"/>
             {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
             {errors.length > 0 ? <small className="text-danger">{errors[0].message}</small> : '' }
         </fieldset>
     }
 
-    getFileData(){
-        this.refs.input.getFileData();
-    }
 }
 
 

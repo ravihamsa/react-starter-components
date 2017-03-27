@@ -147,6 +147,13 @@ class DataLoader {
         url = self.generateGetUrl(url, payLoadToServer)
         if (method === 'post' || method === 'put' || method === 'patch') {
             requestConfig.body = JSON.stringify(payLoadToServer)
+        }else if(method==='form_post'){
+            var data = new FormData()
+            for(var i in payLoadToServer){
+                data.append(i, payLoadToServer[i])
+            }
+            requestConfig.body = data
+            requestConfig.method = 'POST';
         }
 
         return new Promise((resolve, reject) => {
