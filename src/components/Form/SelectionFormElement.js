@@ -75,14 +75,7 @@ export default class SelectionFormElement  extends FormElement {
         }
     }
 
-    getFormClasses() {
-        let classArray = ['form-group'];
-        classArray.push(this.props.className)
-        if (this.state.errors.length > 0) {
-            classArray.push('has-error');
-        }
-        return classArray.join(' ')
-    }
+
 
 
 }

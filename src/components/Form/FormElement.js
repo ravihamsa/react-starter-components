@@ -201,7 +201,8 @@ class FormElement extends Component {
     getFormClasses(){
         let classArray = ['form-group'];
         classArray.push('element')
-        classArray.push('element-'+this.props.type);
+        classArray.push('element-type-'+this.props.type);
+        classArray.push('element-'+this.props.name);
         if(this.state.errors.length > 0){
             classArray.push('has-error');
         }

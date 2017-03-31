@@ -110,5 +110,6 @@ class AutoComplete extends FormElement {
 export default AutoComplete;
 
 AutoComplete.defaultProps = {
+    ...FormElement.defaultProps,
     type:'auto-complete'
 }

@@ -29,5 +29,6 @@ export default TextArea;
 
 
 TextArea.defaultProps = {
+    ...FormElement.defaultProps,
     type:'text-area'
 }

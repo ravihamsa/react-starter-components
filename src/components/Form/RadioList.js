@@ -31,6 +31,7 @@ export default RadioList;
 
 
 RadioList.defaultProps = {
+    ...FormElement.defaultProps,
     type:'radio-list'
 }
 

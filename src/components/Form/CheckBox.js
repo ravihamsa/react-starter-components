@@ -38,5 +38,6 @@ class CheckBox extends FormElement {
 export default CheckBox;
 
 CheckBox.defaultProps = {
+    ...FormElement.defaultProps,
     type:'check-box'
 }

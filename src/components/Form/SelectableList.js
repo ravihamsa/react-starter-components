@@ -62,5 +62,6 @@ export default class SelectableList extends SelectionFormElement {
 
 
 SelectableList.defaultProps = {
+    ...FormElement.defaultProps,
     type:'selectable-list'
 }

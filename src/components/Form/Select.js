@@ -35,6 +35,7 @@ class Select extends FormElement {
 export default Select;
 
 Select.defaultProps = {
+    ...FormElement.defaultProps,
     type:'select'
 }
 
