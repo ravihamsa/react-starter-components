@@ -44,3 +44,8 @@ class DatePicker extends FormElement {
 
 
 export default DatePicker;
+
+DatePicker.defaultProps = {
+    ...FormElement.defaultProps,
+    type:'date-picker'
+}
