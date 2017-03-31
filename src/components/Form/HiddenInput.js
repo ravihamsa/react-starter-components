@@ -23,3 +23,8 @@ class HiddenInput extends FormElement {
 
 
 export default HiddenInput;
+
+HiddenInput.defaultProps = {
+    type:'hidden'
+}
+

@@ -28,3 +28,9 @@ class RadioList extends FormElement {
 }
 
 export default RadioList;
+
+
+RadioList.defaultProps = {
+    type:'radio-list'
+}
+

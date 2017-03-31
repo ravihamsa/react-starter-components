@@ -59,3 +59,8 @@ export default class SelectableList extends SelectionFormElement {
         </fieldset>
     }
 }
+
+
+SelectableList.defaultProps = {
+    type:'selectable-list'
+}

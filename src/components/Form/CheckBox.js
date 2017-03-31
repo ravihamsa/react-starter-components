@@ -34,13 +34,9 @@ class CheckBox extends FormElement {
 }
 
 
-CheckBox.propTypes = {
-    type: PropTypes.string.isRequired,
-    placeholder: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired,
-    defaultValue:PropTypes.bool,
-    options:PropTypes.array
-}
-
 
 export default CheckBox;
+
+CheckBox.defaultProps = {
+    type:'check-box'
+}

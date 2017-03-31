@@ -32,3 +32,8 @@ class FileInput extends FormElement {
 
 
 export default FileInput;
+
+FileInput.defaultProps = {
+    type:'file'
+}
+

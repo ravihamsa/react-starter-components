@@ -129,3 +129,7 @@ export default class Dropdown extends SelectionFormElement {
         </fieldset>
     }
 }
+
+Dropdown.defaultProps = {
+    type:'drop-down'
+}

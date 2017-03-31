@@ -33,3 +33,8 @@ class Select extends FormElement {
 
 
 export default Select;
+
+Select.defaultProps = {
+    type:'select'
+}
+

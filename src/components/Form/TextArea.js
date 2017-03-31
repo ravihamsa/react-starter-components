@@ -26,3 +26,8 @@ class TextArea extends FormElement {
 
 
 export default TextArea;
+
+
+TextArea.defaultProps = {
+    type:'text-area'
+}
