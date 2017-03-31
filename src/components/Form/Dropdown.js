@@ -105,7 +105,7 @@ export default class Dropdown extends SelectionFormElement {
 
 
         return <fieldset className={formClasses}>
-            {this.props.showLabel ? <label>{this.props.label}</label> : null}
+            {this.props.showLabel ? <label className="element-label">{this.props.label}</label> : null}
             <div className="form-control drop-down">
                 <InlinePopup ref="inlinePopup" >
                     <InlineButton>

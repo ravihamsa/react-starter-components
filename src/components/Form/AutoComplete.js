@@ -76,7 +76,7 @@ class AutoComplete extends FormElement {
         let filteredOptions = options.filter((item) => item.name.toLowerCase().indexOf(searchString.toLowerCase()) > -1)
 
         return <fieldset className={formClasses}>
-            {this.props.showLabel ? <label>{this.props.label}</label> : null}
+            {this.props.showLabel ? <label className="element-label">{this.props.label}</label> : null}
             <InlinePopup onClosePopup={this.onClosePopup.bind(this)}>
                 <InlineButton>
                     <div style={{position:'relative'}}>

@@ -10,7 +10,7 @@ class RadioList extends FormElement {
         let name = this.props.name;
 
         return <fieldset className={formClasses} onChange={this.onChange.bind(this)}>
-            {this.props.showLabel ? <label>{this.props.label}</label> : null}
+            {this.props.showLabel ? <label className="element-label">{this.props.label}</label> : null}
             {options.map(function(option, index) {
                 return (
                     <label className="form-control" key={index}>

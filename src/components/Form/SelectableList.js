@@ -48,7 +48,7 @@ export default class SelectableList extends SelectionFormElement {
         let ListItem = this.props.ListItem || SelectableListItem;
 
         return <fieldset className={formClasses + " " + (options.length === 0 ? 'zero-length' : '')}>
-            {this.props.showLabel ? <label>{this.props.label}</label> : null}
+            {this.props.showLabel ? <label className="element-label">{this.props.label}</label> : null}
             <div className="form-control" onClick={this.clickHandler.bind(this)}>
                 <List ListItem={ListItem} items={options} selection={this.state.selection}
                       selectionManager={this.selectionManager} showName={this.props.showName}/>

@@ -176,7 +176,7 @@ export default class RXFormElement extends Component {
         let elementProps = this.context.elementPropIndex[this.props.name];
         let error = this.state.error;
         return <fieldset className={formClasses}>
-            {this.props.showLabel ? <label>{this.props.label}</label> : null}
+            {this.props.showLabel ? <label className="element-label">{this.props.label}</label> : null}
             {this.renderElement()}
             {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
             {error ? <small className="text-danger">{error.message}</small> : '' }

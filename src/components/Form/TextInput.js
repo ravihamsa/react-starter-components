@@ -16,7 +16,7 @@ class TextInput extends FormElement {
         let errors = this.getErrors();
 
         return <fieldset className={formClasses}>
-            {this.props.showLabel ? <label>{this.props.label}</label> : null}
+            {this.props.showLabel ? <label className="element-label">{this.props.label}</label> : null}
             <input type={this.props.type} className="form-control" name={this.props.name}
                    placeholder={this.props.placeholder} onChange={this.onChange.bind(this)}
                    disabled={this.props.disabled}
