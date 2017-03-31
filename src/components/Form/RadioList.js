@@ -17,7 +17,7 @@ class RadioList extends FormElement {
                         <input type="radio" name={name} 
                         defaultChecked={defaultValue === option.id }
                         id={"radio-" + name + "-" + option.id} value={option.id} />
-                        <label htmlFor={"radio-" + name + "-" + option.id}>{option.label}</label>
+                        <label htmlFor={"radio-" + name + "-" + option.id}>{option.name}</label>
                     </label>
                 )
             }, this)}
