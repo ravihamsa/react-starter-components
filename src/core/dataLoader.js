@@ -148,12 +148,13 @@ class DataLoader {
         if (method === 'post' || method === 'put' || method === 'patch') {
             requestConfig.body = JSON.stringify(payLoadToServer)
         }else if(method==='form_post'){
-            var data = new FormData()
+            var data = new FormData();
             for(var i in payLoadToServer){
                 data.append(i, payLoadToServer[i])
             }
             requestConfig.body = data
             requestConfig.method = 'POST';
+            delete requestConfig.headers['Content-Type'];
         }
 
         return new Promise((resolve, reject) => {
