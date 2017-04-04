@@ -161,9 +161,7 @@ class DataLoader {
             fetchPromise
                 .then(function (response) {
                     if (!response.ok) {
-                        try{
-                            return response.json();
-                        }catch(e){
+                        if(!response.json){
                             throw new Error(response.statusText)
                         }
                     }

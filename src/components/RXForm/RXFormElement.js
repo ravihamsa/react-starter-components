@@ -6,6 +6,7 @@ import Rx from 'rxjs';
 import _ from 'lodash';
 import validatorMap from './validationRules';
 import activeRulesMap from './activeRules';
+import dataLoader from '../../core/dataLoader';
 
 let getValidationRule = function (item) {
     return {
@@ -24,6 +25,13 @@ let getActiveRule = (item) => {
         prop: item.prop || 'update',
         value: item.value,
         func: activeRulesMap[item.expr]
+    }
+}
+
+let getServerValidationRule = function (rule) {
+    return {
+        requestId: rule.requestId,
+        getParams: rule.getParams || _.identity
     }
 }
 
@@ -68,6 +76,7 @@ export default class RXFormElement extends Component {
         });
 
         this.addValidationListeners()
+        this.addServerValidationListeners()
         this.addActiveListeners()
         this.propChangeListeners()
         this.updateProps(null, 'register');
@@ -98,6 +107,25 @@ export default class RXFormElement extends Component {
         });
     }
 
+    addServerValidationListeners() {
+
+        if (this.props.serverValidation) {
+            let validateRequest$ = this.value$.filter(val => val.type === 'update')
+                .debounceTime(400)
+                .filter(() => this.state.valid);
+            let serverValidation = getServerValidationRule(this.props.serverValidation);
+            let setError$ = validateRequest$.flatMap((val) => {
+                return Rx.Observable.fromPromise(dataLoader.getRequestDef(serverValidation.requestId, serverValidation.getParams.call({value: val.value}, this.context.elementValueIndex)))
+            }).combineLatest().defaultIfEmpty(null)
+            setError$.subscribe((resp) => {
+                this.updateProps(resp[0], 'error')
+            }, (resp) => {
+                this.updateProps(resp[0], 'error')
+            });
+        }
+
+    }
+
     addValidationListeners() {
         let validateRequest$ = this.value$.filter(val => val.type === 'update');
         let setError$ = validateRequest$
@@ -105,6 +133,7 @@ export default class RXFormElement extends Component {
                 return rule.func(rule, val.value) !== true
             }).take(1).defaultIfEmpty(null))
         setError$.subscribe((rule, val) => {
+            this.updateProps(rule ? false : true, 'valid');
             this.updateProps(rule, 'error')
         });
     }
@@ -149,7 +178,7 @@ export default class RXFormElement extends Component {
     }
 
     getRestProps() {
-        let props = _.omit(this.props, 'showLabel', 'debounceTime', 'options', 'helperText', 'active', 'error', 'validations', 'activeRules', 'valid');
+        let props = _.omit(this.props, 'showLabel', 'debounceTime', 'options', 'helperText', 'active', 'error', 'validations', 'activeRules', 'valid', 'serverValidation');
         props.ref = 'inputElement'
         return props;
     }
@@ -212,6 +241,7 @@ RXFormElement.propTypes = {
     debounceTime: PropTypes.number.isRequired,
     validations: PropTypes.array,
     activeRules: PropTypes.array,
+    serverValidation: PropTypes.object
 }
 
 RXFormElement.defaultProps = {
@@ -226,5 +256,6 @@ RXFormElement.defaultProps = {
     debounceTime: 0,
     error: null,
     validations: [],
-    activeRules: []
+    activeRules: [],
+    serverValidation: null
 }
