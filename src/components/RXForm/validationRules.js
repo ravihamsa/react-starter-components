@@ -24,7 +24,7 @@ export default {
     },
     'email': function(rule, value) {
         var ck_email = /^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-\\+]+)*@[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-\+]+)*(\.[A-Za-z]{2,})$/i;
-        return ck_email.test($.trim(value));
+        return ck_email.test(value.trim());
     },
     'minlen': function(rule, value) {
         var min = rule.length;
@@ -55,13 +55,15 @@ export default {
             return true;
         }
         var ck_url = /(http|https|market):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i;
-        return ck_url.test($.trim(value));
+        return ck_url.test(value.trim());
     },
     'emaillist': function(rule, value) {
         var emails = value.split(',');
         var ck_email = /^([\w\-]+(?:\.[\w\-]+)*)@((?:[\w\-]+\.)*\w[\w\-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
         for (var i = 0; i < emails.length; i++) {
-            if ($.trim(emails[i]) !== '' && !ck_email.test($.trim(emails[i]))) {
+            let email =  emails[i];
+            email = email.trim();
+            if (email !== '' && !ck_email.test(email)) {
                 return false;
             }
         }
