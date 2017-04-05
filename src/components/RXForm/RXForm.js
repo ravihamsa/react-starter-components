@@ -74,6 +74,18 @@ export default class RXForm extends Component {
     }
 
     getValueObject(){
+        let valueObj = {};
+        let errors = [];
+        for(var elementName  in this.elementPropIndex){
+            let propObject = this.elementPropIndex[elementName];
+            if(propObject.active){
+                if(propObject.valid){
+                    valueObj[elementName] = this.valueIndex[elementName];
+                }else{
+                    errors.push([])
+                }
+            }
+        }
 
     }
 
