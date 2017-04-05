@@ -154,6 +154,7 @@ class DataLoader {
             }
             requestConfig.body = data
             requestConfig.method = 'POST';
+            delete requestConfig.headers['Content-Type'];
         }
 
         return new Promise((resolve, reject) => {
