@@ -73,6 +73,10 @@ export default class RXForm extends Component {
         }
     }
 
+    getValueObject(){
+
+    }
+
     onSubmitHandler(e) {
         e.preventDefault();
     }
