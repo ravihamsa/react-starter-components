@@ -13,6 +13,7 @@ export default class RXForm extends Component {
         super(props);
         this.elementProps$ = new Rx.Subject();
         this.elementValue$ = new Rx.Subject();
+        this.forceValidate$ = new Rx.Subject();
         this.elementPropIndex = {};
         this.valueIndex = {};
     }
@@ -68,29 +69,40 @@ export default class RXForm extends Component {
         return {
             elementProps$: this.elementProps$,
             elementValue$: this.elementValue$,
+            forceValidate$: this.forceValidate$,
             elementPropIndex: this.elementPropIndex,
             elementValueIndex: this.valueIndex,
         }
     }
 
-    getValueObject(){
+    getValueObject() {
         let valueObj = {};
         let errors = [];
-        for(var elementName  in this.elementPropIndex){
+        for (var elementName  in this.elementPropIndex) {
             let propObject = this.elementPropIndex[elementName];
-            if(propObject.active){
-                if(propObject.valid){
+            if (propObject.active) {
+                this.forceValidate$.next({field: elementName, type: 'validate', value: this.valueIndex[elementName]});
+                if (propObject.valid) {
                     valueObj[elementName] = this.valueIndex[elementName];
-                }else{
-                    errors.push([])
+                } else {
+                    let error = propObject.error;
+                    errors.push([{field: elementName, type: error.type, message: error.message}])
                 }
             }
+        }
+        return {
+            errors: errors,
+            data: valueObj
         }
 
     }
 
+
     onSubmitHandler(e) {
         e.preventDefault();
+        if (this.props.onSubmitHandler) {
+            this.props.onSubmitHandler(this.getValueObject());
+        }
     }
 
     render() {
@@ -103,6 +115,7 @@ export default class RXForm extends Component {
 RXForm.childContextTypes = {
     elementProps$: PropTypes.object.isRequired,
     elementValue$: PropTypes.object.isRequired,
+    forceValidate$: PropTypes.object.isRequired,
     elementPropIndex: PropTypes.object.isRequired,
     elementValueIndex: PropTypes.object.isRequired,
 }

@@ -127,7 +127,7 @@ export default class RXFormElement extends Component {
     }
 
     addValidationListeners() {
-        let validateRequest$ = this.value$.filter(val => val.type === 'update');
+        let validateRequest$ = this.value$.filter(val => val.type === 'update').merge(this.context.forceValidate$);
         let setError$ = validateRequest$
             .mergeMap((val) => Rx.Observable.from(this.validations).filter((rule) => {
                 return rule.func(rule, val.value) !== true
@@ -224,6 +224,7 @@ export default class RXFormElement extends Component {
 RXFormElement.contextTypes = {
     elementProps$: PropTypes.object.isRequired,
     elementValue$: PropTypes.object.isRequired,
+    forceValidate$: PropTypes.object.isRequired,
     elementPropIndex: PropTypes.object.isRequired,
     elementValueIndex: PropTypes.object.isRequired,
 }
