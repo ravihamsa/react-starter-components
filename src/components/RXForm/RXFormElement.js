@@ -115,7 +115,7 @@ export default class RXFormElement extends Component {
                 .filter(() => this.state.valid);
             let serverValidation = getServerValidationRule(this.props.serverValidation);
             let setError$ = validateRequest$.flatMap((val) => {
-                return Rx.Observable.fromPromise(dataLoader.getRequestDef(serverValidation.requestId, serverValidation.getParams.call({value: val.value}, this.context.elementValueIndex)))
+                return Rx.Observable.fromPromise(dataLoader.getRequestDef(serverValidation.requestId, serverValidation.getParams(value, this.context.elementValueIndex)))
             }).combineLatest().defaultIfEmpty(null)
             setError$.subscribe((resp) => {
                 this.updateProps(resp[0], 'error')
