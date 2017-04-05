@@ -11,4 +11,4 @@ import AnchorLink from './AnchorLink';
 import ActionLink from './ActionLink';
 import ToggleActionButton from './ToggleActionButton';
 
-export default {List,ListItem,SelectableList, SelectableItem, LayoutList,ViewState, ViewStateManager, FormCollection, InlinePopupGroup, PopupGroup, AnchorLink, ActionLink, ToggleActionButton}
+export default {List,ListItem,SelectableList, SelectableItem, LayoutList, ViewState, ViewStateManager, FormCollection, InlinePopupGroup, PopupGroup, AnchorLink, ActionLink, ToggleActionButton}

@@ -13,7 +13,7 @@ import CheckBox from './CheckBox'
 import HiddenInput from './HiddenInput'
 import AutoComplete from './AutoComplete'
 import DatePicker from './DatePicker/DatePicker'
-import SelectableList from './SelectableList'
+import SelectableList, {SelectableListItem} from './SelectableList'
 import Dropdown from './Dropdown'
 import RadioList from './RadioList'
 

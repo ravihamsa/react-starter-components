@@ -17,9 +17,7 @@ export const {RXForm, RXFormElement, RXSelect, RXTextInput, RXRadioList, RXTextA
 
 export const {PaginatedTable, Table, THEAD, TBODY, TH, TD, TR} = componentsIm.Table;
 
-export const {List, ListItem, FormCollection,AnchorLink, ActionLink, ToggleActionButton} = componentsIm.common;
-
-export const {ViewStateManager, ViewState} = componentsIm.common.ViewStateManager;
+export const {List, ListItem, SelectableItem, FormCollection,AnchorLink, ActionLink, ToggleActionButton,ViewStateManager, ViewState} = componentsIm.common;
 
 export const {InlinePopup, InlineButton, InlineBody} = componentsIm.common.InlinePopupGroup;
 
