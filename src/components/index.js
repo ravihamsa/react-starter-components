@@ -10,6 +10,7 @@ import common from './common';
 export default{
     Form,
     RXForm,
+    RXElementGroup,
     RXSelect,
     RXFormElement,
     RXTextInput,

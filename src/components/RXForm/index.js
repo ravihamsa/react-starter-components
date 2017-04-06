@@ -2,7 +2,7 @@
  * Created by ravi.hamsa on 6/29/16.
  */
 
-export RXForm from './RXForm';
+export RXForm, {RXElementGroup} from './RXForm';
 export RXFormElement from './RXFormElement';
 export RXSelect from './RXSelect';
 export RXTextInput from './RXTextInput';
