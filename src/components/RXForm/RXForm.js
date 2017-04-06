@@ -112,6 +112,14 @@ export default class RXForm extends Component {
     }
 }
 
+export class RXElementGroup extends RXForm {
+    render() {
+        return <div className={this.props.className}>
+            {this.props.children}
+        </div>
+    }
+}
+
 RXForm.childContextTypes = {
     elementProps$: PropTypes.object.isRequired,
     elementValue$: PropTypes.object.isRequired,
