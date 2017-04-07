@@ -76,11 +76,19 @@ class InlinePopup extends Component {
         }
     }
 
+    getButtonBounds() {
+        let {inlineButton, inlineBody} = this.refs;
+        return ReactDOM.findDOMNode(inlineButton).getBoundingClientRect();
+
+
+    }
+
     render() {
         let childProps = {
             togglePopup: this.togglePopup.bind(this),
             closePopup: this.closePopup.bind(this),
             itemClick: this.itemClick.bind(this),
+            getButtonBounds: this.getButtonBounds.bind(this),
             isOpen: this.state.open
         }
 
@@ -89,7 +97,7 @@ class InlinePopup extends Component {
 
         return <div style={popupStyles} ref="rootEl" {...domProps}>
             {this.props.children.map(function (children, index) {
-                return React.cloneElement(children, {...childProps, key: index, ref:refMap[index]})
+                return React.cloneElement(children, {...childProps, key: index, ref: refMap[index]})
             })}
         </div>
     }
@@ -108,15 +116,16 @@ class InlineBody extends Component {
     }
 
     componentDidMount() {
-        if (!this.portalElement) {
-            var p = document.createElement('div');
+        let p = this.portalElement;
+        if (!p) {
+            p = document.createElement('div');
             document.body.appendChild(p);
             this.portalElement = p;
         }
         this.componentDidUpdate();
     }
 
-    componentWillReceiveProps(){
+    componentWillReceiveProps() {
         this.componentDidUpdate();
     }
 
@@ -124,20 +133,57 @@ class InlineBody extends Component {
         document.body.removeChild(this.portalElement);
     }
 
+    updatePortalElementPosition(){
+        let p = this.portalElement;
+        if(!p){
+            return;
+        }
+        let refEl = ReactDOM.findDOMNode(this);
+        let bounds = refEl.getBoundingClientRect();
+        let buttonBounds = this.props.getButtonBounds();
+        let style = {position: 'absolute'};
+        style.left = bounds.left + 'px';
+        style.top = bounds.top + 'px';
+        style.width = buttonBounds.width + 'px';
+        for (var i in style) {
+            p.style[i] = style[i];
+        }
+    }
+
     componentDidUpdate() {
         if (this.props.isOpen) {
-            let refEl = ReactDOM.findDOMNode(this);
-            let bounds = refEl.getBoundingClientRect();
-            let style = {position: 'absolute', overflow: 'auto', maxHeight: 200};
-            style.left = bounds.left;
-            style.top = bounds.top;
-            style.width = bounds.width;
+            this.updatePortalElementPosition();
+            let style = {position: 'absolute'};
+            let buttonBounds = this.props.getButtonBounds();
+            let {halign, valign} = this.props;
+            switch (halign) {
+                case 'right':
+                    style.right = 0;
+                    break;
+                case 'center':
+                    style.left = '-50%';
+                    style.transform = 'translateX(-50%)'
+                    break;
+                default:
+                    break;
+            }
+
+            switch (valign) {
+                case 'top':
+                    style.top = -(buttonBounds.height);
+                    break;
+            }
             ReactDOM.render(<div className="inline-popup-body"
-                                 style={style}>{React.cloneElement(this.props.children, {closePopup:this.props.closePopup})}</div>, this.portalElement);
-        }else{
+                                 style={style}>{React.cloneElement(this.props.children, {closePopup: this.props.closePopup})}</div>, this.portalElement);
+        } else {
             ReactDOM.render(<div></div>, this.portalElement);
         }
     }
+}
+
+InlineBody.defaultProps = {
+    valign: 'bottom',
+    halign: 'left'
 }
 
 export default {
