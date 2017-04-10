@@ -110,3 +110,8 @@ export default class RXDropdown extends RXSelectionElement {
 }
 
 
+RXDropdown.defaultProps = {
+    ...RXSelectionElement.defaultProps,
+    type:'drop-down'
+}
+

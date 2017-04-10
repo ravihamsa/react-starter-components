@@ -154,7 +154,7 @@ RXSelectionElement.propTypes = {
 
 RXSelectionElement.defaultProps = {
     ...RXFormElement.defaultProps,
-    type: 'text',
+    type: 'selection',
     placeholder: 'Select',
     label: 'Select',
     options: [],
