@@ -24,13 +24,15 @@ export default class RXForm extends Component {
         let selection$ = this.elementValue$.filter(e => e.type === 'selection');
         let name$ = this.elementValue$.filter(e => e.type === 'name');
         let register$ = this.elementProps$.filter(e => e.type === 'register');
-        let other$ = this.elementProps$.filter(e => e.type !== 'register' && e.type !== '__shadowValue');
+        let other$ = this.elementProps$.filter(e => e.type !== 'register');
+        let shadowValue$ = this.elementProps$.filter(e => e.type !== '__shadowValue');
+        //&& e.type !== '__shadowValue'
 
         register$.subscribe(val => {
             ensurePropertyIndex(this.elementPropIndex, val.field);
         });
 
-        other$.subscribe(val => {
+        other$.merge(shadowValue$).subscribe(val => {
             ensurePropertyIndex(this.elementPropIndex[val.field], val.type);
             this.elementPropIndex[val.field][val.type] = val.value;
         });
