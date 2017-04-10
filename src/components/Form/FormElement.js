@@ -203,7 +203,8 @@ class FormElement extends Component {
         classArray.push('element')
         classArray.push('element-type-'+this.props.type);
         classArray.push('element-'+this.props.name);
-        if(this.state.errors.length > 0){
+        let errors = this.getErrors();
+        if(errors.length > 0){
             classArray.push('has-error');
         }
         return classArray.join(' ')

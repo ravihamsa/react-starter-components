@@ -143,7 +143,7 @@ class InlineBody extends Component {
         let buttonBounds = this.props.getButtonBounds();
         let style = {position: 'absolute'};
         style.left = bounds.left + 'px';
-        style.top = bounds.top + 'px';
+        style.top = (bounds.top +window.scrollY)+ 'px';
         style.width = buttonBounds.width + 'px';
         for (var i in style) {
             p.style[i] = style[i];
