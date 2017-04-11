@@ -48,7 +48,7 @@ export default class RXSelectionElement extends RXFormElement {
     }
 
     applyDefaultValue() {
-        let value = this.state.defaultValue;
+        let value = this.state.value;
         if (this.multiSelect) {
             value = value.split(',') || [];
             _.each(value, (valueId) => {
@@ -81,7 +81,7 @@ export default class RXSelectionElement extends RXFormElement {
 
     getSelectedAttribute(selection, attribute) {
         if (this.multiSelect) {
-            return _.map(selection, attribute);
+            return _.map(selection, attribute).join(',');
         } else {
             return selection ? selection[attribute] : null
         }

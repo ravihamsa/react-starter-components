@@ -18,5 +18,5 @@ export default class RXSelect extends RXFormElement {
 
 RXSelect.defaultProps = {
     ...RXFormElement.defaultProps,
-    defaultValue: '-1'
+    value: '-1'
 }

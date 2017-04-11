@@ -88,6 +88,7 @@ export default class RXDropdown extends RXSelectionElement {
             return item.name.toLowerCase().indexOf(this.state.query.toLowerCase()) > -1;
         })
 
+
         return <InlinePopup ref="inlinePopup">
             <InlineButton>
                 {this.renderButton()}
@@ -99,7 +100,7 @@ export default class RXDropdown extends RXSelectionElement {
                            placeholder={this.props.placeholder}/>
                     <div onClick={this.onClickHandler.bind(this)} ref="listRoot">
                         <List items={filteredOptions} selectionManager={this.selectionManager}
-                              selection={this.state.defaultValue} ListItem={RXDropdownItem}/>
+                              selection={this.state.value} ListItem={RXDropdownItem}/>
                     </div>
                 </div>
             </InlineBody>

@@ -35,7 +35,7 @@ let getServerValidationRule = function (rule) {
     }
 }
 
-let propsList = ['active', 'error', 'disabled', 'valid', 'defaultValue', '__shadowValue']
+let propsList = ['active', 'error', 'disabled', 'valid', '__shadowValue', 'value', 'type']
 
 export default class RXFormElement extends Component {
 
@@ -47,7 +47,7 @@ export default class RXFormElement extends Component {
         this.value$ = new Rx.Subject().debounceTime(debounceTime);
         this.selection$ = new Rx.Subject();
         this.state = _.pick(this.props, propsList);
-        this._value = this.props.defaultValue;
+        this._value = this.props.value;
         this.validations = validations.map(rule => getValidationRule(rule));
         this.activeRules = activeRules.map(rule => getActiveRule(rule));
     }
@@ -89,7 +89,7 @@ export default class RXFormElement extends Component {
     }
 
     readInputValue() {
-        this.updateValue(this.props.defaultValue, 'read');
+        this.updateValue(this.props.value, 'read');
     }
 
     setIfNotEqualState(newStateMap) {
@@ -105,7 +105,7 @@ export default class RXFormElement extends Component {
     propChangeListeners() {
         let propChange$ = this.context.elementProps$.filter(e => e.field === this.props.name);
         propChange$.subscribe(e => {
-            this.setIfNotEqualState(this.context.elementPropIndex[this.props.name])
+            this.setState(this.context.elementPropIndex[this.props.name])
         });
     }
 
@@ -137,7 +137,7 @@ export default class RXFormElement extends Component {
 
     addValidationListeners() {
         let forceValidate$ = this.context.communication$.filter(val => val.type === 'validate');
-        let validateRequest$ = this.value$.filter(val => val.type === 'update').merge(this.context.communication$);
+        let validateRequest$ = this.value$.filter(val => val.type === 'update').merge(forceValidate$);
         let setError$ = validateRequest$
             .mergeMap((val) => Rx.Observable.from(this.validations).filter((rule) => {
                 return rule.func(rule, val.value) !== true
@@ -181,6 +181,7 @@ export default class RXFormElement extends Component {
     updateValue(value, type) {
         this.value$.next({field: this.props.name, type: type, value: value});
         this.updateProps(value, '__shadowValue');
+        this.updateProps(value, 'value');
     }
 
     updateProps(value, type) {
@@ -188,7 +189,7 @@ export default class RXFormElement extends Component {
     }
 
     getRestProps() {
-        let props = _.omit(this.props, 'showLabel', 'debounceTime', 'options', 'helperText', 'active', 'error', 'validations', 'activeRules', 'valid', 'serverValidation');
+        let props = _.omit(this.state, 'showLabel', 'debounceTime', 'options', 'helperText', 'active', 'error', 'validations', 'activeRules', 'valid', 'serverValidation', '__shadowValue', 'register');
         props.ref = 'inputElement';
         props.className = (props.className||'') + ' '+'form-control';
         return props;
@@ -251,7 +252,7 @@ RXFormElement.propTypes = {
     type: PropTypes.string.isRequired,
     placeholder: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
-    defaultValue: PropTypes.string.isRequired,
+    value: PropTypes.string.isRequired,
     showLabel: PropTypes.bool.isRequired,
     active: PropTypes.bool.isRequired,
     disabled: PropTypes.bool.isRequired,
@@ -267,11 +268,11 @@ RXFormElement.defaultProps = {
     type: 'text',
     placeholder: 'Enter Text',
     label: 'Text Input',
+    value:'',
     showLabel: true,
     active: true,
     disabled: false,
     valid: true,
-    defaultValue: '',
     debounceTime: 0,
     error: null,
     validations: [],

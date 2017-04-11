@@ -20,12 +20,12 @@ export default class RXCheckbox extends RXFormElement {
 
 RXCheckbox.propTypes = {
     ...RXFormElement.propTypes,
-    defaultValue: PropTypes.bool.isRequired,
+    value: PropTypes.bool.isRequired,
 
 }
 
 RXCheckbox.defaultProps = {
     ...RXFormElement.defaultProps,
     type: 'checkbox',
-    defaultValue: false
+    value: false
 }
