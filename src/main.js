@@ -2,7 +2,7 @@
  * Created by ravi.hamsa on 6/22/16.
  */
 
-
+import 'babel-polyfill';
 import React, {Component, PropTypes} from "react";
 import Child from './components/Child'
 import NameList from './components/NameList'
