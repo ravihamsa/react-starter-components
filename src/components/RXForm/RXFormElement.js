@@ -56,6 +56,9 @@ export default class RXFormElement extends Component {
     componentWillReceiveProps(newProps) {
         _.each(propsList, (prop) => {
             if (newProps[prop]) {
+                if(prop==='value'){
+                    this.updateValue(newProps[prop], 'update')
+                }
                 this.updateProps(newProps[prop], prop)
             }
         })
