@@ -43,6 +43,7 @@ export default class RXFormElement extends Component {
         super(props);
         let {debounceTime, validations, activeRules} = this.props;
         this.props$ = new Rx.Subject();
+        this.talkToForm$ = new Rx.Subject();
         this.value$ = new Rx.Subject().debounceTime(debounceTime);
         this.selection$ = new Rx.Subject();
         this.state = _.pick(this.props, propsList);
@@ -78,6 +79,7 @@ export default class RXFormElement extends Component {
         this.addValidationListeners()
         this.addServerValidationListeners()
         this.addActiveListeners()
+        this.addCommunicationListeners();
         this.propChangeListeners()
         this.updateProps(null, 'register');
         this.readInputValue();
@@ -107,6 +109,13 @@ export default class RXFormElement extends Component {
         });
     }
 
+    addCommunicationListeners(){
+        let setSibling$ =  this.context.communication$.filter(val=>val.type ==='elementValue' && val.field === this.props.name);
+        setSibling$.subscribe((val)=>{
+            this.updateValue(val.value, 'update');
+        })
+    }
+
     addServerValidationListeners() {
 
         if (this.props.serverValidation) {
@@ -127,7 +136,8 @@ export default class RXFormElement extends Component {
     }
 
     addValidationListeners() {
-        let validateRequest$ = this.value$.filter(val => val.type === 'update').merge(this.context.forceValidate$);
+        let forceValidate$ = this.context.communication$.filter(val => val.type === 'validate');
+        let validateRequest$ = this.value$.filter(val => val.type === 'update').merge(this.context.communication$);
         let setError$ = validateRequest$
             .mergeMap((val) => Rx.Observable.from(this.validations).filter((rule) => {
                 return rule.func(rule, val.value) !== true
@@ -203,6 +213,10 @@ export default class RXFormElement extends Component {
     getErrors() {
         return this.state.errors;
     }
+    setSiblingValue(siblingName, value){
+        this.context.communication$.next({field:siblingName, type:'elementValue', value:value});
+    }
+
 
     renderElementWithWrapper() {
         let formClasses = this.getFormClasses();
@@ -228,7 +242,7 @@ export default class RXFormElement extends Component {
 RXFormElement.contextTypes = {
     elementProps$: PropTypes.object.isRequired,
     elementValue$: PropTypes.object.isRequired,
-    forceValidate$: PropTypes.object.isRequired,
+    communication$: PropTypes.object.isRequired,
     elementPropIndex: PropTypes.object.isRequired,
     elementValueIndex: PropTypes.object.isRequired,
 }
