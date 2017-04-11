@@ -133,9 +133,10 @@ export default class RXSelectionElement extends RXFormElement {
 
     renderElementWithWrapper() {
         let formClasses = this.getFormClasses();
+        formClasses.push(this.props.multiSelect === true ? 'multi-select' : 'single-select');
         let elementProps = this.context.elementPropIndex[this.props.name];
         let error = this.state.error;
-        return <fieldset className={formClasses}>
+        return <fieldset className={formClasses.join(' ')}>
             {this.props.showLabel ? <label className="element-label">{this.props.label}</label> : null}
             {this.renderElement()}
             {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }

@@ -215,7 +215,7 @@ export default class RXFormElement extends Component {
         if (this.state.errors) {
             classArray.push('has-error');
         }
-        return classArray.join(' ')
+        return classArray;
     }
 
     renderElement() {
@@ -236,7 +236,7 @@ export default class RXFormElement extends Component {
         let formClasses = this.getFormClasses();
         let elementProps = this.context.elementPropIndex[this.props.name];
         let error = this.state.error;
-        return <fieldset className={formClasses}>
+        return <fieldset className={formClasses.join(' ')}>
             {this.props.showLabel ? <label className="element-label">{this.props.label}</label> : null}
             {this.renderElement()}
             {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
