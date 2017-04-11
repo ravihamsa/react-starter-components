@@ -52,6 +52,15 @@ export default class RXFormElement extends Component {
         this.activeRules = activeRules.map(rule => getActiveRule(rule));
     }
 
+
+    componentWillReceiveProps(newProps) {
+        _.each(propsList, (prop) => {
+            if (newProps[prop]) {
+                this.updateProps(newProps[prop], prop)
+            }
+        })
+    }
+
     componentWillMount() {
 
         let groupedProps$ = this.props$/*.filter(x=>x.type !== '__shadowValue')*/.groupBy(x => x.type + '--' + x.field);
@@ -109,9 +118,9 @@ export default class RXFormElement extends Component {
         });
     }
 
-    addCommunicationListeners(){
-        let setSibling$ =  this.context.communication$.filter(val=>val.type ==='elementValue' && val.field === this.props.name);
-        setSibling$.subscribe((val)=>{
+    addCommunicationListeners() {
+        let setSibling$ = this.context.communication$.filter(val => val.type === 'elementValue' && val.field === this.props.name);
+        setSibling$.subscribe((val) => {
             this.updateValue(val.value, 'update');
         })
     }
@@ -191,15 +200,15 @@ export default class RXFormElement extends Component {
     getRestProps() {
         let props = _.omit(this.state, 'showLabel', 'debounceTime', 'options', 'helperText', 'active', 'error', 'validations', 'activeRules', 'valid', 'serverValidation', '__shadowValue', 'register', 'exposeName', 'exposeSelection');
         props.ref = 'inputElement';
-        props.className = (props.className||'') + ' '+'form-control';
+        props.className = (props.className || '') + ' ' + 'form-control';
         return props;
     }
 
     getFormClasses() {
         let classArray = ['form-group'];
         classArray.push('element')
-        classArray.push('element-type-'+this.props.type);
-        classArray.push('element-'+this.props.name);
+        classArray.push('element-type-' + this.props.type);
+        classArray.push('element-' + this.props.name);
         if (this.state.errors) {
             classArray.push('has-error');
         }
@@ -214,8 +223,9 @@ export default class RXFormElement extends Component {
     getErrors() {
         return this.state.errors;
     }
-    setSiblingValue(siblingName, value){
-        this.context.communication$.next({field:siblingName, type:'elementValue', value:value});
+
+    setSiblingValue(siblingName, value) {
+        this.context.communication$.next({field: siblingName, type: 'elementValue', value: value});
     }
 
 
@@ -268,7 +278,7 @@ RXFormElement.defaultProps = {
     type: 'text',
     placeholder: 'Enter Text',
     label: 'Text Input',
-    value:'',
+    value: '',
     showLabel: true,
     active: true,
     disabled: false,
