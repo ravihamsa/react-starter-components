@@ -35,7 +35,7 @@ let getServerValidationRule = function (rule) {
     }
 }
 
-let propsList = ['active', 'error', 'disabled', 'valid', '__shadowValue', 'value', 'type']
+let propsList = ['active', 'error', 'disabled', 'valid', '__shadowValue', 'value', 'type', 'exposeName', 'exposeSelection']
 
 export default class RXFormElement extends Component {
 
@@ -189,7 +189,7 @@ export default class RXFormElement extends Component {
     }
 
     getRestProps() {
-        let props = _.omit(this.state, 'showLabel', 'debounceTime', 'options', 'helperText', 'active', 'error', 'validations', 'activeRules', 'valid', 'serverValidation', '__shadowValue', 'register');
+        let props = _.omit(this.state, 'showLabel', 'debounceTime', 'options', 'helperText', 'active', 'error', 'validations', 'activeRules', 'valid', 'serverValidation', '__shadowValue', 'register', 'exposeName', 'exposeSelection');
         props.ref = 'inputElement';
         props.className = (props.className||'') + ' '+'form-control';
         return props;

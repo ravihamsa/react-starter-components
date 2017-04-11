@@ -86,6 +86,12 @@ export default class RXForm extends Component {
                 this.communication$.next({field: elementName, type: 'validate', value: this.valueIndex[elementName]});
                 if (propObject.valid) {
                     valueObj[elementName] = this.valueIndex[elementName];
+                    if(propObject.exposeName){
+                        valueObj[elementName+'_name'] = this.valueIndex[elementName+'_name'];
+                    }
+                    if(propObject.exposeSelection){
+                        valueObj[elementName+'_selection'] = this.valueIndex[elementName+'_selection'];
+                    }
                 } else {
                     let error = propObject.error;
                     errors.push([{field: elementName, type: error.type, message: error.message}])
