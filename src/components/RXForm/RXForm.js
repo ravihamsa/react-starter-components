@@ -111,7 +111,7 @@ export default class RXForm extends Component {
 
     setElementValues(map){
         for(var elementName in map){
-            this.setElementValue(elementName, map[i]);
+            this.setElementValue(elementName, map[elementName]);
         }
     }
 
