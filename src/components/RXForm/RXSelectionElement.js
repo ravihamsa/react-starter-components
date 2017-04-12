@@ -122,12 +122,24 @@ export default class RXSelectionElement extends RXFormElement {
         this.updateProps(this.getFormattedSelection(value), '__shadowValue');
     }*/
 
+    exposeNameAndSelection(){
+        let  {exposeSelection, exposeName} = this.props;
+        let selected = this.selectionManager.getSelected();
+        if(exposeSelection){
+            this.value$.next({field: this.props.name+'_selection', type: 'selection', value: selected});
+        }
+        if(exposeName){
+            this.value$.next({field: this.props.name+'_name', type: 'name', value:  this.getSelectedAttribute(selected, 'name')});
+        }
+    }
+
     onChangeUpdates(){
-        //to be over
+
     }
 
     onChange(e) {
         this.updateValue(this.getFormattedSelection(), 'update');
+        this.exposeNameAndSelection();
         this.onChangeUpdates();
     }
 
@@ -180,6 +192,6 @@ RXSelectionElement.defaultProps = {
     options: [],
     valueType:'idString',
     exposeName:false,
-    value:'-1',
+    value:'',
     exposeSelection:false
 }

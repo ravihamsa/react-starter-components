@@ -66,8 +66,10 @@ export default class RXFormElement extends Component {
             if (newProps[prop]) {
                 if (prop === 'value') {
                     this.applyValue(newProps[prop])
+                }else{
+                    this.updateProps(newProps[prop], prop)
                 }
-                this.updateProps(newProps[prop], prop)
+
             }
         })
     }
