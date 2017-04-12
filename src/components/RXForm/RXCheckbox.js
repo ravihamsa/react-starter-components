@@ -13,7 +13,7 @@ export default class RXCheckbox extends RXFormElement {
     renderElement() {
         let restProps = this.getRestProps();
         delete restProps.label;
-        restProps.defaultChecked = this.getValue() === true;
+        restProps.checked = this.getValue() === true;
         return <input  {...restProps} onChange={this.onChange.bind(this)}/>
     }
 }
