@@ -130,7 +130,7 @@ export default class Dropdown extends SelectionFormElement {
                         <div className="drop-down-body">
                             {this.props.showSearch ? <input type="text" autoFocus defaultValue={this.state.query} ref="searchBox" onChange={this.onKeyPressHandler} className="drop-down-input" placeholder={placeholder}/> : null}
                             <div onClick={this.clickHandler.bind(this)}>
-                                <List ListItem={ListItem} className={(this.multiSelect ? 'multi-select' : 'single-select')} items={filteredOptions} selection={this.state.selection}
+                                <List ListItem={ListItem} className={this.multiSelect ? 'multi-select list' : 'single-select list'} items={filteredOptions} selection={this.state.selection}
                                       selectionManager={this.selectionManager}/>
                             </div>
                         </div>
