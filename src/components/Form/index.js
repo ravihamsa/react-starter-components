@@ -32,5 +32,6 @@ export default{
     DatePicker,
     Dropdown,
     SelectableList,
+    SelectableListItem,
     RadioList
 }

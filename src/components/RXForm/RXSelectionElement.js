@@ -42,20 +42,30 @@ export default class RXSelectionElement extends RXFormElement {
         super(props);
         this.multiSelect = props.multiSelect;
         this.selectionManager = new Selection({multiSelect: props.multiSelect});
-        this.applyDefaultValue()
+        this.applyValue(this.state.value)
         this._value = this.selectionManager.getSelected();
         this.changeSubscription = this.selectionManager.on('change', this.onChange.bind(this));
     }
 
-    applyDefaultValue() {
-        let value = this.state.value;
-        if (this.multiSelect) {
-            value = value.split(',') || [];
-            _.each(value, (valueId) => {
-                this.selectById(valueId)
-            })
-        } else {
-            this.selectById(value)
+    getPropToStateList(){
+        return ['active', 'error', 'disabled', 'valid', '__shadowValue', 'value', 'type', 'exposeName', 'exposeSelection']
+    }
+
+    applyValue(value = '') {
+        let currentSelectionValue =  this.getFormattedSelection();
+        if(value === currentSelectionValue){
+            return;
+        }else{
+            if(this.multiSelect){
+                let valueArray = value.split(',');
+                let selectedArray = currentSelectionValue.split(',');
+                let toSelect = _.difference(valueArray,selectedArray);
+                let toDeselect = _.difference(selectedArray, valueArray);
+                _.each(toSelect, (valueId)=>this.findUpdateSelectionById(valueId, 'select'));
+                _.each(toDeselect, (valueId)=>this.findUpdateSelectionById(valueId, 'deselect'));
+            }else{
+                this.findUpdateSelectionById(value, 'select');
+            }
         }
     }
 
@@ -71,7 +81,16 @@ export default class RXSelectionElement extends RXFormElement {
         }
     }
 
-    formatShadowValue(selection) {
+    findUpdateSelectionById(id, method){
+        let options = this.props.options;
+        let toSelectItem = _.find(options, (item) => item.id === id);
+        if(toSelectItem){
+            this.selectionManager[method](toSelectItem);
+        }
+    }
+
+    getFormattedSelection() {
+        let selection = this.selectionManager.getSelected();
         if (this.multiSelect) {
             return _.map(selection, 'id').join(',');
         } else {
@@ -88,10 +107,10 @@ export default class RXSelectionElement extends RXFormElement {
     }
 
     readInputValue() {
-        this.updateValue(this.selectionManager.getSelected(), 'read');
+        this.updateValue(this.getFormattedSelection(), 'read');
     }
 
-    updateValue(value, type) {
+    /*updateValue(value, type) {
         let  {exposeSelection, exposeName} = this.props;
         if(exposeSelection){
             this.selection$.next({field: this.props.name+'_selection', type: 'selection', value: value});
@@ -100,15 +119,27 @@ export default class RXSelectionElement extends RXFormElement {
             this.selection$.next({field: this.props.name+'_name', type: 'name', value:  this.getSelectedAttribute(value, 'name')});
         }
         this.value$.next({field: this.props.name, type: type, value: this.getSelectedAttribute(value, 'id')});
-        this.updateProps(this.formatShadowValue(value), '__shadowValue');
+        this.updateProps(this.getFormattedSelection(value), '__shadowValue');
+    }*/
+
+    exposeNameAndSelection(){
+        let  {exposeSelection, exposeName} = this.props;
+        let selected = this.selectionManager.getSelected();
+        if(exposeSelection){
+            this.value$.next({field: this.props.name+'_selection', type: 'selection', value: selected});
+        }
+        if(exposeName){
+            this.value$.next({field: this.props.name+'_name', type: 'name', value:  this.getSelectedAttribute(selected, 'name')});
+        }
     }
 
     onChangeUpdates(){
-        //to be over
+
     }
 
     onChange(e) {
-        this.updateValue(this.selectionManager.getSelected(), 'update');
+        this.updateValue(this.getFormattedSelection(), 'update');
+        this.exposeNameAndSelection();
         this.onChangeUpdates();
     }
 
@@ -161,5 +192,6 @@ RXSelectionElement.defaultProps = {
     options: [],
     valueType:'idString',
     exposeName:false,
+    value:'',
     exposeSelection:false
 }

@@ -15,7 +15,7 @@ export default class RXRadioList extends RXFormElement {
                     <label key={index}>
                         <input type="radio" name={name}
                                value={option.id}
-                               defaultChecked={checked}
+                               checked={checked}
                                id={"radio-" + name + "-" + option.id}/>
                         <label htmlFor={"radio-" + name + "-" + option.id}>{option.name}</label>
                     </label>
