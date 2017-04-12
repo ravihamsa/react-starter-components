@@ -9,6 +9,7 @@
     "bluebird": "^3.4.1",
     "collection-manager": "^1.0.2",
     "history": "^3.0.0",
+    "immutable": "^3.8.1",
     "lodash": "^4.13.1",
     "moment": "^2.13.0",
     "node-fetch": "^1.5.3",
@@ -44,8 +45,7 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha $(find src -name '*-test.js') --reporter spec  --compilers js:babel-core/register",
-    "build": "babel src --watch -d lib",
-    "test-node": "./node_modules/mocha/bin/mocha $(find api -name '*-test.js') --compilers js:babel-core/register"
+    "build": "babel src --watch -d lib --ignore test.js"
   },
   "author": "Ravi Hamsa",
   "license": "ISC"
