@@ -10,7 +10,7 @@ export default class RXRadioList extends RXFormElement {
         let {options, name} = this.props;
         return <div  onChange={this.onChange.bind(this)}>
             {options.map(function (option, index) {
-                let checked = this.state.defaultValue === option.id;
+                let checked = this.state.value === option.id;
                 return (
                     <label key={index}>
                         <input type="radio" name={name}

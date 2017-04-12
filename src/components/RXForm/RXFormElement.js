@@ -35,7 +35,7 @@ let getServerValidationRule = function (rule) {
     }
 }
 
-let propsList = ['active', 'error', 'disabled', 'valid', 'defaultValue', '__shadowValue']
+let propsList = ['active', 'error', 'disabled', 'valid', '__shadowValue', 'value', 'type', 'exposeName', 'exposeSelection']
 
 export default class RXFormElement extends Component {
 
@@ -43,12 +43,25 @@ export default class RXFormElement extends Component {
         super(props);
         let {debounceTime, validations, activeRules} = this.props;
         this.props$ = new Rx.Subject();
+        this.talkToForm$ = new Rx.Subject();
         this.value$ = new Rx.Subject().debounceTime(debounceTime);
         this.selection$ = new Rx.Subject();
         this.state = _.pick(this.props, propsList);
-        this._value = this.props.defaultValue;
+        this._value = this.props.value;
         this.validations = validations.map(rule => getValidationRule(rule));
         this.activeRules = activeRules.map(rule => getActiveRule(rule));
+    }
+
+
+    componentWillReceiveProps(newProps) {
+        _.each(propsList, (prop) => {
+            if (newProps[prop]) {
+                if(prop==='value'){
+                    this.updateValue(newProps[prop], 'update')
+                }
+                this.updateProps(newProps[prop], prop)
+            }
+        })
     }
 
     componentWillMount() {
@@ -78,6 +91,7 @@ export default class RXFormElement extends Component {
         this.addValidationListeners()
         this.addServerValidationListeners()
         this.addActiveListeners()
+        this.addCommunicationListeners();
         this.propChangeListeners()
         this.updateProps(null, 'register');
         this.readInputValue();
@@ -87,7 +101,7 @@ export default class RXFormElement extends Component {
     }
 
     readInputValue() {
-        this.updateValue(this.props.defaultValue, 'read');
+        this.updateValue(this.props.value, 'read');
     }
 
     setIfNotEqualState(newStateMap) {
@@ -103,8 +117,15 @@ export default class RXFormElement extends Component {
     propChangeListeners() {
         let propChange$ = this.context.elementProps$.filter(e => e.field === this.props.name);
         propChange$.subscribe(e => {
-            this.setIfNotEqualState(this.context.elementPropIndex[this.props.name])
+            this.setState(this.context.elementPropIndex[this.props.name])
         });
+    }
+
+    addCommunicationListeners() {
+        let setSibling$ = this.context.communication$.filter(val => val.type === 'elementValue' && val.field === this.props.name);
+        setSibling$.subscribe((val) => {
+            this.updateValue(val.value, 'update');
+        })
     }
 
     addServerValidationListeners() {
@@ -127,7 +148,8 @@ export default class RXFormElement extends Component {
     }
 
     addValidationListeners() {
-        let validateRequest$ = this.value$.filter(val => val.type === 'update').merge(this.context.forceValidate$);
+        let forceValidate$ = this.context.communication$.filter(val => val.type === 'validate');
+        let validateRequest$ = this.value$.filter(val => val.type === 'update').merge(forceValidate$);
         let setError$ = validateRequest$
             .mergeMap((val) => Rx.Observable.from(this.validations).filter((rule) => {
                 return rule.func(rule, val.value) !== true
@@ -171,6 +193,7 @@ export default class RXFormElement extends Component {
     updateValue(value, type) {
         this.value$.next({field: this.props.name, type: type, value: value});
         this.updateProps(value, '__shadowValue');
+        this.updateProps(value, 'value');
     }
 
     updateProps(value, type) {
@@ -178,21 +201,21 @@ export default class RXFormElement extends Component {
     }
 
     getRestProps() {
-        let props = _.omit(this.props, 'showLabel', 'debounceTime', 'options', 'helperText', 'active', 'error', 'validations', 'activeRules', 'valid', 'serverValidation');
+        let props = _.omit(this.state, 'showLabel', 'debounceTime', 'options', 'helperText', 'active', 'error', 'validations', 'activeRules', 'valid', 'serverValidation', '__shadowValue', 'register', 'exposeName', 'exposeSelection');
         props.ref = 'inputElement';
-        props.className = (props.className||'') + ' '+'form-control';
+        props.className = (props.className || '') + ' ' + 'form-control';
         return props;
     }
 
     getFormClasses() {
         let classArray = ['form-group'];
         classArray.push('element')
-        classArray.push('element-type-'+this.props.type);
-        classArray.push('element-'+this.props.name);
+        classArray.push('element-type-' + this.props.type);
+        classArray.push('element-' + this.props.name);
         if (this.state.errors) {
             classArray.push('has-error');
         }
-        return classArray.join(' ')
+        return classArray;
     }
 
     renderElement() {
@@ -204,11 +227,16 @@ export default class RXFormElement extends Component {
         return this.state.errors;
     }
 
+    setSiblingValue(siblingName, value) {
+        this.context.communication$.next({field: siblingName, type: 'elementValue', value: value});
+    }
+
+
     renderElementWithWrapper() {
         let formClasses = this.getFormClasses();
         let elementProps = this.context.elementPropIndex[this.props.name];
         let error = this.state.error;
-        return <fieldset className={formClasses}>
+        return <fieldset className={formClasses.join(' ')}>
             {this.props.showLabel ? <label className="element-label">{this.props.label}</label> : null}
             {this.renderElement()}
             {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
@@ -228,7 +256,7 @@ export default class RXFormElement extends Component {
 RXFormElement.contextTypes = {
     elementProps$: PropTypes.object.isRequired,
     elementValue$: PropTypes.object.isRequired,
-    forceValidate$: PropTypes.object.isRequired,
+    communication$: PropTypes.object.isRequired,
     elementPropIndex: PropTypes.object.isRequired,
     elementValueIndex: PropTypes.object.isRequired,
 }
@@ -237,7 +265,7 @@ RXFormElement.propTypes = {
     type: PropTypes.string.isRequired,
     placeholder: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
-    defaultValue: PropTypes.string.isRequired,
+    value: PropTypes.string.isRequired,
     showLabel: PropTypes.bool.isRequired,
     active: PropTypes.bool.isRequired,
     disabled: PropTypes.bool.isRequired,
@@ -253,11 +281,11 @@ RXFormElement.defaultProps = {
     type: 'text',
     placeholder: 'Enter Text',
     label: 'Text Input',
+    value: '',
     showLabel: true,
     active: true,
     disabled: false,
     valid: true,
-    defaultValue: '',
     debounceTime: 0,
     error: null,
     validations: [],

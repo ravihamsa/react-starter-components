@@ -53,16 +53,26 @@ export default class RXDropdown extends RXSelectionElement {
         this.setState({query: value});
     }
 
-    getSummaryText(placeholder) {
+    getSummaryText() {
         let {selectionManager, multiSelect} = this;
+        let  {options} = this.props;
+        if(options ===undefined || options.length === 0){
+            return this.props.noOptionsLabel
+        }
+
         let selected = selectionManager.getSelected();
         if (!selected) {
-            return placeholder
+            return this.props.noSelectionLabel
         }
         if (!multiSelect) {
             return selected.name;
         } else {
-            return selected.length + ' Selected';
+            if(selected.length ===options.length){
+                return this.props.allSelectedLabel
+            }else{
+                return selected.length + ' '+this.props.optionsSelectedLabel;
+            }
+
         }
     }
 
@@ -88,6 +98,7 @@ export default class RXDropdown extends RXSelectionElement {
             return item.name.toLowerCase().indexOf(this.state.query.toLowerCase()) > -1;
         })
 
+
         return <InlinePopup ref="inlinePopup">
             <InlineButton>
                 {this.renderButton()}
@@ -99,7 +110,7 @@ export default class RXDropdown extends RXSelectionElement {
                            placeholder={this.props.placeholder}/>
                     <div onClick={this.onClickHandler.bind(this)} ref="listRoot">
                         <List items={filteredOptions} selectionManager={this.selectionManager}
-                              selection={this.state.defaultValue} ListItem={RXDropdownItem}/>
+                              selection={this.state.value} ListItem={RXDropdownItem}/>
                     </div>
                 </div>
             </InlineBody>
@@ -112,6 +123,10 @@ export default class RXDropdown extends RXSelectionElement {
 
 RXDropdown.defaultProps = {
     ...RXSelectionElement.defaultProps,
-    type:'drop-down'
+    type:'drop-down',
+    noOptionsLabel:'No Options',
+    noSelectionLabel:'Select',
+    allSelectedLabel:'All Selected',
+    optionsSelectedLabel:'Options Selected'
 }
 

@@ -13,7 +13,7 @@ export default class RXForm extends Component {
         super(props);
         this.elementProps$ = new Rx.Subject();
         this.elementValue$ = new Rx.Subject();
-        this.forceValidate$ = new Rx.Subject();
+        this.communication$ = new Rx.Subject();
         this.elementPropIndex = {};
         this.valueIndex = {};
     }
@@ -71,7 +71,7 @@ export default class RXForm extends Component {
         return {
             elementProps$: this.elementProps$,
             elementValue$: this.elementValue$,
-            forceValidate$: this.forceValidate$,
+            communication$: this.communication$,
             elementPropIndex: this.elementPropIndex,
             elementValueIndex: this.valueIndex,
         }
@@ -83,9 +83,15 @@ export default class RXForm extends Component {
         for (var elementName  in this.elementPropIndex) {
             let propObject = this.elementPropIndex[elementName];
             if (propObject.active) {
-                this.forceValidate$.next({field: elementName, type: 'validate', value: this.valueIndex[elementName]});
+                this.communication$.next({field: elementName, type: 'validate', value: this.valueIndex[elementName]});
                 if (propObject.valid) {
                     valueObj[elementName] = this.valueIndex[elementName];
+                    if(propObject.exposeName){
+                        valueObj[elementName+'_name'] = this.valueIndex[elementName+'_name'];
+                    }
+                    if(propObject.exposeSelection){
+                        valueObj[elementName+'_selection'] = this.valueIndex[elementName+'_selection'];
+                    }
                 } else {
                     let error = propObject.error;
                     errors.push([{field: elementName, type: error.type, message: error.message}])
@@ -97,6 +103,16 @@ export default class RXForm extends Component {
             data: valueObj
         }
 
+    }
+
+    setElementValue(elementName, value){
+        this.communication$.next({field:elementName, type:'elementValue', value:value});
+    }
+
+    setElementValues(map){
+        for(var elementName in map){
+            this.setElementValue(elementName, map[i]);
+        }
     }
 
 
@@ -125,7 +141,7 @@ export class RXElementGroup extends RXForm {
 RXForm.childContextTypes = {
     elementProps$: PropTypes.object.isRequired,
     elementValue$: PropTypes.object.isRequired,
-    forceValidate$: PropTypes.object.isRequired,
+    communication$: PropTypes.object.isRequired,
     elementPropIndex: PropTypes.object.isRequired,
     elementValueIndex: PropTypes.object.isRequired,
 }

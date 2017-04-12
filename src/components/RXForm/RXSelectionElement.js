@@ -48,7 +48,7 @@ export default class RXSelectionElement extends RXFormElement {
     }
 
     applyDefaultValue() {
-        let value = this.state.defaultValue;
+        let value = this.state.value;
         if (this.multiSelect) {
             value = value.split(',') || [];
             _.each(value, (valueId) => {
@@ -81,7 +81,7 @@ export default class RXSelectionElement extends RXFormElement {
 
     getSelectedAttribute(selection, attribute) {
         if (this.multiSelect) {
-            return _.map(selection, attribute);
+            return _.map(selection, attribute).join(',');
         } else {
             return selection ? selection[attribute] : null
         }
@@ -133,9 +133,10 @@ export default class RXSelectionElement extends RXFormElement {
 
     renderElementWithWrapper() {
         let formClasses = this.getFormClasses();
+        formClasses.push(this.props.multiSelect === true ? 'multi-select' : 'single-select');
         let elementProps = this.context.elementPropIndex[this.props.name];
         let error = this.state.error;
-        return <fieldset className={formClasses}>
+        return <fieldset className={formClasses.join(' ')}>
             {this.props.showLabel ? <label className="element-label">{this.props.label}</label> : null}
             {this.renderElement()}
             {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
