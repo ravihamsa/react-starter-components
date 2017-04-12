@@ -7,9 +7,11 @@ import FormElement from './FormElement';
 import SelectionFormElement from './SelectionFormElement';
 import List from '../common/List';
 import InlinePopupGroup from '../common/InlinePopupGroup'
+import {SelectableListItem} from './SelectableList'
 const {InlinePopup,InlineButton,  InlineBody} = InlinePopupGroup;
 
-export class SelectableListItem extends Component {
+
+/*export class SelectableListItem extends Component {
 
     getClassName() {
         let itemData = this.props.itemData;
@@ -44,7 +46,7 @@ export class SelectableListItem extends Component {
             {itemData.name}
         </li>;
     }
-}
+}*/
 
 
 export default class Dropdown extends SelectionFormElement {
