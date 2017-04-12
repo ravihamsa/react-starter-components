@@ -35,7 +35,6 @@ let getServerValidationRule = function (rule) {
     }
 }
 
-let propsList = ['active', 'error', 'disabled', 'valid', '__shadowValue', 'value', 'type', 'exposeName', 'exposeSelection']
 
 export default class RXFormElement extends Component {
 
@@ -46,18 +45,27 @@ export default class RXFormElement extends Component {
         this.talkToForm$ = new Rx.Subject();
         this.value$ = new Rx.Subject().debounceTime(debounceTime);
         this.selection$ = new Rx.Subject();
-        this.state = _.pick(this.props, propsList);
+        this.state = _.pick(this.props, this.getPropToStateList());
+        this.state.__shadowValue = this.props.value;
         this._value = this.props.value;
         this.validations = validations.map(rule => getValidationRule(rule));
         this.activeRules = activeRules.map(rule => getActiveRule(rule));
     }
 
+    getPropToStateList() {
+        return ['active', 'error', 'disabled', 'valid', 'value', 'type']
+    }
+
+
+    applyValue(value){
+        this.updateValue(value, 'update');
+    }
 
     componentWillReceiveProps(newProps) {
-        _.each(propsList, (prop) => {
+        _.each(this.getPropToStateList(), (prop) => {
             if (newProps[prop]) {
-                if(prop==='value'){
-                    this.updateValue(newProps[prop], 'update')
+                if (prop === 'value') {
+                    this.applyValue(newProps[prop])
                 }
                 this.updateProps(newProps[prop], prop)
             }
@@ -66,13 +74,12 @@ export default class RXFormElement extends Component {
 
     componentWillMount() {
 
-        let groupedProps$ = this.props$/*.filter(x=>x.type !== '__shadowValue')*/.groupBy(x => x.type + '--' + x.field);
+        let groupedProps$ = this.props$.groupBy(x => x.type + '--' + x.field);
         groupedProps$.flatMap(group => {
             return group.distinctUntilChanged((a, b) => {
                 return a.value === b.value
             });
         }).subscribe(value => this.context.elementProps$.next(value))
-
 
         this.selection$.groupBy(x => x.type + '--' + x.field).flatMap(group => {
             return group.distinctUntilChanged((a, b) => {
@@ -95,8 +102,8 @@ export default class RXFormElement extends Component {
         this.propChangeListeners()
         this.updateProps(null, 'register');
         this.readInputValue();
-        _.each(propsList, (prop) => {
-            this.updateProps(this.props[prop], prop)
+        _.each(this.getPropToStateList(), (prop) => {
+            this.updateProps(this.state[prop], prop)
         })
     }
 
@@ -192,7 +199,6 @@ export default class RXFormElement extends Component {
 
     updateValue(value, type) {
         this.value$.next({field: this.props.name, type: type, value: value});
-        this.updateProps(value, '__shadowValue');
         this.updateProps(value, 'value');
     }
 
