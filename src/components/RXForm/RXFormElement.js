@@ -61,18 +61,16 @@ export default class RXFormElement extends Component {
         this.updateValue(value, 'update');
     }
 
-    componentWillReceiveProps(newProps) {
+/*    componentWillReceiveProps(newProps) {
         _.each(this.getPropToStateList(), (prop) => {
             if (newProps[prop]) {
                 if (prop === 'value') {
                     this.applyValue(newProps[prop])
-                }else{
-                    this.updateProps(newProps[prop], prop)
                 }
-
+                this.updateProps(newProps[prop], prop)
             }
         })
-    }
+    }*/
 
     componentWillMount() {
 
@@ -133,7 +131,7 @@ export default class RXFormElement extends Component {
     addCommunicationListeners() {
         let setSibling$ = this.context.communication$.filter(val => val.type === 'elementValue' && val.field === this.props.name);
         setSibling$.subscribe((val) => {
-            this.updateValue(val.value, 'update');
+            this.applyValue(val.value);
         })
     }
 
@@ -181,6 +179,7 @@ export default class RXFormElement extends Component {
         let valueIndex = this.context.elementValueIndex;
         valueChange$
             .filter(value => value.field !== elementName && elementsToWatchForActive.indexOf(value.field) > -1)
+            // .do(value=>console.log(value, 'activeCheck'))
             .mergeMap(value => {
                 return Rx.Observable.from(this.activeRules).filter(rule => {
                     return rule.func({value: valueIndex[rule.element]}, rule) !== true
