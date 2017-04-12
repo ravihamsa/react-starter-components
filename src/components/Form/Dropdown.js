@@ -69,16 +69,26 @@ export default class Dropdown extends SelectionFormElement {
         this.setState({query: value});
     }
 
-    getSummaryText(placeholder){
+    getSummaryText() {
         let {selectionManager, multiSelect} = this;
-        let selected = selectionManager.getSelected();
-        if(!selected){
-            return  placeholder || '--Select-- ';
+        let  {options} = this.props;
+        if(options ===undefined || options.length === 0){
+            return this.props.noOptionsLabel
         }
-        if(!multiSelect){
+
+        let selected = selectionManager.getSelected();
+        if (!selected) {
+            return this.props.noSelectionLabel
+        }
+        if (!multiSelect) {
             return selected.name;
-        }else{
-            return selected.length + ' Selected';
+        } else {
+            if(selected.length ===options.length){
+                return this.props.allSelectedLabel
+            }else{
+                return selected.length + ' '+this.props.optionsSelectedLabel;
+            }
+
         }
     }
 
@@ -92,6 +102,7 @@ export default class Dropdown extends SelectionFormElement {
 
     render() {
         let formClasses = this.getFormClasses();
+        formClasses= formClasses + ' '+ (this.multiSelect ? 'multi-select' : 'single-select');
         let errors = this.getErrors();
         let options = this.props.options;
         let ListItem = this.props.ListItem || SelectableListItem;
@@ -113,7 +124,7 @@ export default class Dropdown extends SelectionFormElement {
                     </InlineButton>
                     <InlineBody>
                         <div className="drop-down-body">
-                            <input type="text" autoFocus defaultValue={this.state.query} ref="searchBox" onChange={this.onKeyPressHandler} className="drop-down-input" placeholder={placeholder}/>
+                            {this.props.showSearch ? <input type="text" autoFocus defaultValue={this.state.query} ref="searchBox" onChange={this.onKeyPressHandler} className="drop-down-input" placeholder={placeholder}/> : null}
                             <div onClick={this.clickHandler.bind(this)}>
                                 <List ListItem={ListItem} items={filteredOptions} selection={this.state.selection}
                                       selectionManager={this.selectionManager}/>
@@ -132,5 +143,10 @@ export default class Dropdown extends SelectionFormElement {
 
 Dropdown.defaultProps = {
     ...FormElement.defaultProps,
-    type:'drop-down'
+    type:'drop-down',
+    showSearch:false,
+    noOptionsLabel:'No Options',
+    noSelectionLabel:'Select',
+    allSelectedLabel:'All Selected',
+    optionsSelectedLabel:'Options Selected'
 }

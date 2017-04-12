@@ -43,6 +43,7 @@ export default class SelectableList extends SelectionFormElement {
 
     render() {
         let formClasses = this.getFormClasses();
+        formClasses= formClasses + ' '+ (this.multiSelect ? 'multi-select' : 'single-select');
         let errors = this.getErrors();
         let options = this.props.options;
         let ListItem = this.props.ListItem || SelectableListItem;
