@@ -97,7 +97,10 @@ export default class Dropdown extends SelectionFormElement {
     }
 
     renderButton(){
-        let selectionSummary = this.getSummaryText(this.props.placeholder);
+        let getSummaryText = this.getSummaryText;
+        let {placeholder,dropDownSummary:dropDownSummary=getSummaryText} = this.props;
+        dropDownSummary = dropDownSummary.bind(this);
+        let selectionSummary = dropDownSummary(placeholder);
         return <div className="drop-down-button">
             <span className="drop-down-text"> {selectionSummary}</span>
             <span className="glyphicon glyphicon-chevron-down drop-down-icon"></span>
