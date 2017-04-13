@@ -12,8 +12,8 @@ export default class RXRadioList extends RXFormElement {
             {options.map(function (option, index) {
                 let checked = this.state.value === option.id;
                 return (
-                    <label key={index}>
-                        <input type="radio" name={name}
+                    <label key={index} className="form-check-label">
+                        <input type="radio" name={name} className="form-check-input"
                                value={option.id}
                                checked={checked}
                                id={"radio-" + name + "-" + option.id}/>
