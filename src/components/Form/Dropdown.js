@@ -120,6 +120,9 @@ export default class Dropdown extends SelectionFormElement {
             return item.name.toLowerCase().indexOf(this.state.query.toLowerCase()) > -1;
         })
 
+        if(filteredOptions.length > 500 && this.state.query === ''){
+            filteredOptions = []
+        }
 
 
         return <fieldset className={formClasses}>
