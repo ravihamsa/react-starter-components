@@ -13,7 +13,7 @@ let getValidationRule = function (item) {
         type: item.expr,
         value: item.value,
         length: item.length,
-        func: validatorMap[item.expr],
+        func:item.expr === 'function' ? item.func : validatorMap[item.expr],
         message: item.message || item.expr
     }
 }
@@ -24,7 +24,7 @@ let getActiveRule = (item) => {
         element: item.element,
         prop: item.prop || 'update',
         value: item.value,
-        func: activeRulesMap[item.expr]
+        func:item.expr === 'function' ? item.func : activeRulesMap[item.expr]
     }
 }
 
@@ -159,7 +159,7 @@ export default class RXFormElement extends Component {
         let validateRequest$ = this.value$.filter(val => val.type === 'update').merge(forceValidate$);
         let setError$ = validateRequest$
             .mergeMap((val) => Rx.Observable.from(this.validations).filter((rule) => {
-                return rule.func(rule, val.value) !== true
+                return rule.func.call(this,rule, val.value) !== true
             }).take(1).defaultIfEmpty(null))
         setError$.subscribe((rule, val) => {
             this.updateProps(rule ? false : true, 'valid');
@@ -182,7 +182,7 @@ export default class RXFormElement extends Component {
             // .do(value=>console.log(value, 'activeCheck'))
             .mergeMap(value => {
                 return Rx.Observable.from(this.activeRules).filter(rule => {
-                    return rule.func({value: valueIndex[rule.element]}, rule) !== true
+                    return rule.func.call(this,{value: valueIndex[rule.element]}, rule) !== true
                 }).mapTo(false).defaultIfEmpty(true)
             })
             .subscribe(e => {

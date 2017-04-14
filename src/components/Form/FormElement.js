@@ -82,7 +82,7 @@ let getRuleValue = function(item){
     return  {
         type:item.expr,
         value:item.value,
-        func:validatorMap[item.expr],
+        func:item.expr === 'function' ? item.func : validatorMap[item.expr],
         message:item.message || item.expr
     }
 }
@@ -97,7 +97,10 @@ class FormElement extends Component {
         this.state= {
             errors:[]
         }
-        this.validations = validations;
+        this.validations = validations.map(function(rule, index){
+            return getRuleValue(rule);
+        });
+
     }
 
     subscribeToChange(){
@@ -157,8 +160,8 @@ class FormElement extends Component {
 
     validateValue(value){
         let name = this.props.name;
-        let errors = this.validations.filter(function(item){
-            return getRuleValue(item).func(item, value) === false;
+        let errors = this.validations.filter((item)=>{
+            return item.func.call(this,item, value) === false;
         })
         this.context.errorStore.set({[name]:errors})
         this.setState({errors:errors})
@@ -210,6 +213,10 @@ class FormElement extends Component {
     getErrors (){
         let errors = this.state && this.state.errors || [];
         return errors;
+    }
+
+    getSiblingValue(siblingName){
+        return this.context.valueStore.get(siblingName)
     }
 
 }
