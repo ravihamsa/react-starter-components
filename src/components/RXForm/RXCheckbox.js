@@ -14,7 +14,19 @@ export default class RXCheckbox extends RXFormElement {
         let restProps = this.getRestProps();
         delete restProps.label;
         restProps.checked = this.state.value === true;
+        restProps.className = (this.props.className || '') + ' form-check-input';
         return <input  {...restProps} onChange={this.onChange.bind(this)}/>
+    }
+
+    renderElementWithWrapper() {
+        let formClasses = this.getFormClasses();
+        let elementProps = this.context.elementPropIndex[this.props.name];
+        let error = this.state.error;
+        return <fieldset className={formClasses.join(' ')}>
+            <label className="element-label form-check-label">{this.renderElement()}{this.props.label}</label>
+            {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
+            {error ? <small className="text-danger">{error.message}</small> : '' }
+        </fieldset>
     }
 }
 
