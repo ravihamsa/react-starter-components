@@ -97,10 +97,7 @@ class FormElement extends Component {
         this.state= {
             errors:[]
         }
-        this.validations = validations.map(function(rule, index){
-            return getRuleValue(rule);
-        });
-
+        this.validations = validations;
     }
 
     subscribeToChange(){
@@ -161,7 +158,7 @@ class FormElement extends Component {
     validateValue(value){
         let name = this.props.name;
         let errors = this.validations.filter(function(item){
-            return item.func(item, value) === false;
+            return getRuleValue(item).func(item, value) === false;
         })
         this.context.errorStore.set({[name]:errors})
         this.setState({errors:errors})
