@@ -246,4 +246,10 @@ class SmartWrapper extends Component {
 
 }
 
+export class NoLoadingSmartWrapper extends SmartWrapper {
+    render(){
+        return this.renderChildren();
+    }
+}
+
 export default SmartWrapper;

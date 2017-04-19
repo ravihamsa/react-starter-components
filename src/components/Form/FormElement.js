@@ -7,62 +7,62 @@ import Rx from 'rxjs';
 
 
 let validatorMap = {
-    'req': function(rule, value) {
+    'req': function (rule, value) {
         return !_.isEmpty(value);
     },
-    'selReq': function(rule, value){
+    'selReq': function (rule, value) {
         return value !== '-1';
     },
-    'digits': function(rule, value) {
+    'digits': function (rule, value) {
         return (/^\d{5}$/).test(value);
     },
-    'alphanumeric': function(rule, value) {
+    'alphanumeric': function (rule, value) {
         var ck_alphaNumeric = /^\w+$/;
         return ck_alphaNumeric.test(value);
     },
-    'number': function(rule, value) {
+    'number': function (rule, value) {
         if (value === undefined) {
             return true;
         }
         var numberVal = +value;
         return numberVal === numberVal;
     },
-    'email': function(rule, value) {
+    'email': function (rule, value) {
         var ck_email = /^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-\\+]+)*@[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-\+]+)*(\.[A-Za-z]{2,})$/i;
         return ck_email.test($.trim(value));
     },
-    'minlen': function(rule, value) {
+    'minlen': function (rule, value) {
         var min = rule.length;
         return $.trim(String(value)).length >= min;
     },
-    'maxlen': function(rule, value) {
+    'maxlen': function (rule, value) {
         var max = rule.length;
         return $.trim(String(value)).length <= max;
     },
-    'lt': function(rule, value) {
+    'lt': function (rule, value) {
         var target = parseFloat(rule.value);
         var curvalue = parseFloat(value);
         return curvalue < target;
     },
-    'gt': function(rule, value) {
+    'gt': function (rule, value) {
         var target = parseFloat(rule.value);
         var curvalue = parseFloat(value);
         return curvalue > target;
     },
-    'eq': function(rule, value) {
+    'eq': function (rule, value) {
         return rule.value === value;
     },
-    'neq': function(rule, value) {
+    'neq': function (rule, value) {
         return rule.value !== value;
     },
-    'url': function(rule, value) {
+    'url': function (rule, value) {
         if (value === '') {
             return true;
         }
         var ck_url = /(http|https|market):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i;
         return ck_url.test($.trim(value));
     },
-    'emaillist': function(rule, value) {
+    'emaillist': function (rule, value) {
         var emails = value.split(',');
         var ck_email = /^([\w\-]+(?:\.[\w\-]+)*)@((?:[\w\-]+\.)*\w[\w\-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
         for (var i = 0; i < emails.length; i++) {
@@ -72,75 +72,98 @@ let validatorMap = {
         }
         return true;
     },
-    'function': function(rule, value) {
+    'function': function (rule, value) {
         var func = rule.func;
         return func.call(this, value, rule);
     }
 }
 
-let getRuleValue = function(item){
-    return  {
-        type:item.expr,
-        value:item.value,
-        func:item.expr === 'function' ? item.func : validatorMap[item.expr],
-        message:item.message || item.expr
+let getRuleValue = function (item) {
+    return {
+        type: item.expr,
+        value: item.value,
+        element: item.element,
+        func: item.expr === 'function' ? item.func : validatorMap[item.expr],
+        message: item.message || item.expr
     }
 }
 
 class FormElement extends Component {
 
-    constructor(){
+    constructor() {
         super(...arguments);
-        let validations = this.props.validations || [];
+        let {validations = []} = this.props
         this.change$ = new Rx.Subject();
         this._changing = false;
-        this.state= {
-            errors:[]
+        this.state = {
+            errors: []
         }
-        this.validations = validations.map(function(rule, index){
+        this.validations = _.filter(validations, item => item.element === undefined).map(function (rule, index) {
             return getRuleValue(rule);
         });
 
+        this.siblingValidations = _.filter(validations, item => item.element !== undefined).map(function (rule, index) {
+            return getRuleValue(rule);
+        });
     }
 
-    subscribeToChange(){
+    setState(arg1, arg2){
+        if(this.props.name === 'stateIds'){
+            console.log(arg1, arg2, 'stateIds')
+        }
+        super.setState(arg1, arg2);
+    }
+
+    subscribeToChange() {
         let debounceTime = this.props.debounceTime;
-        if(debounceTime !==undefined){
-            this.changeSubscription = this.change$.debounceTime(debounceTime).subscribe((value)=>{
+        if (debounceTime !== undefined) {
+            this.changeSubscription = this.change$.debounceTime(debounceTime).subscribe((value) => {
                 this.updateValueStore(value);
                 this._changing = false;
             })
-        }else{
-            this.changeSubscription = this.change$.subscribe((value)=>this.updateValueStore(value))
+        } else {
+            this.changeSubscription = this.change$.subscribe((value) => this.updateValueStore(value))
         }
 
     }
+
+    subscribeToValidation() {
+        let siblingsToBeValidated = this.siblingValidations;
+        if (siblingsToBeValidated.length === 0) {
+            return;
+        }
+        let self = this;
+        this.validationSubscription = this.context.valueStore.on('change', (changed, fullObject) => {
+            self.validateSiblingsOnChange(changed);
+        })
+    }
+
 
     onChange(event) {
         this.setValue(this.getValueFromNode(event.target));
     }
 
-    setValue(value, skipValidate){
+    setValue(value, skipValidate) {
         let name = this.props.name;
         let toSet = {[name]: value};
 
-        if(this.props.options){
+        if (this.props.options) {
             var multiSelect = this.multiSelect;
-            var selectedOption =  multiSelect ? _.filter(this.props.options,(item)=> value.indexOf(item.id)>-1) : this.props.options.find((item)=> item.id===value);
+            var selectedOption = multiSelect ? _.filter(this.props.options, (item) => value.indexOf(item.id) > -1) : this.props.options.find((item) => item.id === value);
             this.context.valueDetailStore.set({[name]: selectedOption});
-            if(this.props.exposeSelection){
+            if (this.props.exposeSelection) {
                 toSet[name + '_selection'] = selectedOption
             }
-            if(this.props.exposeName && selectedOption){
+            if (this.props.exposeName && selectedOption) {
                 toSet[name + '_name'] = multiSelect ? _.map(selectedOption, 'name') : selectedOption.name
             }
         }
 
-        if(value === null){
-            if(this.props.exposeSelection){
+        if (value === null) {
+            if (this.props.exposeSelection) {
                 toSet[name + '_selection'] = undefined
             }
-            if(this.props.exposeName){
+            if (this.props.exposeName) {
                 toSet[name + '_name'] = undefined
             }
         }
@@ -148,74 +171,109 @@ class FormElement extends Component {
         // this.context.valueStore.set(toSet);
         this._changing = true;
         this.change$.next(toSet);
-        if(skipValidate !== true){
+        if (skipValidate !== true) {
             this.validateValue(value);
         }
-        this.setState({defaultValue:value})
+        this.setState({defaultValue: value})
     }
 
-    updateValueStore(toSet){
+    updateValueStore(toSet) {
         this.context.valueStore.set(toSet);
     }
 
-    validateValue(value){
-        let name = this.props.name;
-        let errors = this.validations.filter((item)=>{
-            return item.func.call(this,item, value) === false;
-        })
-        this.context.errorStore.set({[name]:errors})
-        this.setState({errors:errors})
+    validateSiblingsOnChange(changed){
+        let errors = this.state.errors;
+        if (errors && errors.length > 0) {
+            return;
+        }
+        let toValidateIds = this.siblingValidations.map((item) => item.element);
+        let changedKey = _.keys(changed)[0];
+        if (toValidateIds.indexOf(changedKey) > -1) {
+            let errors = this.siblingValidations.filter((item) => {
+                return item.element === changedKey && item.func.call(this, item, changed[changedKey]) === false;
+            })
+            this.context.errorStore.set({[changedKey]: errors})
+            this.setState({errors: errors})
+        }
     }
 
-    getValueFromNode(node){
+    validateSiblings(){
+        let changedKey = this.props.name;
+        let toValidateIds = this.siblingValidations.map((item) => item.element);
+        let valueStore =  this.context.valueStore;
+        let errors = this.siblingValidations.filter((item) => {
+            return item.func.call(this, item, valueStore.get(item.element)) === false;
+        })
+        this.context.errorStore.set({[changedKey]: errors})
+        this.setState({errors: errors})
+    }
+
+    validateValue(value) {
+        let name = this.props.name;
+        let errors = this.validations.filter((item) => {
+            return item.func.call(this, item, value) === false;
+        })
+        this.context.errorStore.set({[name]: errors})
+        this.setState({errors: errors})
+        if(errors.length === 0){
+            this.validateSiblings();
+        }
+    }
+
+    getValueFromNode(node) {
         return node.value;
     }
 
-    componentWillMount(){
+    componentWillMount() {
         let self = this;
         let name = self.props.name;
         let valueStoreValue = this.context.valueStore.get(this.props.name);
-        if(valueStoreValue === undefined){
+        if (valueStoreValue === undefined) {
             self.context.valueStore.set({[name]: self.props.defaultValue})
         }
-        self.context.elementIndex[name]=self;
-        this.unsubscribeErrorStore = this.context.errorStore.on('forceValidate', function(){
+        self.context.elementIndex[name] = self;
+        this.unsubscribeErrorStore = this.context.errorStore.on('forceValidate', function () {
             self.validateValue(self.context.valueStore.get(name));
         })
         this.subscribeToChange();
+        this.subscribeToValidation();
     }
 
-    componentWillUnmount(){
-        if(this.unsubscribeErrorStore){
+    componentWillUnmount() {
+        if (this.unsubscribeErrorStore) {
             this.unsubscribeErrorStore();
         }
-        if(this.changeSubscription){
+        if (this.validationSubscription) {
+            this.validationSubscription();
+        }
+        if (this.changeSubscription) {
             this.changeSubscription.unsubscribe()
         }
     }
 
-    getDefaultValue(){
-        return this._changing ?  this.state.defaultValue : this.context.valueStore.get(this.props.name);
+    getDefaultValue() {
+        return this._changing ? this.state.defaultValue : this.context.valueStore.get(this.props.name);
     }
 
-    getFormClasses(){
+    getFormClasses() {
         let classArray = ['form-group'];
         classArray.push('element')
-        classArray.push('element-type-'+this.props.type);
-        classArray.push('element-'+this.props.name);
+        classArray.push('element-type-' + this.props.type);
+        classArray.push('element-' + this.props.name);
         let errors = this.getErrors();
-        if(errors.length > 0){
+        if (errors.length > 0) {
             classArray.push('has-error');
         }
         return classArray.join(' ')
     }
 
-    getErrors (){
+    getErrors() {
+        console.log(this.state.errors, this.props.name);
         let errors = this.state && this.state.errors || [];
         return errors;
     }
 
-    getSiblingValue(siblingName){
+    getSiblingValue(siblingName) {
         return this.context.valueStore.get(siblingName)
     }
 
@@ -232,20 +290,20 @@ FormElement.propTypes = {
     type: PropTypes.string.isRequired,
     placeholder: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
-    defaultValue:PropTypes.string,
-    options:PropTypes.array,
-    exposeSelection:PropTypes.bool,
-    exposeName:PropTypes.bool,
-    showLabel:PropTypes.bool.isRequired
+    defaultValue: PropTypes.string,
+    options: PropTypes.array,
+    exposeSelection: PropTypes.bool,
+    exposeName: PropTypes.bool,
+    showLabel: PropTypes.bool.isRequired
 }
 
 FormElement.defaultProps = {
     type: 'text',
     placeholder: 'Enter Text',
     label: 'Text Input',
-    showLabel:true,
-    exposeSelection:false,
-    exposeName:false,
+    showLabel: true,
+    exposeSelection: false,
+    exposeName: false,
 }
 
 
