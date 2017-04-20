@@ -268,7 +268,6 @@ class FormElement extends Component {
     }
 
     getErrors() {
-        console.log(this.state.errors, this.props.name);
         let errors = this.state && this.state.errors || [];
         return errors;
     }
