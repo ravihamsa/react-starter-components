@@ -43,9 +43,12 @@ class DatePicker extends FormElement {
             {this.props.showLabel ? <label className="element-label">{this.props.label}</label> : null}
             <InlinePopup>
                    <InlineButton>
-                       <input type={this.props.type} className="form-control" name={this.props.name}
-                              placeholder={this.props.placeholder} onChange={this.onChange.bind(this)} value={displayValue}
-                              readOnly="true" ref="inputField"/>
+                       <div>
+                           <input type={this.props.type} className="form-control" name={this.props.name}
+                                  placeholder={this.props.placeholder} onChange={this.onChange.bind(this)} value={displayValue}
+                                  readOnly="true" ref="inputField"/>
+                           <span className="calendar icon"></span>
+                       </div>
                    </InlineButton>
                     <InlineBody>
                         <Month onDateSelect={this.onDateSelect.bind(this)} selectedDate={defaultValue}></Month>
