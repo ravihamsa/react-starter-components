@@ -121,7 +121,21 @@ class DataLoader {
         return response;
     }
 
-    _getFetchPromise(config, payload,requestId,requestHash) {
+    _getXHRPromise(url, opts={}, onProgress){
+        return new Promise( (res, rej)=>{
+            var xhr = new XMLHttpRequest();
+            xhr.open(opts.method, url);
+            for (var k in opts.headers||{})
+                xhr.setRequestHeader(k, opts.headers[k]);
+            xhr.onload = e => res(e.target.responseText);
+            xhr.onerror = rej;
+            if (xhr.upload && onProgress)
+                xhr.upload.onprogress = onProgress; // event.loaded / event.total * 100 ; //event.lengthComputable
+            xhr.send(opts.body);
+        });
+    }
+
+    _getFetchPromise(config, payload,requestId,requestHash, onProgress) {
         let self = this;
         let {url, method, queue, cache, paramParser} = config;
         method = method.toLowerCase();
@@ -147,7 +161,7 @@ class DataLoader {
         url = self.generateGetUrl(url, payLoadToServer)
         if (method === 'post' || method === 'put' || method === 'patch') {
             requestConfig.body = JSON.stringify(payLoadToServer)
-        }else if(method==='form_post'){
+        }else if(method==='form_post' || method==='upload'){
             var data = new FormData()
             for(var i in payLoadToServer){
                 data.append(i, payLoadToServer[i])
@@ -155,10 +169,18 @@ class DataLoader {
             requestConfig.body = data
             requestConfig.method = 'POST';
             delete requestConfig.headers['Content-Type'];
+
+
         }
 
         return new Promise((resolve, reject) => {
-            var fetchPromise = fetch(url, requestConfig);
+            var fetchPromise;
+            if(method === 'upload'){
+                fetchPromise = this._getXHRPromise(url, requestConfig, onProgress);
+            }else{
+                fetchPromise = fetch(url, requestConfig);
+            }
+
             fetchPromise
                 .then(function (response) {
                     if (!response.ok) {
@@ -193,7 +215,7 @@ class DataLoader {
         })
     }
 
-    getRequestDef(requestId, payload) {
+    getRequestDef(requestId, payload, onProgress) {
         var config = this._resourceConfigIndex[requestId];
         var self = this;
 
@@ -219,7 +241,7 @@ class DataLoader {
                     return queuePromise;
                 }
 
-                let fetchPromise = this._getFetchPromise(config, payload, requestId, requestHash);
+                let fetchPromise = this._getFetchPromise(config, payload, requestId, requestHash, onProgress);
                 if (queue !== 'none') {
                     self._requestQue[requestHash] = fetchPromise;
                     fetchPromise.finally(() => {
