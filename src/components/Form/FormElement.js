@@ -182,10 +182,6 @@ class FormElement extends Component {
     }
 
     validateSiblingsOnChange(changed){
-        let errors = this.state.errors;
-        if (errors && errors.length > 0) {
-            return;
-        }
         let toValidateIds = this.siblingValidations.map((item) => item.element);
         let changedKey = _.keys(changed)[0];
         if (toValidateIds.indexOf(changedKey) > -1) {
@@ -193,13 +189,12 @@ class FormElement extends Component {
                 return item.element === changedKey && item.func.call(this, item, changed[changedKey]) === false;
             })
             this.context.errorStore.set({[changedKey]: errors})
-            this.setState({errors: errors})
+            this.setState({siblingErrors: errors})
         }
     }
 
     validateSiblings(){
         let changedKey = this.props.name;
-        let toValidateIds = this.siblingValidations.map((item) => item.element);
         let valueStore =  this.context.valueStore;
         let errors = this.siblingValidations.filter((item) => {
             return item.func.call(this, item, valueStore.get(item.element)) === false;
@@ -268,9 +263,9 @@ class FormElement extends Component {
     }
 
     getErrors() {
-        console.log(this.state.errors, this.props.name);
         let errors = this.state && this.state.errors || [];
-        return errors;
+        let siblingErrors = this.state && this.state.siblingErrors || [];
+        return errors.concat(siblingErrors);
     }
 
     getSiblingValue(siblingName) {
