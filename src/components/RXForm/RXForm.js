@@ -115,6 +115,16 @@ export default class RXForm extends Component {
         }
     }
 
+    setElementProp(elementName, prop, value){
+        this.communication$.next({field:elementName, type:'elementProp', prop:prop, value:value});
+    }
+
+    setElementProps(map){
+        for(var elementName in map){
+            this.setElementValue(elementName, map[elementName].prop, map[elementName].value);
+        }
+    }
+
 
     onSubmitHandler(e) {
         e.preventDefault();

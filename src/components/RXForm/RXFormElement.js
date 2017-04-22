@@ -133,6 +133,11 @@ export default class RXFormElement extends Component {
         setSibling$.subscribe((val) => {
             this.applyValue(val.value);
         })
+
+        let setSiblingProp$ = this.context.communication$.filter(val => val.type === 'elementProp' && val.field === this.props.name);
+        setSiblingProp$.subscribe((val) => {
+            this.updateProps(val.value, val.prop);
+        })
     }
 
     addServerValidationListeners() {
