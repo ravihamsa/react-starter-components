@@ -127,7 +127,9 @@ class DataLoader {
             xhr.open(opts.method, url);
             for (var k in opts.headers||{})
                 xhr.setRequestHeader(k, opts.headers[k]);
-            xhr.onload = e => res(e.target.responseText);
+            xhr.onload = e => {
+                return res({ok:true, json:()=>JSON.parse(e.target.responseText)})
+            };
             xhr.onerror = rej;
             if (xhr.upload && onProgress)
                 xhr.upload.onprogress = onProgress; // event.loaded / event.total * 100 ; //event.lengthComputable
