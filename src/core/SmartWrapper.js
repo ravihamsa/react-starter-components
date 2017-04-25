@@ -130,9 +130,9 @@ class SmartWrapper extends Component {
         return dataLoader.getRequestDef(requestId, payload);
     }
 
-    _addRequest(requestId, payload, handlers) {
+    _addRequest(requestId, payload, handlers, onProgress) {
         let self = this;
-        let def = dataLoader.getRequestDef(requestId, payload);
+        let def = dataLoader.getRequestDef(requestId, payload, onProgress);
         def.done(self.wrapCallBack(handlers.done))
         def.catch(self.wrapCallBack(handlers.catch))
         def.finally(self.wrapCallBack(function () {
@@ -182,12 +182,12 @@ class SmartWrapper extends Component {
         })
     }
 
-    addRequest(propName, requestId, payload) {
+    addRequest(propName, requestId, payload, onProgress) {
         delete this.dataIndex.errors;
         return this._addRequest(requestId, payload, {
             done: (data)=>this.dataIndex[propName] = data,
             catch: (error)=>this.dataIndex['errors'] = error
-        })
+        },onProgress)
     }
 
     addStateRequest(stateName, requestId, payload, defaultValue) {

@@ -51,7 +51,7 @@ class DatePicker extends FormElement {
                        </div>
                    </InlineButton>
                     <InlineBody>
-                        <Month onDateSelect={this.onDateSelect.bind(this)} selectedDate={defaultValue}></Month>
+                        <Month onDateSelect={this.onDateSelect.bind(this)} selectedDate={defaultValue} displayDate={defaultValue}></Month>
                     </InlineBody>
             </InlinePopup>
             {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }

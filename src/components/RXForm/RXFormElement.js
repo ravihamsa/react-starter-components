@@ -13,7 +13,7 @@ let getValidationRule = function (item) {
         type: item.expr,
         value: item.value,
         length: item.length,
-        func:item.expr === 'function' ? item.func : validatorMap[item.expr],
+        func: item.expr === 'function' ? item.func : validatorMap[item.expr],
         message: item.message || item.expr
     }
 }
@@ -24,7 +24,17 @@ let getActiveRule = (item) => {
         element: item.element,
         prop: item.prop || 'update',
         value: item.value,
-        func:item.expr === 'function' ? item.func : activeRulesMap[item.expr]
+        func: item.expr === 'function' ? item.func : activeRulesMap[item.expr]
+    }
+}
+
+let getPropRule = (item) => {
+    return {
+        type: item.expr,
+        element: item.element,
+        prop: item.prop,
+        value: item.value,
+        func: item.expr === 'function' ? item.func : activeRulesMap[item.expr]
     }
 }
 
@@ -40,7 +50,7 @@ export default class RXFormElement extends Component {
 
     constructor(props) {
         super(props);
-        let {debounceTime, validations, activeRules} = this.props;
+        let {debounceTime, validations, activeRules, propRules} = this.props;
         this.props$ = new Rx.Subject();
         this.talkToForm$ = new Rx.Subject();
         this.value$ = new Rx.Subject().debounceTime(debounceTime);
@@ -50,6 +60,7 @@ export default class RXFormElement extends Component {
         this._value = this.props.value;
         this.validations = validations.map(rule => getValidationRule(rule));
         this.activeRules = activeRules.map(rule => getActiveRule(rule));
+        this.propRules = propRules.map(rule => getPropRule(rule));
     }
 
     getPropToStateList() {
@@ -57,20 +68,20 @@ export default class RXFormElement extends Component {
     }
 
 
-    applyValue(value){
+    applyValue(value) {
         this.updateValue(value, 'update');
     }
 
-/*    componentWillReceiveProps(newProps) {
-        _.each(this.getPropToStateList(), (prop) => {
-            if (newProps[prop]) {
-                if (prop === 'value') {
-                    this.applyValue(newProps[prop])
-                }
-                this.updateProps(newProps[prop], prop)
-            }
-        })
-    }*/
+    /*    componentWillReceiveProps(newProps) {
+     _.each(this.getPropToStateList(), (prop) => {
+     if (newProps[prop]) {
+     if (prop === 'value') {
+     this.applyValue(newProps[prop])
+     }
+     this.updateProps(newProps[prop], prop)
+     }
+     })
+     }*/
 
     componentWillMount() {
 
@@ -98,6 +109,7 @@ export default class RXFormElement extends Component {
         this.addValidationListeners()
         this.addServerValidationListeners()
         this.addActiveListeners()
+        this.addPropListeners();
         this.addCommunicationListeners();
         this.propChangeListeners()
         this.updateProps(null, 'register');
@@ -133,6 +145,11 @@ export default class RXFormElement extends Component {
         setSibling$.subscribe((val) => {
             this.applyValue(val.value);
         })
+
+        let setSiblingProp$ = this.context.communication$.filter(val => val.type === 'elementProp' && val.field === this.props.name);
+        setSiblingProp$.subscribe((val) => {
+            this.updateProps(val.value, val.prop);
+        })
     }
 
     addServerValidationListeners() {
@@ -159,7 +176,7 @@ export default class RXFormElement extends Component {
         let validateRequest$ = this.value$.filter(val => val.type === 'update').merge(forceValidate$);
         let setError$ = validateRequest$
             .mergeMap((val) => Rx.Observable.from(this.validations).filter((rule) => {
-                return rule.func.call(this,rule, val.value) !== true
+                return rule.func.call(this, rule, val.value) !== true
             }).take(1).defaultIfEmpty(null))
         setError$.subscribe((rule, val) => {
             this.updateProps(rule ? false : true, 'valid');
@@ -182,11 +199,39 @@ export default class RXFormElement extends Component {
             // .do(value=>console.log(value, 'activeCheck'))
             .mergeMap(value => {
                 return Rx.Observable.from(this.activeRules).filter(rule => {
-                    return rule.func.call(this,{value: valueIndex[rule.element]}, rule) !== true
+                    return rule.func.call(this, {value: valueIndex[rule.element]}, rule) !== true
                 }).mapTo(false).defaultIfEmpty(true)
             })
             .subscribe(e => {
                 this.updateProps(e, 'active')
+            })
+    }
+
+    addPropListeners() {
+
+        let elementName = this.props.name;
+        let {propRules} = this;
+        if (propRules.length === 0) {
+            return;
+        }
+
+        let elementsToWatchForActive = _.map(propRules, 'element');
+        let valueChange$ = this.context.elementValue$;
+        let valueIndex = this.context.elementValueIndex;
+        valueChange$
+            .filter(value => value.field !== elementName && value.type === 'update' && elementsToWatchForActive.indexOf(value.field) > -1)
+            // .do(value=>console.log(value, 'activeCheck'))
+            .mergeMap(value => {
+                return Rx.Observable.from(propRules).filter(rule => {
+                    return rule.func.call(this, {value: valueIndex[rule.element]}, rule) !== true
+                }).defaultIfEmpty(false)
+            })
+            .subscribe(e => {
+                if(e === false){
+                    this.updateProps(false, 'disabled')
+                }else{
+                    this.updateProps(false, 'disabled')
+                }
             })
     }
 
@@ -297,5 +342,7 @@ RXFormElement.defaultProps = {
     error: null,
     validations: [],
     activeRules: [],
+    propRules: [],
     serverValidation: null
 }
+
