@@ -8,6 +8,8 @@ import validatorMap from './validationRules';
 import activeRulesMap from './activeRules';
 import dataLoader from '../../core/dataLoader';
 
+let defaultPropReturnFunction = _.identity;
+
 let getValidationRule = function (item) {
     return {
         type: item.expr,
@@ -34,6 +36,7 @@ let getPropRule = (item) => {
         element: item.element,
         prop: item.prop,
         value: item.value,
+        valueFunc:item.valueFunc || defaultPropReturnFunction,
         func: item.expr === 'function' ? item.func : activeRulesMap[item.expr]
     }
 }
@@ -215,23 +218,24 @@ export default class RXFormElement extends Component {
             return;
         }
 
+        let groupedPropRules = _.groupBy(propRules, (e)=>e.prop);
+
+
         let elementsToWatchForActive = _.map(propRules, 'element');
         let valueChange$ = this.context.elementValue$;
         let valueIndex = this.context.elementValueIndex;
+
         valueChange$
             .filter(value => value.field !== elementName && value.type === 'update' && elementsToWatchForActive.indexOf(value.field) > -1)
             // .do(value=>console.log(value, 'activeCheck'))
-            .mergeMap(value => {
-                return Rx.Observable.from(propRules).filter(rule => {
-                    return rule.func.call(this, {value: valueIndex[rule.element]}, rule) !== true
-                }).defaultIfEmpty(false)
-            })
-            .subscribe(e => {
-                if(e === false){
-                    this.updateProps(false, 'disabled')
-                }else{
-                    this.updateProps(false, 'disabled')
-                }
+            .subscribe(value=>{
+                _.each(groupedPropRules, (rules, prop)=>{
+                    let propValue =   _.reduce(rules, (memo, rule)=>{
+                        return !memo && rule.func.call(this, {value: valueIndex[rule.element]}, rule) === true
+                    }, false)
+                    this.updateProps(this.props.getPropValue(prop,propValue), prop)
+                })
+
             })
     }
 
@@ -343,6 +347,7 @@ RXFormElement.defaultProps = {
     validations: [],
     activeRules: [],
     propRules: [],
+    getPropValue:(prop, value)=>value,
     serverValidation: null
 }
 
