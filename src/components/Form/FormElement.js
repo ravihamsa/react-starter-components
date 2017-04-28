@@ -88,11 +88,22 @@ let getRuleValue = function (item) {
     }
 }
 
+let getPropRule = (item) => {
+    return {
+        type: item.expr,
+        element: item.element,
+        prop: item.prop,
+        value: item.value,
+        valueFunc:item.valueFunc || _.identity,
+        func: item.expr === 'function' ? item.func : activeRulesMap[item.expr]
+    }
+}
+
 class FormElement extends Component {
 
     constructor() {
         super(...arguments);
-        let {validations = []} = this.props
+        let {validations = [], propRules=[]} = this.props
         this.change$ = new Rx.Subject();
         this._changing = false;
         this.state = {
@@ -103,6 +114,10 @@ class FormElement extends Component {
         });
 
         this.siblingValidations = _.filter(validations, item => item.element !== undefined).map(function (rule, index) {
+            return getRuleValue(rule);
+        });
+
+        this.propRules = propRules.map(function (rule, index) {
             return getRuleValue(rule);
         });
     }
@@ -135,6 +150,7 @@ class FormElement extends Component {
         let self = this;
         this.validationSubscription = this.context.valueStore.on('change', (changed, fullObject) => {
             self.validateSiblingsOnChange(changed);
+            self.handlePropRules(changed, fullObject);
         })
     }
 
@@ -190,6 +206,17 @@ class FormElement extends Component {
             })
             this.context.errorStore.set({[changedKey]: errors})
             this.setState({siblingErrors: errors})
+        }
+    }
+
+    handlePropRules(changed, fullObjecdt){
+        let toValidateIds = this.propRules.map((item) => item.element);
+        let changedKey = _.keys(changed)[0];
+        if (toValidateIds.indexOf(changedKey) > -1) {
+            let propValue =   _.reduce(this.propRules, (memo, rule)=>{
+                return !memo && rule.func.call(this, {value: fullObjecdt[rule.element]}, rule) === true
+            }, false)
+            console.log(propValue);
         }
     }
 
@@ -258,6 +285,9 @@ class FormElement extends Component {
         let errors = this.getErrors();
         if (errors.length > 0) {
             classArray.push('has-error');
+        }
+        if(this.props.disabled){
+            classArray.push('disabled')
         }
         return classArray.join(' ')
     }
