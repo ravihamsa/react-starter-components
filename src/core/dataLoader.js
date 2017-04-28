@@ -193,7 +193,14 @@ class DataLoader {
                     return response;
                 })
                 .then(function (response) {
-                    return response.json();
+                    let json ={data:{}}; //gracefully handling exception when response is empty, and sending empty object
+                    try{
+                        json = response.json();
+                    }
+                    catch(e){
+                        console.warn(e);
+                    }
+                    return json;
                 })
                 .then(function (body) {
                     let parsedResponse = self._responseParser(body);
