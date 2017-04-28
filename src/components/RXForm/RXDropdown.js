@@ -99,7 +99,7 @@ export default class RXDropdown extends RXSelectionElement {
         })
 
 
-        return <InlinePopup ref="inlinePopup">
+        return <InlinePopup ref="inlinePopup" disabled={this.props.disabled}>
             <InlineButton>
                 {this.renderButton()}
             </InlineButton>

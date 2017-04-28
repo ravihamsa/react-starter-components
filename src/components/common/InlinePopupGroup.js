@@ -61,7 +61,9 @@ class InlinePopup extends Component {
     }
 
     togglePopup() {
-        this.state.open ? this.closePopup() : this.openPopup();
+        if(!this.props.disabled){
+            this.state.open ? this.closePopup() : this.openPopup();
+        }
     }
 
     itemClick() {
@@ -184,6 +186,10 @@ class InlineBody extends Component {
 InlineBody.defaultProps = {
     valign: 'bottom',
     halign: 'left'
+}
+
+InlinePopup.defaultProps = {
+    disabled:false
 }
 
 export default {

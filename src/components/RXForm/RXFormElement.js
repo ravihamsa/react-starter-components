@@ -271,6 +271,9 @@ export default class RXFormElement extends Component {
         if (this.state.errors) {
             classArray.push('has-error');
         }
+        if(this.props.disabled){
+            classArray.push('disabled')
+        }
         return classArray;
     }
 
