@@ -296,7 +296,7 @@ export default class RXFormElement extends Component {
     renderElementWithWrapper() {
         let formClasses = this.getFormClasses();
         let elementProps = this.context.elementPropIndex[this.props.name];
-        let error = this.state.error;
+        let error = this.state.error || this.state.serverError;
         return <fieldset className={formClasses.join(' ')}>
             {this.props.showLabel ? <label className="element-label">{this.props.label}</label> : null}
             {this.renderElement()}
