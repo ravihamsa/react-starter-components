@@ -167,6 +167,7 @@ export default class RXFormElement extends Component {
             }).combineLatest().defaultIfEmpty(null)
             setError$.subscribe((resp) => {
                 this.updateProps(resp[0], 'error')
+                this.updateProps(resp[0] ? false : true, 'serverValid');
             }, (resp) => {
                 this.updateProps(resp[0], 'error')
             });
@@ -329,6 +330,7 @@ RXFormElement.propTypes = {
     active: PropTypes.bool.isRequired,
     disabled: PropTypes.bool.isRequired,
     valid: PropTypes.bool.isRequired,
+    serverValid: PropTypes.bool.isRequired,
     error: PropTypes.object,
     debounceTime: PropTypes.number.isRequired,
     validations: PropTypes.array,
@@ -345,6 +347,7 @@ RXFormElement.defaultProps = {
     active: true,
     disabled: false,
     valid: true,
+    serverValid: true,
     debounceTime: 0,
     error: null,
     validations: [],

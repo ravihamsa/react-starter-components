@@ -57,12 +57,19 @@ export default class SelectionFormElement  extends FormElement {
 
     selectById(value) {
         let options = this.props.options;
+        let {selectionManager} = this;
         let toSelectItem = _.find(options, (item) => item.id === value);
         if (toSelectItem) {
             if (this.multiSelect) {
-                this.selectionManager.toggle(toSelectItem)
+                selectionManager.toggle(toSelectItem)
             } else {
-                this.selectionManager.select(toSelectItem)
+                let isAlreadySelected = selectionManager.isSelected(toSelectItem);
+                if(!isAlreadySelected){
+                    selectionManager.select(toSelectItem)
+                }else{
+                    selectionManager.trigger('change', toSelectItem, toSelectItem);
+                }
+
             }
         }
     }

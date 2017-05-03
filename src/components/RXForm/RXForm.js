@@ -84,7 +84,7 @@ export default class RXForm extends Component {
             let propObject = this.elementPropIndex[elementName];
             if (propObject.active) {
                 this.communication$.next({field: elementName, type: 'validate', value: this.valueIndex[elementName]});
-                if (propObject.valid) {
+                if (propObject.valid && propObject.serverValid) {
                     valueObj[elementName] = this.valueIndex[elementName];
                     if(propObject.exposeName){
                         valueObj[elementName+'_name'] = this.valueIndex[elementName+'_name'];
