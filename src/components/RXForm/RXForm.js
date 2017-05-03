@@ -93,7 +93,7 @@ export default class RXForm extends Component {
                         valueObj[elementName+'_selection'] = this.valueIndex[elementName+'_selection'];
                     }
                 } else {
-                    let error = propObject.error;
+                    let error = propObject.error || propObject.serverError;
                     errors.push([{field: elementName, type: error.type, message: error.message}])
                 }
             }

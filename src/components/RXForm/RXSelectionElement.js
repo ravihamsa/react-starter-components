@@ -48,7 +48,7 @@ export default class RXSelectionElement extends RXFormElement {
     }
 
     getPropToStateList(){
-        return ['active', 'error', 'disabled', 'valid', '__shadowValue', 'value', 'type', 'exposeName', 'exposeSelection']
+        return ['active', 'error', 'disabled', 'valid', '__shadowValue', 'value', 'type', 'exposeName', 'exposeSelection', 'serverValid', 'serverError']
     }
 
     applyValue(value = '') {
@@ -173,7 +173,7 @@ export default class RXSelectionElement extends RXFormElement {
         let formClasses = this.getFormClasses();
         formClasses.push(this.props.multiSelect === true ? 'multi-select' : 'single-select');
         let elementProps = this.context.elementPropIndex[this.props.name];
-        let error = this.state.error;
+        let error = this.state.error || this.state.serverError;
         return <fieldset className={formClasses.join(' ')}>
             {this.props.showLabel ? <label className="element-label">{this.props.label}</label> : null}
             {this.renderElement()}

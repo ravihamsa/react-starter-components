@@ -67,7 +67,7 @@ export default class RXFormElement extends Component {
     }
 
     getPropToStateList() {
-        return ['active', 'error', 'disabled', 'valid', 'value', 'type']
+        return ['active', 'error', 'disabled', 'valid', 'value', 'type', 'serverValid', 'serverError']
     }
 
 
@@ -166,10 +166,11 @@ export default class RXFormElement extends Component {
                 return Rx.Observable.fromPromise(dataLoader.getRequestDef(serverValidation.requestId, serverValidation.getParams(val, this.context.elementValueIndex)))
             }).combineLatest().defaultIfEmpty(null)
             setError$.subscribe((resp) => {
-                this.updateProps(resp[0], 'error')
+                this.updateProps(resp[0], 'serverError')
                 this.updateProps(resp[0] ? false : true, 'serverValid');
             }, (resp) => {
-                this.updateProps(resp[0], 'error')
+                this.updateProps(resp[0], 'serverError')
+                this.updateProps(resp[0] ? false : true, 'serverValid');
             });
         }
 
@@ -295,7 +296,7 @@ export default class RXFormElement extends Component {
     renderElementWithWrapper() {
         let formClasses = this.getFormClasses();
         let elementProps = this.context.elementPropIndex[this.props.name];
-        let error = this.state.error;
+        let error = this.state.error || this.state.serverError;
         return <fieldset className={formClasses.join(' ')}>
             {this.props.showLabel ? <label className="element-label">{this.props.label}</label> : null}
             {this.renderElement()}
@@ -350,6 +351,7 @@ RXFormElement.defaultProps = {
     serverValid: true,
     debounceTime: 0,
     error: null,
+    serverError: null,
     validations: [],
     activeRules: [],
     propRules: [],
