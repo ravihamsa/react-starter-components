@@ -48,7 +48,7 @@ export default class RXSelectionElement extends RXFormElement {
     }
 
     getPropToStateList(){
-        return ['active', 'error', 'disabled', 'valid', '__shadowValue', 'value', 'type', 'exposeName', 'exposeSelection']
+        return ['active', 'error', 'disabled', 'valid', '__shadowValue', 'value', 'type', 'exposeName', 'exposeSelection', 'serverValid', 'serverError']
     }
 
     applyValue(value = '') {
