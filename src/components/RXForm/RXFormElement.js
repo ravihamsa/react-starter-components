@@ -53,7 +53,7 @@ export default class RXFormElement extends Component {
 
     constructor(props) {
         super(props);
-        let {debounceTime, validations, activeRules, propRules} = this.props;
+        let {debounceTime=0, validations, activeRules, propRules} = this.props;
         this.props$ = new Rx.Subject();
         this.talkToForm$ = new Rx.Subject();
         this.value$ = new Rx.Subject().debounceTime(debounceTime);
@@ -158,7 +158,8 @@ export default class RXFormElement extends Component {
     addServerValidationListeners() {
 
         if (this.props.serverValidation) {
-            let validateRequest$ = this.value$.filter(val => val.type === 'update')
+            let forceServerValidation$ = this.context.communication$.filter(val => val.type === 'elementServerValidation' && val.field === this.props.name);
+            let validateRequest$ = this.value$.filter(val => val.type === 'update').merge(forceServerValidation$)
                 .debounceTime(400)
                 .filter(() => this.state.valid);
             let serverValidation = getServerValidationRule(this.props.serverValidation);
@@ -259,7 +260,7 @@ export default class RXFormElement extends Component {
     }
 
     getRestProps() {
-        let props = _.omit(this.state, 'showLabel', 'debounceTime', 'options', 'helperText', 'active', 'error', 'validations', 'activeRules', 'valid', 'serverValidation', '__shadowValue', 'register', 'exposeName', 'exposeSelection');
+        let props = _.omit(this.state, 'showLabel', 'debounceTime', 'options', 'helperText', 'active', 'error', 'validations', 'activeRules', 'valid', 'serverValidation', '__shadowValue', 'register', 'exposeName', 'exposeSelection', 'serverValid', 'serverError');
         props.ref = 'inputElement';
         props.className = (props.className || '') + ' ' + 'form-control';
         return props;

@@ -32,6 +32,10 @@ class DatePicker extends FormElement {
 
     }
 
+    getDefaultValue() {
+        return this._changing ? (this.state.defaultValue) : (this.context.valueStore.get(this.props.name)||moment().format(inputFormat));
+    }
+
     render() {
 
         let defaultValue = this.getDefaultValue()
@@ -51,7 +55,7 @@ class DatePicker extends FormElement {
                        </div>
                    </InlineButton>
                     <InlineBody>
-                        <Month onDateSelect={this.onDateSelect.bind(this)} selectedDate={defaultValue} displayDate={defaultValue}></Month>
+                        <Month onDateSelect={this.onDateSelect.bind(this)} selectedDate={defaultValue} displayDate={defaultValue} minDate={this.props.minDate} maxDate={this.props.maxDate}></Month>
                     </InlineBody>
             </InlinePopup>
             {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
@@ -66,5 +70,7 @@ export default DatePicker;
 DatePicker.defaultProps = {
     ...FormElement.defaultProps,
     type:'date-picker',
-    displayFormat:'DD/MM/YYYY'
+    displayFormat:inputFormat,
+    minDate:moment().format(inputFormat),
+    maxDate:moment().add(10,'years').format(inputFormat)
 }
