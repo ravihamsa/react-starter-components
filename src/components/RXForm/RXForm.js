@@ -119,6 +119,10 @@ export default class RXForm extends Component {
         this.communication$.next({field:elementName, type:'elementProp', prop:prop, value:value});
     }
 
+    forceElementServerValidation(elementName){
+        this.communication$.next({field:elementName, type:'elementServerValidation', value:this.valueIndex[elementName]});
+    }
+
     setElementProps(map){
         for(var elementName in map){
             this.setElementValue(elementName, map[elementName].prop, map[elementName].value);
