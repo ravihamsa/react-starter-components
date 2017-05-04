@@ -260,7 +260,7 @@ export default class RXFormElement extends Component {
     }
 
     getRestProps() {
-        let props = _.omit(this.state, 'showLabel', 'debounceTime', 'options', 'helperText', 'active', 'error', 'validations', 'activeRules', 'valid', 'serverValidation', '__shadowValue', 'register', 'exposeName', 'exposeSelection');
+        let props = _.omit(this.state, 'showLabel', 'debounceTime', 'options', 'helperText', 'active', 'error', 'validations', 'activeRules', 'valid', 'serverValidation', '__shadowValue', 'register', 'exposeName', 'exposeSelection', 'serverValid', 'serverError');
         props.ref = 'inputElement';
         props.className = (props.className || '') + ' ' + 'form-control';
         return props;
