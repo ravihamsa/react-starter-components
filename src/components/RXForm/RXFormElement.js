@@ -67,7 +67,7 @@ export default class RXFormElement extends Component {
     }
 
     getPropToStateList() {
-        return ['active', 'error', 'disabled', 'valid', 'value', 'type', 'serverValid', 'serverError']
+        return ['active', 'error', 'disabled', 'valid', 'value', 'type', 'serverValid', 'serverError', 'placeholder']
     }
 
 
