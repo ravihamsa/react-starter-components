@@ -55,9 +55,9 @@ export default class RXFormElement extends Component {
         super(props);
         let {debounceTime=0, validations, activeRules, propRules} = this.props;
         this.props$ = new Rx.Subject();
-        this.talkToForm$ = new Rx.Subject();
+        // this.talkToForm$ = new Rx.Subject();
         this.value$ = new Rx.Subject().debounceTime(debounceTime);
-        this.selection$ = new Rx.Subject();
+        // this.selection$ = new Rx.Subject();
         this.state = _.pick(this.props, this.getPropToStateList());
         this.state.__shadowValue = this.props.value;
         this._value = this.props.value;
@@ -67,7 +67,7 @@ export default class RXFormElement extends Component {
     }
 
     getPropToStateList() {
-        return ['active', 'error', 'disabled', 'valid', 'value', 'type', 'serverValid', 'serverError']
+        return ['active', 'error', 'disabled', 'valid', 'value', 'type', 'serverValid', 'serverError', 'placeholder']
     }
 
 
@@ -94,14 +94,6 @@ export default class RXFormElement extends Component {
                 return a.value === b.value
             });
         }).subscribe(value => this.context.elementProps$.next(value))
-
-        this.selection$.groupBy(x => x.type + '--' + x.field).flatMap(group => {
-            return group.distinctUntilChanged((a, b) => {
-                return a.value === b.value
-            });
-        }).subscribe(value => {
-            return this.context.elementValue$.next(value)
-        });
 
         this.value$.distinctUntilChanged((a, b) => {
             return a.value === b.value
