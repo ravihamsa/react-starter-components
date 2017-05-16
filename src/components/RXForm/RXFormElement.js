@@ -45,7 +45,7 @@ let getServerValidationRule = function (rule) {
     return {
         requestId: rule.requestId,
         getParams: rule.getParams || _.identity,
-        validateRequest: rule.validateRequest || _.identity
+        validateRequest: rule.validateRequest || function() {return true}
     }
 }
 
@@ -157,7 +157,7 @@ export default class RXFormElement extends Component {
     }
 
     addServerValidationListeners() {
-        
+
         if (this.props.serverValidation) {
             let forceServerValidation$ = this.context.communication$.filter(val => val.type === 'elementServerValidation' && val.field === this.props.name);
             let serverValidation = getServerValidationRule(this.props.serverValidation);
