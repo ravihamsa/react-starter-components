@@ -10,6 +10,8 @@ import dataLoader from '../../core/dataLoader';
 
 let defaultPropReturnFunction = _.identity;
 
+let returnTrueFunction = function() {return true};
+
 let getValidationRule = function (item) {
     return {
         type: item.expr,
@@ -44,7 +46,8 @@ let getPropRule = (item) => {
 let getServerValidationRule = function (rule) {
     return {
         requestId: rule.requestId,
-        getParams: rule.getParams || _.identity
+        getParams: rule.getParams || _.identity,
+        validateRequest: rule.validateRequest || returnTrueFunction
     }
 }
 
@@ -151,10 +154,13 @@ export default class RXFormElement extends Component {
 
         if (this.props.serverValidation) {
             let forceServerValidation$ = this.context.communication$.filter(val => val.type === 'elementServerValidation' && val.field === this.props.name);
+            let serverValidation = getServerValidationRule(this.props.serverValidation);
             let validateRequest$ = this.value$.filter(val => val.type === 'update').merge(forceServerValidation$)
                 .debounceTime(400)
-                .filter(() => this.state.valid);
-            let serverValidation = getServerValidationRule(this.props.serverValidation);
+                .filter(() => this.state.valid)
+                .filter((val) => {
+                    return serverValidation.validateRequest(val, this.context.elementValueIndex)
+                });
             let setError$ = validateRequest$.flatMap((val) => {
                 return Rx.Observable.fromPromise(dataLoader.getRequestDef(serverValidation.requestId, serverValidation.getParams(val, this.context.elementValueIndex)))
             }).combineLatest().defaultIfEmpty(null)
