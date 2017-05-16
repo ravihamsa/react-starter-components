@@ -10,6 +10,8 @@ import dataLoader from '../../core/dataLoader';
 
 let defaultPropReturnFunction = _.identity;
 
+let returnTrueFunction = function() {return true};
+
 let getValidationRule = function (item) {
     return {
         type: item.expr,
@@ -45,7 +47,7 @@ let getServerValidationRule = function (rule) {
     return {
         requestId: rule.requestId,
         getParams: rule.getParams || _.identity,
-        validateRequest: rule.validateRequest || function() {return true}
+        validateRequest: rule.validateRequest || returnTrueFunction
     }
 }
 
