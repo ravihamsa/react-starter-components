@@ -10,6 +10,8 @@ import dataLoader from '../../core/dataLoader';
 
 let defaultPropReturnFunction = _.identity;
 
+let returnTrueFunction = function() {return true};
+
 let getValidationRule = function (item) {
     return {
         type: item.expr,
@@ -44,7 +46,8 @@ let getPropRule = (item) => {
 let getServerValidationRule = function (rule) {
     return {
         requestId: rule.requestId,
-        getParams: rule.getParams || _.identity
+        getParams: rule.getParams || _.identity,
+        validateRequest: rule.validateRequest || returnTrueFunction
     }
 }
 
@@ -55,9 +58,9 @@ export default class RXFormElement extends Component {
         super(props);
         let {debounceTime=0, validations, activeRules, propRules} = this.props;
         this.props$ = new Rx.Subject();
-        this.talkToForm$ = new Rx.Subject();
+        // this.talkToForm$ = new Rx.Subject();
         this.value$ = new Rx.Subject().debounceTime(debounceTime);
-        this.selection$ = new Rx.Subject();
+        // this.selection$ = new Rx.Subject();
         this.state = _.pick(this.props, this.getPropToStateList());
         this.state.__shadowValue = this.props.value;
         this._value = this.props.value;
@@ -67,7 +70,7 @@ export default class RXFormElement extends Component {
     }
 
     getPropToStateList() {
-        return ['active', 'error', 'disabled', 'valid', 'value', 'type', 'serverValid', 'serverError']
+        return ['active', 'error', 'disabled', 'valid', 'value', 'type', 'serverValid', 'serverError', 'placeholder']
     }
 
 
@@ -94,14 +97,6 @@ export default class RXFormElement extends Component {
                 return a.value === b.value
             });
         }).subscribe(value => this.context.elementProps$.next(value))
-
-        this.selection$.groupBy(x => x.type + '--' + x.field).flatMap(group => {
-            return group.distinctUntilChanged((a, b) => {
-                return a.value === b.value
-            });
-        }).subscribe(value => {
-            return this.context.elementValue$.next(value)
-        });
 
         this.value$.distinctUntilChanged((a, b) => {
             return a.value === b.value
@@ -159,10 +154,13 @@ export default class RXFormElement extends Component {
 
         if (this.props.serverValidation) {
             let forceServerValidation$ = this.context.communication$.filter(val => val.type === 'elementServerValidation' && val.field === this.props.name);
+            let serverValidation = getServerValidationRule(this.props.serverValidation);
             let validateRequest$ = this.value$.filter(val => val.type === 'update').merge(forceServerValidation$)
                 .debounceTime(400)
-                .filter(() => this.state.valid);
-            let serverValidation = getServerValidationRule(this.props.serverValidation);
+                .filter(() => this.state.valid)
+                .filter((val) => {
+                    return serverValidation.validateRequest(val, this.context.elementValueIndex)
+                });
             let setError$ = validateRequest$.flatMap((val) => {
                 return Rx.Observable.fromPromise(dataLoader.getRequestDef(serverValidation.requestId, serverValidation.getParams(val, this.context.elementValueIndex)))
             }).combineLatest().defaultIfEmpty(null)

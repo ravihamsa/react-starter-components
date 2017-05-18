@@ -139,18 +139,24 @@ export default class List extends Component {
         return _.pick(this.props, 'className', 'style')
     }
 
+    getItems(){
+        return this.props.items || [];
+    }
+
+    getItemClass(item){
+        return this.props.ListItem || ListItem;
+    }
+
     render() {
         var self = this;
-        var itemArray = self.props.items || [];
-
-
-        var ListItemClass = self.props.ListItem || ListItem;
+        var itemArray = this.getItems();
 
         var otherProps = _.omit(this.props, 'className', 'style', 'tagName', 'noDataMessage', 'ListItem', 'itemClassName', 'itemTagName');
         otherProps.tagName = this.props.itemTagName || 'li';
         otherProps.className = this.props.itemClassName || 'list-item';
 
-        var listItems = itemArray.map(function (item, index) {
+        var listItems = itemArray.map( (item, index)=>{
+            var ListItemClass = this.getItemClass(item);
             return <ListItemClass key={item.id} itemIndex={index} itemData={item} {...otherProps}/>
         });
 
