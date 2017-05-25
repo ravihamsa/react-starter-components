@@ -114,7 +114,7 @@ export default class Dropdown extends SelectionFormElement {
         let options = this.props.options;
         let ListItem = this.props.ListItem || SelectableListItem;
         let placeholder = this.props.placeholder || "Please Enter Text";
-
+        let {valign="top"} = this.props;
 
         let filteredOptions = _.filter(options, (item) => {
             return item.name.toLowerCase().indexOf(this.state.query.toLowerCase()) > -1;
@@ -132,9 +132,9 @@ export default class Dropdown extends SelectionFormElement {
                     <InlineButton>
                         {this.renderButton()}
                     </InlineButton>
-                    <InlineBody>
+                    <InlineBody valign={valign} className="inline-popup-body-fullwidth">
                         <div className="drop-down-body">
-                            {this.props.showSearch ? <input type="text" autoFocus defaultValue={this.state.query} ref="searchBox" onChange={this.onKeyPressHandler} className="drop-down-input" placeholder={placeholder}/> : null}
+                            {this.props.showSearch ? <div className="drop-down-search-container"><input type="text" autoFocus defaultValue={this.state.query} ref="searchBox" onChange={this.onKeyPressHandler} className="drop-down-input" placeholder={placeholder}/> </div>: null}
                             <div onClick={this.clickHandler.bind(this)}>
                                 <List ListItem={ListItem}
                                       className={this.multiSelect ? 'multi-select list' : 'single-select list'}

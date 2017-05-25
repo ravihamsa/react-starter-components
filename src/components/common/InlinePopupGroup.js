@@ -153,6 +153,7 @@ class InlineBody extends Component {
     }
 
     componentDidUpdate() {
+        let {className=''} = this.props;
         if (this.props.isOpen) {
             this.updatePortalElementPosition();
             let style = {position: 'absolute'};
@@ -175,7 +176,7 @@ class InlineBody extends Component {
                     style.top = -(buttonBounds.height);
                     break;
             }
-            ReactDOM.render(<div className="inline-popup-body"
+            ReactDOM.render(<div className={className + " inline-popup-body"}
                                  style={style}>{React.cloneElement(this.props.children, {closePopup: this.props.closePopup})}</div>, this.portalElement);
         } else {
             ReactDOM.render(<div></div>, this.portalElement);
