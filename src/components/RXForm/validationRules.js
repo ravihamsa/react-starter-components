@@ -54,7 +54,7 @@ export default {
         if (value === '') {
             return true;
         }
-        var ck_url = /(http|https|market):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i;
+        var ck_url = /^(http|https|market):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/i;
         return ck_url.test(value.trim());
     },
     'emaillist': function(rule, value) {
