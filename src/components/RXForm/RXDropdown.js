@@ -105,11 +105,11 @@ export default class RXDropdown extends RXSelectionElement {
             </InlineButton>
             <InlineBody valign={valign} className="inline-popup-body-fullwidth">
                 <div className="drop-down-body">
-                    <div className="drop-down-search-container">
+                    {this.props.showSearch ? <div className="drop-down-search-container">
                         <input type="text" autoFocus defaultValue={this.state.query} ref="searchBox"
                            onChange={this.onKeyPressHandler} className="drop-down-input"
                            placeholder={this.props.placeholder}/>
-                    </div>
+                    </div>:null}
                     <div onClick={this.onClickHandler.bind(this)} ref="listRoot">
                         <List items={filteredOptions} selectionManager={this.selectionManager}
                               selection={this.state.value} ListItem={RXDropdownItem}/>
