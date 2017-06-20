@@ -24,7 +24,8 @@ export default class RXForm extends Component {
         let selection$ = this.elementValue$.filter(e => e.type === 'selection');
         let name$ = this.elementValue$.filter(e => e.type === 'name');
         let register$ = this.elementProps$.filter(e => e.type === 'register');
-        let other$ = this.elementProps$.filter(e => e.type !== 'register');
+        let clear$ = this.elementProps$.filter(e => e.type === 'clear');
+        let other$ = this.elementProps$.filter(e => e.type !== 'register' && e.type !== 'clear');
         let shadowValue$ = this.elementProps$.filter(e => e.type !== '__shadowValue');
         //&& e.type !== '__shadowValue'
 
@@ -50,6 +51,10 @@ export default class RXForm extends Component {
             this.propChangeHandler(val);
         })
 
+        clear$.subscribe(val=>{
+            delete this.valueIndex[val.field]
+            this.valueChangeHandler({[val.field]: val.value}, this.valueIndex);
+        })
         // selection$.subscribe(e => console.log(e))
     }
 

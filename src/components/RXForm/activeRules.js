@@ -15,7 +15,7 @@ export default {
         return value.value;
     },
     'contains': function(value, rule){
-        return rule.value.indexOf(value) !== -1;
+        return rule.value.indexOf(value.value) !== -1;
     },
     'function': function(value, rule) {
         var func = rule.func;

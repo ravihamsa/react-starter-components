@@ -93,7 +93,12 @@ export default class RXSelectionElement extends RXFormElement {
         let toSelectItem = _.find(options, (item) => item.id === id);
         if(toSelectItem){
             this.selectionManager[method](toSelectItem);
+        }else{
+            if(!this.multiSelect){
+                this.selectionManager.clear();
+            }
         }
+
     }
 
     getFormattedSelection() {
