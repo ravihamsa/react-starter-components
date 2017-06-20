@@ -258,6 +258,7 @@ export default class RXFormElement extends Component {
     }
 
     updateValue(value, type) {
+        this._value = value;
         this.value$.next({field: this.props.name, type: type, value: value});
         this.updateProps(value, 'value');
     }
