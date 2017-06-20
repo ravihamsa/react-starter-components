@@ -97,26 +97,67 @@ class PopupButton extends Component {
 }
 
 class PopupBody extends Component {
+
+    componentDidMount() {
+        let p = this.portalElement;
+        if (!p) {
+            p = document.createElement('div');
+            document.body.appendChild(p);
+            this.portalElement = p;
+        }
+        this.componentDidUpdate();
+    }
+
+    updatePortalElementPosition(){
+        let p = this.portalElement;
+        if(!p){
+            return;
+        }
+        let style = {position: 'absolute', left:0, top:0, width:'100%', height:'100%', backgroundColor:'rgba(0,0,0,0.5)', zIndex:99};
+        for (var i in style) {
+            p.style[i] = style[i];
+        }
+    }
+
+    hidePortalElement(){
+        let p = this.portalElement;
+        if(!p){
+            return;
+        }
+        let style = {position: 'absolute', left:0, top:0, width:0, height:0, backgroundColor:'rgba(0,0,0,0)', zIndex:99};
+        for (var i in style) {
+            p.style[i] = style[i];
+        }
+    }
+
+    componentWillReceiveProps() {
+        this.componentDidUpdate();
+    }
+
+    componentWillUnmount() {
+        document.body.removeChild(this.portalElement);
+    }
+
     maskClick(){
         if(this.props.isModal){
             this.props.closePopup();
         }
     }
 
-    render() {
-
-        let className=this.props.className || 'default'
-
-        if(this.props.isOpen){
-            return <div style={popupContainerStyles} className={"popup-container " + className}>
-                <div style={maskStyles} onClick={this.maskClick.bind(this)} className={"popup-mask " + className} >
-                </div>
-                <div
-                    style={bodyStyles} className={"popup-body " + className}> { React.cloneElement(this.props.children, {closePopup: this.props.closePopup}) }</div>
-            </div>
-        }else{
-            return <span></span>
+    componentDidUpdate() {
+        let {className = ''} = this.props;
+        if (this.props.isOpen) {
+            this.updatePortalElementPosition();
+            ReactDOM.render(<div className={className}
+                                 style={bodyStyles}>{React.cloneElement(this.props.children, {closePopup: this.props.closePopup})}</div>, this.portalElement);
+        } else {
+            this.hidePortalElement();
+            ReactDOM.render(<div className="dummy-container"></div>, this.portalElement);
         }
+    }
+
+    render() {
+        return <div className="popop-body"></div>;
     }
 }
 
