@@ -2,8 +2,8 @@
  * Created by ravi.hamsa on 3/26/17.
  */
 import React, {PropTypes, Component} from "react";
-import Rx from 'rxjs';
-import _ from 'lodash';
+import {Rx} from '../../core/rxutils'
+import {_} from '../../core/utils'
 import validatorMap from './validationRules';
 import activeRulesMap from './activeRules';
 import dataLoader from '../../core/dataLoader';
@@ -93,7 +93,7 @@ export default class RXFormElement extends Component {
     componentWillMount() {
 
         let groupedProps$ = this.props$.groupBy(x => x.type + '--' + x.field);
-        groupedProps$.flatMap(group => {
+        groupedProps$.mergeMap(group => {
             return group.distinctUntilChanged((a, b) => {
                 return a.value === b.value
             });
@@ -168,7 +168,7 @@ export default class RXFormElement extends Component {
                 .filter((val) => {
                     return serverValidation.validateRequest(val, this.context.elementValueIndex)
                 });
-            let setError$ = validateRequest$.flatMap((val) => {
+            let setError$ = validateRequest$.mergeMap((val) => {
                 return Rx.Observable.fromPromise(dataLoader.getRequestDef(serverValidation.requestId, serverValidation.getParams(val, this.context.elementValueIndex)))
             }).combineLatest().defaultIfEmpty(null)
             setError$.takeUntil(this.unmount$).subscribe((resp) => {

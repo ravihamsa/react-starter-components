@@ -4,7 +4,7 @@
 import SimpleEmitter from './SimpleEmitter';
 import {Record, List} from 'immutable';
 import {getUniqueId} from './utils';
-import _ from 'lodash';
+import {_} from '../core/util'
 
 
 const update = (name, valueMap) => {

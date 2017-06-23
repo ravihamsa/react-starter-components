@@ -3,7 +3,23 @@
  */
 
 import React from "react";
-import _ from 'lodash';
+import has from 'lodash/has';
+import map from 'lodash/map';
+import each from 'lodash/each';
+import filter from 'lodash/filter';
+import pick from 'lodash/pick';
+import difference from 'lodash/difference';
+import omit from 'lodash/omit';
+
+export const _  = {
+    has:has,
+    map:map,
+    each:each,
+    filter:filter,
+    pick:pick,
+    omit:omit,
+    difference:difference
+}
 
 const identity = function(arg1){
     return arg1;

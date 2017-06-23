@@ -2,8 +2,8 @@
  * Created by ravi.hamsa on 6/29/16.
  */
 import React, {PropTypes, Component} from "react";
-import _ from 'lodash';
-import Rx from 'rxjs';
+import {_} from '../../core/utils'
+import {Rx} from '../../core/rxutils'
 
 
 let validatorMap = {

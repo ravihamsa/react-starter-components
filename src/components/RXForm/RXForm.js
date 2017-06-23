@@ -2,7 +2,9 @@
  * Created by ravi.hamsa on 3/26/17.
  */
 import React, {PropTypes, Component} from "react";
-import Rx from 'rxjs';
+import {Rx} from '../../core/rxutils'
+
+console.log(Rx);
 
 let ensurePropertyIndex = (obj, prop) => {
     obj[prop] = obj[prop] || {};
