@@ -2,7 +2,9 @@
  * Created by ravi.hamsa on 3/26/17.
  */
 import React, {PropTypes, Component} from "react";
-import Rx from 'rxjs';
+import {Rx} from '../../core/rxutils'
+
+console.log(Rx);
 
 let ensurePropertyIndex = (obj, prop) => {
     obj[prop] = obj[prop] || {};
@@ -24,7 +26,8 @@ export default class RXForm extends Component {
         let selection$ = this.elementValue$.filter(e => e.type === 'selection');
         let name$ = this.elementValue$.filter(e => e.type === 'name');
         let register$ = this.elementProps$.filter(e => e.type === 'register');
-        let other$ = this.elementProps$.filter(e => e.type !== 'register');
+        let clear$ = this.elementProps$.filter(e => e.type === 'clear');
+        let other$ = this.elementProps$.filter(e => e.type !== 'register' && e.type !== 'clear');
         let shadowValue$ = this.elementProps$.filter(e => e.type !== '__shadowValue');
         //&& e.type !== '__shadowValue'
 
@@ -50,6 +53,10 @@ export default class RXForm extends Component {
             this.propChangeHandler(val);
         })
 
+        clear$.subscribe(val => {
+            delete this.valueIndex[val.field]
+            this.valueChangeHandler({[val.field]: val.value}, this.valueIndex);
+        })
         // selection$.subscribe(e => console.log(e))
     }
 
@@ -86,11 +93,11 @@ export default class RXForm extends Component {
                 this.communication$.next({field: elementName, type: 'validate', value: this.valueIndex[elementName]});
                 if (propObject.valid && propObject.serverValid) {
                     valueObj[elementName] = this.valueIndex[elementName];
-                    if(propObject.exposeName){
-                        valueObj[elementName+'_name'] = this.valueIndex[elementName+'_name'];
+                    if (propObject.exposeName) {
+                        valueObj[elementName + '_name'] = this.valueIndex[elementName + '_name'];
                     }
-                    if(propObject.exposeSelection){
-                        valueObj[elementName+'_selection'] = this.valueIndex[elementName+'_selection'];
+                    if (propObject.exposeSelection) {
+                        valueObj[elementName + '_selection'] = this.valueIndex[elementName + '_selection'];
                     }
                 } else {
                     let error = propObject.error || propObject.serverError;
@@ -105,26 +112,36 @@ export default class RXForm extends Component {
 
     }
 
-    setElementValue(elementName, value){
-        this.communication$.next({field:elementName, type:'elementValue', value:value});
+    setElementValue(elementName, value) {
+        this.communication$.next({field: elementName, type: 'elementValue', value: value});
     }
 
-    setElementValues(map){
-        for(var elementName in map){
+    setElementValues(map) {
+        for (var elementName in map) {
             this.setElementValue(elementName, map[elementName]);
         }
     }
 
-    setElementProp(elementName, prop, value){
-        this.communication$.next({field:elementName, type:'elementProp', prop:prop, value:value});
+    setElementProp(elementName, prop, value) {
+        this.communication$.next({field: elementName, type: 'elementProp', prop: prop, value: value});
     }
 
-    forceElementServerValidation(elementName){
-        this.communication$.next({field:elementName, type:'elementServerValidation', value:this.valueIndex[elementName]});
+    setElementProps(map) {
+        for (var elementName in map) {
+            this.setElementProp(elementName, map[elementName].prop, map[elementName].value);
+        }
     }
 
-    setElementProps(map){
-        for(var elementName in map){
+    forceElementServerValidation(elementName) {
+        this.communication$.next({
+            field: elementName,
+            type: 'elementServerValidation',
+            value: this.valueIndex[elementName]
+        });
+    }
+
+    setElementProps(map) {
+        for (var elementName in map) {
             this.setElementValue(elementName, map[elementName].prop, map[elementName].value);
         }
     }

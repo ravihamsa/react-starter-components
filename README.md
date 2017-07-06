@@ -14,7 +14,7 @@ Use yoeman generator https://www.npmjs.com/package/generator-react-starter-app
 # usage
 
 ```js
-import {core,components} from 'react-starter-components';
+import {SmartWrapper, RXForm} from 'react-starter-components';
 
 ```
 

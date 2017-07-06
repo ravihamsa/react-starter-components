@@ -3,7 +3,7 @@
  */
 import RXFormElement from './RXFormElement'
 import ReactDOM from 'react-dom';
-import _ from 'lodash'
+import {_} from '../../core/utils'
 
 export default class RXCheckboxList extends RXFormElement {
     /*readInputValue(){

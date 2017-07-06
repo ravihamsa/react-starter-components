@@ -4,7 +4,7 @@
 
 import Promise from 'bluebird';
 import fetch from './fetch';
-import _ from 'lodash';
+import {_} from '../core/utils'
 
 class DataLoader {
     constructor() {

@@ -2,7 +2,7 @@
  * Created by ravi.hamsa on 10/22/16.
  */
 import React, {Component, PropTypes} from "react";
-import _ from 'lodash'
+import {_} from '../../core/utils'
 export default class ActionLink extends Component {
 
     onClick(event){

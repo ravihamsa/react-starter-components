@@ -5,7 +5,7 @@
 import React, {Component, PropTypes} from 'react';
 import moment from 'moment';
 import List from '../../common/List'
-import _ from 'lodash';
+import {_} from '../../../core/utils'
 
 const DATE_FORMAT = 'DD/MM/YYYY';
 

@@ -2,8 +2,8 @@
  * Created by ravi.hamsa on 3/26/17.
  */
 import React, {PropTypes, Component} from "react";
-import Rx from 'rxjs';
-import _ from 'lodash';
+import {Rx} from '../../core/rxutils'
+import {_} from '../../core/utils'
 import validatorMap from './validationRules';
 import activeRulesMap from './activeRules';
 import dataLoader from '../../core/dataLoader';
@@ -38,7 +38,7 @@ let getPropRule = (item) => {
         element: item.element,
         prop: item.prop,
         value: item.value,
-        valueFunc:item.valueFunc || defaultPropReturnFunction,
+        valueFunc: item.valueFunc || defaultPropReturnFunction,
         func: item.expr === 'function' ? item.func : activeRulesMap[item.expr]
     }
 }
@@ -56,8 +56,9 @@ export default class RXFormElement extends Component {
 
     constructor(props) {
         super(props);
-        let {debounceTime=0, validations, activeRules, propRules} = this.props;
+        let {debounceTime = 0, validations, activeRules, propRules} = this.props;
         this.props$ = new Rx.Subject();
+        this.unmount$ = new Rx.Subject();
         // this.talkToForm$ = new Rx.Subject();
         this.value$ = new Rx.Subject().debounceTime(debounceTime);
         // this.selection$ = new Rx.Subject();
@@ -92,15 +93,15 @@ export default class RXFormElement extends Component {
     componentWillMount() {
 
         let groupedProps$ = this.props$.groupBy(x => x.type + '--' + x.field);
-        groupedProps$.flatMap(group => {
+        groupedProps$.mergeMap(group => {
             return group.distinctUntilChanged((a, b) => {
                 return a.value === b.value
             });
-        }).subscribe(value => this.context.elementProps$.next(value))
+        }).takeUntil(this.unmount$).subscribe(value => this.context.elementProps$.next(value))
 
         this.value$.distinctUntilChanged((a, b) => {
             return a.value === b.value
-        }).subscribe(value => {
+        }).takeUntil(this.unmount$).subscribe(value => {
             return this.context.elementValue$.next(value)
         });
 
@@ -115,6 +116,12 @@ export default class RXFormElement extends Component {
         _.each(this.getPropToStateList(), (prop) => {
             this.updateProps(this.state[prop], prop)
         })
+
+    }
+
+    componentWillUnmount() {
+        this.updateProps(null, 'clear');
+        this.unmount$.next();
     }
 
     readInputValue() {
@@ -133,19 +140,19 @@ export default class RXFormElement extends Component {
 
     propChangeListeners() {
         let propChange$ = this.context.elementProps$.filter(e => e.field === this.props.name);
-        propChange$.subscribe(e => {
+        propChange$.takeUntil(this.unmount$).subscribe(e => {
             this.setState(this.context.elementPropIndex[this.props.name])
         });
     }
 
     addCommunicationListeners() {
         let setSibling$ = this.context.communication$.filter(val => val.type === 'elementValue' && val.field === this.props.name);
-        setSibling$.subscribe((val) => {
+        setSibling$.takeUntil(this.unmount$).subscribe((val) => {
             this.applyValue(val.value);
         })
 
         let setSiblingProp$ = this.context.communication$.filter(val => val.type === 'elementProp' && val.field === this.props.name);
-        setSiblingProp$.subscribe((val) => {
+        setSiblingProp$.takeUntil(this.unmount$).subscribe((val) => {
             this.updateProps(val.value, val.prop);
         })
     }
@@ -161,10 +168,10 @@ export default class RXFormElement extends Component {
                 .filter((val) => {
                     return serverValidation.validateRequest(val, this.context.elementValueIndex)
                 });
-            let setError$ = validateRequest$.flatMap((val) => {
+            let setError$ = validateRequest$.mergeMap((val) => {
                 return Rx.Observable.fromPromise(dataLoader.getRequestDef(serverValidation.requestId, serverValidation.getParams(val, this.context.elementValueIndex)))
             }).combineLatest().defaultIfEmpty(null)
-            setError$.subscribe((resp) => {
+            setError$.takeUntil(this.unmount$).subscribe((resp) => {
                 this.updateProps(resp[0], 'serverError')
                 this.updateProps(resp[0] ? false : true, 'serverValid');
             }, (resp) => {
@@ -182,7 +189,7 @@ export default class RXFormElement extends Component {
             .mergeMap((val) => Rx.Observable.from(this.validations).filter((rule) => {
                 return rule.func.call(this, rule, val.value) !== true
             }).take(1).defaultIfEmpty(null))
-        setError$.subscribe((rule, val) => {
+        setError$.takeUntil(this.unmount$).subscribe((rule, val) => {
             this.updateProps(rule ? false : true, 'valid');
             this.updateProps(rule, 'error')
         });
@@ -206,6 +213,7 @@ export default class RXFormElement extends Component {
                     return rule.func.call(this, {value: valueIndex[rule.element]}, rule) !== true
                 }).mapTo(false).defaultIfEmpty(true)
             })
+            .takeUntil(this.unmount$)
             .subscribe(e => {
                 this.updateProps(e, 'active')
             })
@@ -219,7 +227,7 @@ export default class RXFormElement extends Component {
             return;
         }
 
-        let groupedPropRules = _.groupBy(propRules, (e)=>e.prop);
+        let groupedPropRules = _.groupBy(propRules, (e) => e.prop);
 
 
         let elementsToWatchForActive = _.map(propRules, 'element');
@@ -229,12 +237,13 @@ export default class RXFormElement extends Component {
         valueChange$
             .filter(value => value.field !== elementName && value.type === 'update' && elementsToWatchForActive.indexOf(value.field) > -1)
             // .do(value=>console.log(value, 'activeCheck'))
-            .subscribe(value=>{
-                _.each(groupedPropRules, (rules, prop)=>{
-                    let propValue =   _.reduce(rules, (memo, rule)=>{
+            .takeUntil(this.unmount$)
+            .subscribe(value => {
+                _.each(groupedPropRules, (rules, prop) => {
+                    let propValue = _.reduce(rules, (memo, rule) => {
                         return !memo && rule.func.call(this, {value: valueIndex[rule.element]}, rule) === true
                     }, false)
-                    this.updateProps(this.props.getPropValue(prop,propValue), prop)
+                    this.updateProps(this.props.getPropValue(prop, propValue), prop)
                 })
 
             })
@@ -249,6 +258,7 @@ export default class RXFormElement extends Component {
     }
 
     updateValue(value, type) {
+        this._value = value;
         this.value$.next({field: this.props.name, type: type, value: value});
         this.updateProps(value, 'value');
     }
@@ -258,7 +268,7 @@ export default class RXFormElement extends Component {
     }
 
     getRestProps() {
-        let props = _.omit(this.state, 'showLabel', 'debounceTime', 'options', 'helperText', 'active', 'error', 'validations', 'activeRules', 'valid', 'serverValidation', '__shadowValue', 'register', 'exposeName', 'exposeSelection', 'serverValid', 'serverError');
+        let props = _.omit(this.state, 'showLabel', 'debounceTime', 'options', 'helperText', 'active', 'error', 'validations', 'activeRules', 'valid', 'serverValidation', '__shadowValue', 'register', 'clear',  'exposeName', 'exposeSelection', 'serverValid', 'serverError');
         props.ref = 'inputElement';
         props.className = (props.className || '') + ' ' + 'form-control';
         return props;
@@ -272,7 +282,7 @@ export default class RXFormElement extends Component {
         if (this.state.errors) {
             classArray.push('has-error');
         }
-        if(this.props.disabled){
+        if (this.props.disabled) {
             classArray.push('disabled')
         }
         return classArray;
@@ -291,6 +301,9 @@ export default class RXFormElement extends Component {
         this.context.communication$.next({field: siblingName, type: 'elementValue', value: value});
     }
 
+    getSiblingValue(siblingName){
+        return this.context.valueIndex[siblingName];
+    }
 
     renderElementWithWrapper() {
         let formClasses = this.getFormClasses();
@@ -354,7 +367,7 @@ RXFormElement.defaultProps = {
     validations: [],
     activeRules: [],
     propRules: [],
-    getPropValue:(prop, value)=>value,
+    getPropValue: (prop, value) => value,
     serverValidation: null
 }
 

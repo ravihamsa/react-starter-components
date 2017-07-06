@@ -2,7 +2,7 @@
  * Created by ravi.hamsa on 6/30/16.
  */
 import React, {Component, PropTypes} from "react";
-import _ from 'lodash';
+import {_} from '../../core/utils'
 
 export class ListItem extends Component {
     render() {

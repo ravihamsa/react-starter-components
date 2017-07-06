@@ -6,6 +6,9 @@ import Selection from 'selection-manager';
 import RXFormElement from './RXFormElement';
 import List from '../common/List'
 
+const returnTrue = function(){
+    return true;
+}
 
 export class RXSelectionItem extends Component {
 
@@ -42,6 +45,7 @@ export default class RXSelectionElement extends RXFormElement {
         super(props);
         this.multiSelect = props.multiSelect;
         this.selectionManager = new Selection({multiSelect: props.multiSelect});
+        this.validateSelection = props.validateSelection || returnTrue;
         this.applyValue(this.state.value)
         this._value = this.selectionManager.getSelected();
         this.changeSubscription = this.selectionManager.on('change', this.onChange.bind(this));
@@ -93,7 +97,12 @@ export default class RXSelectionElement extends RXFormElement {
         let toSelectItem = _.find(options, (item) => item.id === id);
         if(toSelectItem){
             this.selectionManager[method](toSelectItem);
+        }else{
+            if(!this.multiSelect){
+                this.selectionManager.clear();
+            }
         }
+
     }
 
     getFormattedSelection() {
@@ -144,6 +153,10 @@ export default class RXSelectionElement extends RXFormElement {
 
     }
 
+    getValue() {
+        return this.selectionManager.getSelected();
+    }
+
     onChange(e) {
         this.updateValue(this.getFormattedSelection(), 'update');
         this.exposeNameAndSelection();
@@ -153,6 +166,10 @@ export default class RXSelectionElement extends RXFormElement {
     onClickHandler(e) {
         let curElement = e.target;
         let listRoot = this.refs.listRoot;
+        if(this.props.disabled || !this.validateSelection()){
+            return;
+        }
+
         while (curElement !== listRoot && !curElement.classList.contains('list-item')) {
             curElement = curElement.parentNode;
         }

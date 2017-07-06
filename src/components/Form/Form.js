@@ -3,7 +3,7 @@
  */
 import React, {PropTypes, Component} from "react";
 import core from '../../core';
-import _ from 'lodash';
+import {_} from '../../core/utils'
 const {SimpleModel}=core;
 
 class Form extends Component {
