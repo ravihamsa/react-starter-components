@@ -9,6 +9,7 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/mapTo';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/take';

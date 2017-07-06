@@ -11,21 +11,38 @@ import pick from 'lodash/pick';
 import difference from 'lodash/difference';
 import omit from 'lodash/omit';
 import extend from 'lodash/extend';
-
+import flatten from 'lodash/flatten';
+import defaults from 'lodash/defaults';
+import values from 'lodash/values';
+import find from 'lodash/find';
+import reduce from 'lodash/reduce';
+import keys from 'lodash/keys';
+import debounce from 'lodash/debounce';
+import isEmpty from 'lodash/isEmpty';
+const identity = function(arg1){
+    return arg1;
+}
 export const _  = {
     has:has,
     map:map,
+    isEmpty:isEmpty,
+    reduce:reduce,
     each:each,
     filter:filter,
     pick:pick,
     omit:omit,
     extend:extend,
+    defaults:defaults,
+    flatten:flatten,
+    find:find,
+    keys:keys,
+    debounce:debounce,
+    identity:identity,
+    values:values,
     difference:difference
 }
 
-const identity = function(arg1){
-    return arg1;
-}
+
 
 const getUniqueId = (function(){
     var counter = 1000;
