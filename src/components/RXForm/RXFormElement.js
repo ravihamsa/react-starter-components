@@ -301,6 +301,9 @@ export default class RXFormElement extends Component {
         this.context.communication$.next({field: siblingName, type: 'elementValue', value: value});
     }
 
+    getSiblingValue(siblingName){
+        return this.context.valueIndex[siblingName];
+    }
 
     renderElementWithWrapper() {
         let formClasses = this.getFormClasses();
