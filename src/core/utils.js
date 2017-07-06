@@ -19,6 +19,7 @@ import reduce from 'lodash/reduce';
 import keys from 'lodash/keys';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
+import groupBy from 'lodash/groupBy';
 const identity = function(arg1){
     return arg1;
 }
@@ -27,6 +28,7 @@ export const _  = {
     map:map,
     isEmpty:isEmpty,
     reduce:reduce,
+    groupBy:groupBy,
     each:each,
     filter:filter,
     pick:pick,
