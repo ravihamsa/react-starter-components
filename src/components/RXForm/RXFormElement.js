@@ -302,7 +302,7 @@ export default class RXFormElement extends Component {
     }
 
     getSiblingValue(siblingName){
-        return this.context.valueIndex[siblingName];
+        return this.context.elementValueIndex[siblingName];
     }
 
     renderElementWithWrapper() {
