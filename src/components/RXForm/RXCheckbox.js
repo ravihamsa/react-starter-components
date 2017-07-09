@@ -10,6 +10,14 @@ export default class RXCheckbox extends RXFormElement {
         this.updateValue(e.target.checked, 'update');
     }
 
+    getFormClasses(){
+        let classArray  = super.getFormClasses();
+        if(this.state.value){
+            classArray.push('checked');
+        }
+        return classArray;
+    }
+
     renderElement() {
         let restProps = this.getRestProps();
         delete restProps.label;
