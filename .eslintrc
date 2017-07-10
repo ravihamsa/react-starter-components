@@ -1,0 +1,156 @@
+{
+  "parser": "babel-eslint",
+  "extends": [ "eslint:recommended", "plugin:react/recommended" ],
+  // Extend off of the recommended set of rules
+  "globals": {
+    "require": true,
+    "__dirname": true,
+    "process": true,
+    "React": true,
+    "ReactDOM": true
+  },
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "plugins": [
+    "react"
+  ],
+  "rules": {
+    /*
+     * Company Standards (go/jsstandards)
+     */
+    "indent": [
+      2,
+      4,
+      {
+        "SwitchCase": 1,
+        "VariableDeclarator": {
+          "var": 2,
+          "let": 2,
+          "const": 3
+          // For readability's sake
+        }
+      }
+    ],
+    "array-bracket-spacing": [
+      2,
+      "never"
+    ],
+    "space-in-parens": [
+      2,
+      "never"
+    ],
+    "space-before-function-paren": [
+      2,
+      "never"
+    ],
+    "no-spaced-func": 2,
+    "quotes": [
+      2,
+      "single",
+      "avoid-escape"
+    ],
+    "no-trailing-spaces": 2,
+    "camelcase": [
+      1,
+      {
+        "properties": "always"
+      }
+    ],
+    // Only generating a warning because constructors need to be PascalCase
+    "new-cap": [
+      2,
+      {
+        "newIsCap": true,
+        "capIsNew": false
+      }
+    ],
+    "keyword-spacing": [
+      2,
+      {
+        "before": true,
+        "after": true
+      }
+    ],
+    "semi": [
+      2,
+      "always"
+    ],
+    "eqeqeq": [
+      2,
+      "always"
+    ],
+    "no-empty": [
+      2,
+      {
+        "allowEmptyCatch": true
+      }
+    ],
+    /*
+     * Lite standards
+     */
+    "yoda": [
+      2,
+      "never"
+    ],
+    "max-len": [
+      2,
+      {
+        "code": 120
+      }
+    ],
+    "prefer-const": 2,
+    "one-var-declaration-per-line": [
+      2,
+      "always"
+    ],
+    "no-var": 2,
+    "comma-spacing": 2,
+    "space-infix-ops": 2,
+    "object-curly-spacing": 2,
+    "brace-style": 2,
+    "object-curly-newline": [
+      2,
+      {
+        "ObjectExpression": {
+          "minProperties": 1
+        }
+      }
+    ],
+    "computed-property-spacing": 2,
+    /*
+     * From voyager
+     * http://jarvis.corp.linkedin.com/codesearch/result/?name=0920_styleguide.rst&path=voyager-web%2Fdocs%2Fbasics&reponame=voyager%2Fvoyager-web
+     */
+    "no-new-object": 2,
+    "object-shorthand": [
+      2,
+      "always"
+    ],
+    "quote-props": [
+      2,
+      "as-needed"
+    ],
+    "no-array-constructor": 2,
+    "no-useless-concat": 2,
+    "func-names": [
+      2,
+      "always"
+    ],
+    "wrap-iife": [
+      2,
+      "outside"
+    ],
+    "no-loop-func": 2,
+    "no-new-func": 2,
+    "no-param-reassign": 2,
+    "prefer-arrow-callback": 2,
+    "arrow-spacing": 2,
+    "arrow-parens": [
+      2,
+      "as-needed"
+    ],
+    "arrow-body-style": 2
+  }
+}
