@@ -15,3 +15,5 @@ export RXCheckbox from './RXCheckbox';
 export RXFileInput from './RXFileInput';
 export validationRules from './validationRules';
 export activeRules from './activeRules';
+export RXPlainTextInput from './RXPlainTextInput';
+export RXPlainSelect from './RXPlainSelect';

@@ -217,5 +217,6 @@ RXSelectionElement.defaultProps = {
     valueType:'idString',
     exposeName:false,
     value:'',
-    exposeSelection:false
+    exposeSelection:false,
+    multiSelect:false
 }
