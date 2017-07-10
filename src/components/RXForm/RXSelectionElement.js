@@ -5,6 +5,7 @@ import React, {PropTypes, Component} from "react";
 import Selection from 'selection-manager';
 import RXFormElement from './RXFormElement';
 import List from '../common/List'
+import {_} from '../../core/utils';
 
 const returnTrue = function(){
     return true;
