@@ -3,7 +3,7 @@
  */
 import React, {PropTypes, Component} from 'react';
 import {bodyClick$, createEventStream} from './../../core/rxutils';
-
+import {_} from './../../core/utils'
 
 let popupStyles = {
     position: 'relative'

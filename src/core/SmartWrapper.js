@@ -6,7 +6,7 @@ import React, {Component} from "react";
 import dataLoader from './dataLoader';
 import Loader from './Loader';
 import MessageStack from './MessageStack';
-import {identity} from './utils';
+import {identity,_} from './utils';
 
 const NATIVE_PROPS=['children', 'dataRequests', 'onDataUpdate', 'activeRules']
 

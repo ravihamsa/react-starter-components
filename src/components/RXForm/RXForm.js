@@ -4,8 +4,6 @@
 import React, {PropTypes, Component} from "react";
 import {Rx} from '../../core/rxutils'
 
-console.log(Rx);
-
 let ensurePropertyIndex = (obj, prop) => {
     obj[prop] = obj[prop] || {};
 }
