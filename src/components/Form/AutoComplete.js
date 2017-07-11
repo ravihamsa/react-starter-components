@@ -8,8 +8,6 @@ import InlinePopupGroup from '../common/InlinePopupGroup'
 import Selection from 'selection-manager';
 const {InlinePopup, InlineButton, InlineBody} = InlinePopupGroup;
 
-console.log(InlinePopup, 'InlinePopup');
-
 class AutoComplete extends FormElement {
     constructor() {
         super(...arguments);

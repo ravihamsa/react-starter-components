@@ -7,7 +7,7 @@ import RXSelectionElement from './RXSelectionElement';
 import List from '../common/List'
 import InlinePopupGroup from '../common/InlinePopupGroup'
 const {InlinePopup, InlineButton, InlineBody} = InlinePopupGroup
-
+import {_} from '../../core/utils';
 
 export class RXDropdownItem extends Component {
 

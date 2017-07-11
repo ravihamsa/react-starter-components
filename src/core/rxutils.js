@@ -41,8 +41,6 @@ export const Rx = {
     Subject:Subject
 }
 
-console.log(Observable, Subject);
-
 export default {
     bodyClick$,
     windowResize$,

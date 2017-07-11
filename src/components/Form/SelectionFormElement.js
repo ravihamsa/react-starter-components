@@ -3,7 +3,7 @@
  */
 import FormElement from './FormElement';
 import Selection from 'selection-manager';
-
+import {_} from '../../core/utils';
 
 export default class SelectionFormElement  extends FormElement {
     constructor(){
