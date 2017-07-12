@@ -2,29 +2,31 @@
  * Created by ravi.hamsa on 7/2/16.
  */
 import React, {PropTypes, Component} from 'react';
+import {escapePress$} from '../../core/rxutils';
 
-let popupStyles = {
+const popupStyles = {
     display:'inline-block'
-}
+};
 
-let bodyStyles = {
+const bodyStyles = {
     position: 'absolute',
     left:'50%',
     top:'50%',
     transform:'translateX(-50%) translateY(-50%)',
     zIndex: 999,
 
-}
-let maskStyles = {
+};
+const maskStyles = {
     position: 'absolute',
     backgroundColor:'rgba(0,0,0,0.5)',
     left:0,
     top:0,
     right:0,
-    bottom:0
-}
+    bottom:0,
+    zIndex: 998
+};
 
-let popupContainerStyles = {
+const popupContainerStyles = {
     position: 'fixed',
     zIndex: 998,
     backgroundColor:'rgba(0,0,0,0.5)',
@@ -32,24 +34,31 @@ let popupContainerStyles = {
     top:0,
     right:0,
     bottom:0
-}
+};
 
 let openPopup;
 
 class Popup extends Component {
     constructor() {
-        super(...arguments)
+        super(...arguments);
         this.state = {
             open: false
-        }
+        };
     }
 
     openPopup() {
-        this.setState({open: true})
+        this.setState({
+            open: true
+        });
+        if (this.props.closeOnEscape){
+            escapePress$.take(1).subscribe(() => this.closePopup());
+        }
     }
 
     closePopup() {
-        this.setState({open: false})
+        this.setState({
+            open: false
+        });
     }
 
     togglePopup() {
@@ -63,36 +72,39 @@ class Popup extends Component {
     }
 
     render() {
-        let childProps = {
+        const childProps = {
             togglePopup: this.togglePopup.bind(this),
             closePopup: this.closePopup.bind(this),
             itemClick: this.itemClick.bind(this),
             isOpen: this.state.open,
             isModal: this.props.isModal
-        }
+        };
 
-        let className = this.props.className || 'popup'
+        const className = this.props.className || 'popup';
         let children = this.props.children;
-        if(!children.map){
-            children = [children]
+        if (!children.map){
+            children = [children];
         }
 
         return <div style={popupStyles} className={className}>
-            {children.map(function (children, index) {
-                return React.cloneElement(children, {...childProps, key: index})
-            })}
-        </div>
+            {children.map((children, index) => React.cloneElement(children, {
+                ...childProps, key: index
+            }))}
+        </div>;
     }
 }
 
 Popup.defaultProps = {
-    isModal:true
-}
+    isModal:true,
+    closeOnEscape:true
+};
 
 
 class PopupButton extends Component {
     render() {
-        return React.cloneElement(this.props.children, {onClick: this.props.togglePopup})
+        return React.cloneElement(this.props.children, {
+            onClick: this.props.togglePopup
+        });
     }
 }
 
@@ -102,31 +114,44 @@ class PopupBody extends Component {
         let p = this.portalElement;
         if (!p) {
             p = document.createElement('div');
+            // p.onclick = this.maskClick.bind(this);
+
+            const maskElement = document.createElement('div');
+            maskElement.onclick = this.maskClick.bind(this);
+            // p.appendChild(maskElement);
+
+            const containerElement =  document.createElement('div');
+            // p.appendChild(containerElement);
             document.body.appendChild(p);
+
             this.portalElement = p;
+            this.containerElement = containerElement;
+            this.maskElement = maskElement;
+
         }
         this.componentDidUpdate();
     }
 
     updatePortalElementPosition(){
-        let p = this.portalElement;
-        if(!p){
+        const p = this.containerElement;
+        const maskElement = this.maskElement;
+        if (!p){
             return;
         }
-        let style = {position: 'absolute', left:0, top:0, width:'100%', height:'100%', backgroundColor:'rgba(0,0,0,0.5)', zIndex:99};
-        for (var i in style) {
-            p.style[i] = style[i];
+
+        for (const i in maskStyles){
+            maskElement.style[i] = maskStyles[i];
         }
     }
 
     hidePortalElement(){
-        let p = this.portalElement;
-        if(!p){
+        const p = this.containerElement;
+        const maskElement = this.maskElement;
+        if (!p){
             return;
         }
-        let style = {position: 'absolute', left:0, top:0, width:0, height:0, backgroundColor:'rgba(0,0,0,0)', zIndex:99};
-        for (var i in style) {
-            p.style[i] = style[i];
+        for (const i in maskStyles){
+            maskElement.style[i] = maskStyles[i];
         }
     }
 
@@ -139,20 +164,30 @@ class PopupBody extends Component {
     }
 
     maskClick(){
-        if(this.props.isModal){
+        if (this.props.isModal){
             this.props.closePopup();
         }
     }
 
     componentDidUpdate() {
-        let {className = ''} = this.props;
+        const {className = ''} = this.props;
         if (this.props.isOpen) {
             this.updatePortalElementPosition();
             ReactDOM.render(<div className={className}
-                                 style={bodyStyles}>{React.cloneElement(this.props.children, {closePopup: this.props.closePopup})}</div>, this.portalElement);
+                style={bodyStyles}>{React.cloneElement(this.props.children, {
+                    closePopup: this.props.closePopup
+                })}</div>, this.containerElement);
+            this.portalElement.appendChild(this.maskElement);
+            this.portalElement.appendChild(this.containerElement);
         } else {
             this.hidePortalElement();
-            ReactDOM.render(<div className="dummy-container"></div>, this.portalElement);
+            ReactDOM.render(<div className="dummy-container"></div>, this.containerElement);
+            try {
+                this.portalElement.removeChild(this.maskElement);
+                this.portalElement.removeChild(this.containerElement);
+            } catch (e){
+                //do nothing
+            }
         }
     }
 
@@ -165,4 +200,4 @@ export default {
     Popup,
     PopupButton,
     PopupBody
-}
+};
