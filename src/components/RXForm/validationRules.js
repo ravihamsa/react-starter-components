@@ -1,6 +1,7 @@
 /**
  * Created by ravi.hamsa on 3/25/17.
  */
+import {_} from '../../core/utils';
 export default {
     'req': function(rule, value) {
         return !_.isEmpty(value);
