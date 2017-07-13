@@ -22,27 +22,30 @@ import 'rxjs/add/operator/defaultIfEmpty';
 
 
 export let bodyClick$ = Observable.of(true);
-
+export let bodyKeyUp$ = Observable.of(true);
+export let escapePress$ = Observable.of(true);
 export let windowResize$ = Observable.of(true);
 
 if (global.document) {
     bodyClick$ = Observable.fromEvent(document, 'click');
+    bodyKeyUp$ = Observable.fromEvent(document, 'keyup');
+    escapePress$ = bodyKeyUp$.filter(e => e.keyCode === 27);
     windowResize$ = Observable.fromEvent(window, 'resize');
 }
 
 
-export let createEventStream = function(element, event) {
-    return Observable.fromEvent(element, event);
-}
+export const createEventStream = (element, event) => Observable.fromEvent(element, event);
 
 
 export const Rx = {
-    Observable:Observable,
-    Subject:Subject
-}
+    Observable,
+    Subject
+};
 
 export default {
     bodyClick$,
+    bodyKeyUp$,
+    escapePress$,
     windowResize$,
     createEventStream
-}
+};
