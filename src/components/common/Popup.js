@@ -171,10 +171,12 @@ class PopupBody extends Component {
 
     componentDidUpdate() {
         const {className = ''} = this.props;
-        ReactDOM.render(<div className={className}
-                             style={bodyStyles}>{React.cloneElement(this.props.children, {
-            closePopup: this.props.closePopup
-        })}</div>, this.containerElement);
+        if (this.props.isOpen) {
+            ReactDOM.render(<div className={className}
+                                 style={bodyStyles}>{React.cloneElement(this.props.children, {
+                closePopup: this.props.closePopup
+            })}</div>, this.containerElement);
+        }
         if (this.props.isOpen !== this.isOpen) {
             if (this.props.isOpen) {
                 this.updatePortalElementPosition();
