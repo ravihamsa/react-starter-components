@@ -5,35 +5,35 @@ import React, {PropTypes, Component} from 'react';
 import {escapePress$} from '../../core/rxutils';
 
 const popupStyles = {
-    display:'inline-block'
+    display: 'inline-block'
 };
 
 const bodyStyles = {
     position: 'absolute',
-    left:'50%',
-    top:'50%',
-    transform:'translateX(-50%) translateY(-50%)',
+    left: '50%',
+    top: '50%',
+    transform: 'translateX(-50%) translateY(-50%)',
     zIndex: 999,
 
 };
 const maskStyles = {
     position: 'absolute',
-    backgroundColor:'rgba(0,0,0,0.5)',
-    left:0,
-    top:0,
-    right:0,
-    bottom:0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
     zIndex: 998
 };
 
 const popupContainerStyles = {
     position: 'fixed',
     zIndex: 998,
-    backgroundColor:'rgba(0,0,0,0.5)',
-    left:0,
-    top:0,
-    right:0,
-    bottom:0
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0
 };
 
 let openPopup;
@@ -50,7 +50,7 @@ class Popup extends Component {
         this.setState({
             open: true
         });
-        if (this.props.closeOnEscape){
+        if (this.props.closeOnEscape) {
             escapePress$.take(1).subscribe(() => this.closePopup());
         }
     }
@@ -82,7 +82,7 @@ class Popup extends Component {
 
         const className = this.props.className || 'popup';
         let children = this.props.children;
-        if (!children.map){
+        if (!children.map) {
             children = [children];
         }
 
@@ -95,8 +95,8 @@ class Popup extends Component {
 }
 
 Popup.defaultProps = {
-    isModal:true,
-    closeOnEscape:true
+    isModal: true,
+    closeOnEscape: true
 };
 
 
@@ -120,7 +120,7 @@ class PopupBody extends Component {
             maskElement.onclick = this.maskClick.bind(this);
             // p.appendChild(maskElement);
 
-            const containerElement =  document.createElement('div');
+            const containerElement = document.createElement('div');
             // p.appendChild(containerElement);
             document.body.appendChild(p);
 
@@ -132,25 +132,25 @@ class PopupBody extends Component {
         this.componentDidUpdate();
     }
 
-    updatePortalElementPosition(){
+    updatePortalElementPosition() {
         const p = this.containerElement;
         const maskElement = this.maskElement;
-        if (!p){
+        if (!p) {
             return;
         }
 
-        for (const i in maskStyles){
+        for (const i in maskStyles) {
             maskElement.style[i] = maskStyles[i];
         }
     }
 
-    hidePortalElement(){
+    hidePortalElement() {
         const p = this.containerElement;
         const maskElement = this.maskElement;
-        if (!p){
+        if (!p) {
             return;
         }
-        for (const i in maskStyles){
+        for (const i in maskStyles) {
             maskElement.style[i] = maskStyles[i];
         }
     }
@@ -163,31 +163,34 @@ class PopupBody extends Component {
         document.body.removeChild(this.portalElement);
     }
 
-    maskClick(){
-        if (this.props.isModal){
+    maskClick() {
+        if (this.props.isModal) {
             this.props.closePopup();
         }
     }
 
     componentDidUpdate() {
         const {className = ''} = this.props;
-        if (this.props.isOpen) {
-            this.updatePortalElementPosition();
-            ReactDOM.render(<div className={className}
-                style={bodyStyles}>{React.cloneElement(this.props.children, {
-                    closePopup: this.props.closePopup
-                })}</div>, this.containerElement);
-            this.portalElement.appendChild(this.maskElement);
-            this.portalElement.appendChild(this.containerElement);
-        } else {
-            this.hidePortalElement();
-            ReactDOM.render(<div className="dummy-container"></div>, this.containerElement);
-            try {
-                this.portalElement.removeChild(this.maskElement);
-                this.portalElement.removeChild(this.containerElement);
-            } catch (e){
-                //do nothing
+        ReactDOM.render(<div className={className}
+                             style={bodyStyles}>{React.cloneElement(this.props.children, {
+            closePopup: this.props.closePopup
+        })}</div>, this.containerElement);
+        if (this.props.isOpen !== this.isOpen) {
+            if (this.props.isOpen) {
+                this.updatePortalElementPosition();
+                this.portalElement.appendChild(this.maskElement);
+                this.portalElement.appendChild(this.containerElement);
+            } else {
+                this.hidePortalElement();
+                ReactDOM.render(<div className="dummy-container"></div>, this.containerElement);
+                try {
+                    this.portalElement.removeChild(this.maskElement);
+                    this.portalElement.removeChild(this.containerElement);
+                } catch (e) {
+                    //do nothing
+                }
             }
+            this.isOpen = this.props.isOpen;
         }
     }
 
