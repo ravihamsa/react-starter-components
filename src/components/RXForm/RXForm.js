@@ -56,6 +56,7 @@ export default class RXForm extends Component {
 
         clear$.takeUntil(this.unmount$).subscribe(val => {
             delete this.valueIndex[val.field];
+            delete this.elementPropIndex[val.field];
             this.valueChangeHandler({
                 [val.field]: val.value
             }, this.valueIndex);
