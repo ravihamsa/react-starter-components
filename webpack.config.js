@@ -195,6 +195,7 @@ var configNode = {
             compress: {
                 screw_ie8: true, // jscs:ignore requireCamelCaseOrUpperCaseIdentifiers
                 warnings: false,
+                drop_console: true
             },
         })]
 }

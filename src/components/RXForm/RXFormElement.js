@@ -252,7 +252,6 @@ export default class RXFormElement extends Component {
     }
 
     updateProps(value, type) {
-        console.log(value, type, this.props.name);
         this.props$.next({
             field: this.props.name, type, value
         });

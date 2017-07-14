@@ -13,7 +13,7 @@ class FormCollection extends Component {
 
     onFormChange(index, changed, allData){
         this._dataCollection[index]=allData;
-        console.log(this._dataCollection);
+        //console.log(this._dataCollection);
     }
 
     render(){

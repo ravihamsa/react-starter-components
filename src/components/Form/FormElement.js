@@ -124,7 +124,7 @@ class FormElement extends Component {
 
     setState(arg1, arg2){
         if(this.props.name === 'stateIds'){
-            console.log(arg1, arg2, 'stateIds')
+            //console.log(arg1, arg2, 'stateIds')
         }
         super.setState(arg1, arg2);
     }
@@ -216,7 +216,7 @@ class FormElement extends Component {
             let propValue =   _.reduce(this.propRules, (memo, rule)=>{
                 return !memo && rule.func.call(this, {value: fullObjecdt[rule.element]}, rule) === true
             }, false)
-            console.log(propValue);
+            //console.log(propValue);
         }
     }
 
