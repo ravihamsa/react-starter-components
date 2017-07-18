@@ -269,7 +269,7 @@ export default class RXFormElement extends Component {
         classArray.push('element');
         classArray.push('element-type-' + this.props.type);
         classArray.push('element-' + this.props.name);
-        if (this.state.errors) {
+        if (this.state.error) {
             classArray.push('has-error');
         }
         if (this.props.disabled) {
