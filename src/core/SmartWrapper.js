@@ -6,9 +6,9 @@ import React, {Component} from "react";
 import dataLoader from './dataLoader';
 import Loader from './Loader';
 import MessageStack from './MessageStack';
-import {identity,_} from './utils';
+import {identity, _} from './utils';
 
-const NATIVE_PROPS=['children', 'dataRequests', 'onDataUpdate', 'activeRules']
+const NATIVE_PROPS = ['children', 'dataRequests', 'onDataUpdate', 'activeRules']
 
 class SmartWrapper extends Component {
 
@@ -39,7 +39,7 @@ class SmartWrapper extends Component {
         this.isInDom = true;
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         this.isInDom = false;
     }
 
@@ -70,8 +70,8 @@ class SmartWrapper extends Component {
 
 
                 let propDependencies = storeConfig.propDependencies;
-                if(propDependencies !== undefined && propDependencies.length !== undefined && propDependencies.length > 0){
-                    _.each(propDependencies, (propDependency)=>{
+                if (propDependencies !== undefined && propDependencies.length !== undefined && propDependencies.length > 0) {
+                    _.each(propDependencies, (propDependency) => {
                         let newPropValue = newProps[propDependency];
                         let oldPropValue = prevProps[propDependency];
                         if (newPropValue !== oldPropValue) {
@@ -126,7 +126,7 @@ class SmartWrapper extends Component {
         }
     }
 
-    getRequestDef(requestId, payload){
+    getRequestDef(requestId, payload) {
         return dataLoader.getRequestDef(requestId, payload);
     }
 
@@ -142,30 +142,30 @@ class SmartWrapper extends Component {
         return def;
     }
 
-    wrapCallBack(fn){
-        if(!fn){
+    wrapCallBack(fn) {
+        if (!fn) {
             return identity;
         }
         let self = this;
-        return function(){
-            if(self.isInDom){
+        return function () {
+            if (self.isInDom) {
                 fn.apply(null, arguments)
             }
         }
     }
 
-    addRequestIfValid(propName, requestId, filteredProps, storeConfig){
+    addRequestIfValid(propName, requestId, filteredProps, storeConfig) {
         let self = this;
         let isRequestValid = storeConfig.validateRequest !== undefined ? storeConfig.validateRequest(filteredProps) : true;
         let getParams = storeConfig.getParams;
-        if(isRequestValid){
+        if (isRequestValid) {
             let params = getParams ? getParams.call(self, filteredProps) : filteredProps
-            this.addRequest(propName, requestId, params)
-        }else{
-            let fallbackResponse = storeConfig.staticFallback  !== undefined  ? storeConfig.staticFallback(filteredProps) : {data:[]};
-            let def =  dataLoader.getStaticPromise(fallbackResponse);
-            def.done((data)=>this.dataIndex[propName] = data)
-            def.catch((error)=>this.dataIndex['errors'] = error)
+            this.addRequestWithController({propName, requestId, params, storeConfig})
+        } else {
+            let fallbackResponse = storeConfig.staticFallback !== undefined ? storeConfig.staticFallback(filteredProps) : {data: []};
+            let def = dataLoader.getStaticPromise(fallbackResponse);
+            def.done((data) => this.dataIndex[propName] = data)
+            def.catch((error) => this.dataIndex['errors'] = error)
             def.finally(self.wrapCallBack(function () {
                 self.bumpAndCheckLoading(-1)
             }))
@@ -174,30 +174,54 @@ class SmartWrapper extends Component {
         }
     }
 
-    addDummyRequest(propName, requestId, payload, storeConfig){
+    addDummyRequest(propName, requestId, payload, storeConfig) {
         delete this.dataIndex.errors;
         return this._addRequest(requestId, payload, {
-            done: (data)=>this.dataIndex[propName] = data,
-            catch: (error)=>this.dataIndex['errors'] = error
+            done: (data) => this.dataIndex[propName] = data,
+            catch: (error) => this.dataIndex['errors'] = error
         })
+    }
+
+    addRequestWithController(config) {
+        const {propName, requestId, params, storeConfig} = config;
+        const {controller, controllerKey} = storeConfig;
+        delete this.dataIndex.errors;
+        return this._addRequest(requestId, params, {
+            done: data => {
+                if (propName) {
+                    this.dataIndex[propName] = data;
+                }
+                if (controller && controller.set) {
+                    controller.set(controllerKey, data);
+                }
+            },
+            catch: error => {
+                if (propName) {
+                    this.dataIndex['errors'] = error;
+                }
+                if (controller && controller.setError) {
+                    controller.setError(controllerKey, error);
+                }
+            }
+        });
     }
 
     addRequest(propName, requestId, payload, onProgress) {
         delete this.dataIndex.errors;
         return this._addRequest(requestId, payload, {
-            done: (data)=>this.dataIndex[propName] = data,
-            catch: (error)=>this.dataIndex['errors'] = error
-        },onProgress)
+            done: (data) => this.dataIndex[propName] = data,
+            catch: (error) => this.dataIndex['errors'] = error
+        }, onProgress)
     }
 
     addStateRequest(stateName, requestId, payload, defaultValue) {
-        if(defaultValue === undefined){
+        if (defaultValue === undefined) {
             defaultValue = null
         }
-        this.setState({[stateName]:defaultValue})
+        this.setState({[stateName]: defaultValue})
         return this._addRequest(requestId, payload, {
-            done: (data)=>this.setState({[stateName]:data}),
-            catch: (error)=>this.setState({[stateName]:defaultValue,[`${stateName}Error`]:error})
+            done: (data) => this.setState({[stateName]: data}),
+            catch: (error) => this.setState({[stateName]: defaultValue, [`${stateName}Error`]: error})
         })
     }
 
@@ -232,9 +256,9 @@ class SmartWrapper extends Component {
             } else if (this.dataIndex.errors && this.props.showError !== false) {
                 return this.renderErrors()
             } else {
-                if(this.props.showIf === false){
+                if (this.props.showIf === false) {
                     return null
-                }else{
+                } else {
                     return this.renderChildren()
                 }
             }
@@ -247,7 +271,7 @@ class SmartWrapper extends Component {
 }
 
 export class NoLoadingSmartWrapper extends SmartWrapper {
-    render(){
+    render() {
         return this.renderChildren();
     }
 }

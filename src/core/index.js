@@ -12,7 +12,8 @@ import MessageStack from './MessageStack'
 import utils from './utils'
 import rxutils from './rxutils'
 import fetch from './fetch';
+import SimpleControllerV2 from './SimpleControllerV2';
 // import navigate from './navigate'
 // import history from './history'
 
-export default {dataLoader, SimpleModel, SimpleEmitter, SmartWrapper,NoLoadingSmartWrapper,ActiveWrapper,Loader, MessageStack, fetch, utils, rxutils}
+export default {dataLoader, SimpleModel, SimpleEmitter, SmartWrapper,NoLoadingSmartWrapper,ActiveWrapper,Loader, MessageStack, fetch, utils, rxutils, SimpleControllerV2}

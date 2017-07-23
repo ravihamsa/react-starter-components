@@ -2,12 +2,19 @@
  * Created by ravi.hamsa on 4/10/17.
  */
 import SimpleEmitter from './SimpleEmitter';
-import {Record, List} from 'immutable';
+import {Record, List, Map} from 'immutable';
 import {getUniqueId} from './utils';
 import {_} from '../core/util';
 
 
 const update = (name, valueMap) => {
+    let map = this._dataIndex[name];
+    map = map.merge(valueMap);
+    this._dataIndex[name] = map;
+    this.triggerChange();
+};
+
+const reset = (name, valueMap) => {
     let map = this._dataIndex[name];
     map = map.merge(valueMap);
     this._dataIndex[name] = map;
@@ -42,13 +49,14 @@ const createMap = (name, Model, valueMap = {}) => {
         id: getUniqueId()
     }));
     this._commandIndex['update' + name] = update.bind(this, name);
+    this._commandIndex['reset' + name] = reset.bind(this, name);
 };
 
 const createList = (name, Model) => {
     this._dataIndex[name] = List();
-    this._commandIndex['update' + name] = updateInList.bind(this, name);
-    this._commandIndex['add' + name] = add.bind(this, Model, name);
-    this._commandIndex['remove' + name] = remove.bind(this, name);
+    this._commandIndex['updateItem' + name] = updateInList.bind(this, name);
+    this._commandIndex['addItem' + name] = add.bind(this, Model, name);
+    this._commandIndex['removeItem' + name] = remove.bind(this, name);
 };
 
 

@@ -10,7 +10,7 @@ import componentsIm from './components';
 export core from './core';
 export components from './components';
 
-export const {dataLoader, SimpleModel, SimpleEmitter, SmartWrapper, NoLoadingSmartWrapper, Loader, MessageStack, utils, rxutils, ActiveWrapper} = coreIm;
+export const {dataLoader, SimpleModel, SimpleEmitter, SmartWrapper, NoLoadingSmartWrapper, Loader, MessageStack, utils, rxutils, ActiveWrapper,SimpleControllerV2} = coreIm;
 
 export const {Form,ElementGroup, FormElement, SelectionFormElement, TextInput, TextArea, FileInput, Select, CheckBox, HiddenInput, AutoComplete, DatePicker, SelectableList, SelectableListItem, Dropdown, RadioList} = componentsIm.Form;
 

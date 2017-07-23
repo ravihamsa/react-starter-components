@@ -1,7 +1,8 @@
 /**
  * Created by ravi.hamsa on 3/26/17.
  */
-import React, {PropTypes, Component} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {Rx} from '../../core/rxutils';
 
 const ensurePropertyIndex = (obj, prop) => {
@@ -11,12 +12,18 @@ const ensurePropertyIndex = (obj, prop) => {
 export default class RXForm extends Component {
     constructor(props) {
         super(props);
+        this.hasController = false;
         this.elementProps$ = new Rx.Subject();
         this.elementValue$ = new Rx.Subject();
         this.communication$ = new Rx.Subject();
         this.unmount$ = new Rx.Subject();
         this.elementPropIndex = {};
         this.valueIndex = {};
+        const {controllerKey, controller} = this.props;
+        if (controller && controllerKey) {
+            this.valueIndex = controller.toJSON()[controllerKey];
+            this.hasController = true;
+        }
     }
 
     componentWillMount() {
@@ -64,7 +71,7 @@ export default class RXForm extends Component {
         // selection$.subscribe(e => console.log(e))
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         this.unmount$.next();
     }
 
@@ -77,8 +84,12 @@ export default class RXForm extends Component {
 
     valueChangeHandler(changed, fullObject) {
         // console.log(changed, fullObject);
-        if (this.props.onValueChange) {
-            this.props.onValueChange(changed, fullObject);
+        const {controller, name, onValueChange} = this.props;
+        if (onValueChange) {
+            onValueChange(changed, fullObject);
+        }
+        if (controller && name && controller.set) {
+            controller.set(name, fullObject);
         }
     }
 
@@ -89,6 +100,7 @@ export default class RXForm extends Component {
             communication$: this.communication$,
             elementPropIndex: this.elementPropIndex,
             elementValueIndex: this.valueIndex,
+            hasController: this.hasController
         };
     }
 
@@ -156,13 +168,6 @@ export default class RXForm extends Component {
         });
     }
 
-    setElementProps(map) {
-        for (const elementName in map) {
-            this.setElementValue(elementName, map[elementName].prop, map[elementName].value);
-        }
-    }
-
-
     onSubmitHandler(e) {
         e.preventDefault();
         if (this.props.onSubmitHandler) {
@@ -191,4 +196,10 @@ RXForm.childContextTypes = {
     communication$: PropTypes.object.isRequired,
     elementPropIndex: PropTypes.object.isRequired,
     elementValueIndex: PropTypes.object.isRequired,
+    hasController: PropTypes.bool.isRequired
 };
+
+RXForm.propTypes = {
+    ...Component.propTypes,
+    onSubmitHandler: PropTypes.func
+}

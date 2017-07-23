@@ -10,11 +10,11 @@ import dataLoader from '../../core/dataLoader';
 
 const defaultPropReturnFunction = _.identity;
 
-const returnTrueFunction = function() {
+const returnTrueFunction = ()=> {
     return true;
 };
 
-const getValidationRule = function(item) {
+const getValidationRule = item => {
     return {
         type: item.expr,
         value: item.value,
@@ -41,7 +41,7 @@ const getPropRule = item => ({
     func: item.expr === 'function' ? item.func : activeRulesMap[item.expr]
 });
 
-const getServerValidationRule = function(rule) {
+const getServerValidationRule = rule => {
     return {
         requestId: rule.requestId,
         getParams: rule.getParams || _.identity,
@@ -115,7 +115,13 @@ export default class RXFormElement extends Component {
     }
 
     readInputValue() {
-        this.updateValue(this.props.value, 'read');
+        const {hasController, valueIndex} = this.context;
+        if (!hasController) {
+            this.updateValue(this.props.value, 'read');
+        } else {
+            this.updateValue(valueIndex[this.props.name], 'read');
+        }
+
     }
 
     setIfNotEqualState(newStateMap) {
@@ -133,7 +139,7 @@ export default class RXFormElement extends Component {
     propChangeListeners() {
         const propChange$ = this.context.elementProps$.filter(e => e.field === this.props.name);
         propChange$.takeUntil(this.unmount$).subscribe(e => {
-            if (this.context.elementPropIndex[this.props.name]){
+            if (this.context.elementPropIndex[this.props.name]) {
                 this.setState(this.context.elementPropIndex[this.props.name]);
             }
         });
@@ -258,9 +264,11 @@ export default class RXFormElement extends Component {
     }
 
     getRestProps() {
-        const props = _.omit(this.state, 'showLabel', 'debounceTime', 'options', 'helperText', 'active', 'error', 'validations', 'activeRules', 'valid', 'serverValidation', '__shadowValue', 'register', 'clear',  'exposeName', 'exposeSelection', 'serverValid', 'serverError');
+        const props = _.omit(this.state, 'showLabel', 'debounceTime', 'options', 'helperText', 'active', 'error',
+            'validations', 'activeRules', 'valid', 'serverValidation', '__shadowValue', 'register', 'clear',
+            'exposeName', 'exposeSelection', 'serverValid', 'serverError');
         props.ref = 'inputElement';
-        props.className = (props.className || '') + ' ' + 'form-control';
+        props.className = (props.className || '') + ' form-control';
         return props;
     }
 
@@ -293,19 +301,18 @@ export default class RXFormElement extends Component {
         });
     }
 
-    getSiblingValue(siblingName){
+    getSiblingValue(siblingName) {
         return this.context.elementValueIndex[siblingName];
     }
 
     renderElementWithWrapper() {
         const formClasses = this.getFormClasses();
-        const elementProps = this.context.elementPropIndex[this.props.name];
         const error = this.state.error || this.state.serverError;
         return <fieldset className={formClasses.join(' ')}>
             {this.props.showLabel ? <label className="element-label">{this.props.label}</label> : null}
             {this.renderElement()}
-            {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
-            {error ? <small className="text-danger">{error.message}</small> : '' }
+            {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : ''}
+            {error ? <small className="text-danger">{error.message}</small> : ''}
         </fieldset>;
     }
 
@@ -324,10 +331,14 @@ RXFormElement.contextTypes = {
     communication$: PropTypes.object.isRequired,
     elementPropIndex: PropTypes.object.isRequired,
     elementValueIndex: PropTypes.object.isRequired,
+    hasController: PropTypes.bool.isRequired
 };
 
 RXFormElement.propTypes = {
     type: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    helperText: PropTypes.string,
+    getPropValue: PropTypes.func.isRequired,
     placeholder: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired,
@@ -340,6 +351,7 @@ RXFormElement.propTypes = {
     debounceTime: PropTypes.number.isRequired,
     validations: PropTypes.array,
     activeRules: PropTypes.array,
+    propRules: PropTypes.array,
     serverValidation: PropTypes.object
 };
 
