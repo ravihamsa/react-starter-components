@@ -18,9 +18,10 @@ export default class ActiveWrapper extends Component {
 
 ActiveWrapper.propTypes = {
     active:PropTypes.bool.isRequired,
-    className:PropTypes.string.optional
+    className:PropTypes.string
 };
 
 ActiveWrapper.defaultProps = {
-    active:true
+    active:true,
+    className:''
 };

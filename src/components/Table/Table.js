@@ -80,7 +80,10 @@ class PaginatedTable extends Component {
         this.renderRecords = records.slice(this.start, this.end);
     }
 
-    onNext() {
+    onNext(e) {
+        if(e && e.preventDefault){
+            e.preventDefault();
+        }
         if(this.hasNext()){
             this.setState({
                 curPage:this.state.curPage + 1
@@ -88,7 +91,10 @@ class PaginatedTable extends Component {
         }
     }
 
-    onPrev(){
+    onPrev(event){
+        if(event && event.preventDefault){
+            event.preventDefault();
+        }
         if(this.hasPrev()){
             this.setState({
                 curPage:this.state.curPage - 1
@@ -99,7 +105,7 @@ class PaginatedTable extends Component {
     hasNext(){
         let records = this.props.records;
         let totalFullPages = Math.floor(records.length / this.state.perPage);
-        return this.state.curPage < totalFullPages;
+        return this.state.curPage < totalFullPages - 1;
     }
 
     hasPrev(){
