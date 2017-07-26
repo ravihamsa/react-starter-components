@@ -4,7 +4,10 @@
 import React, {PropTypes, Component} from "react";
 import core from '../../core';
 import EventEmitter from "events";
+import {_} from '../../core/utils';
 const {cloneChildren} = core.utils;
+
+
 
 
 class TH extends Component {
@@ -69,7 +72,10 @@ class PaginatedTable extends Component {
             curPage: +this.props.curPage || 0,
             perPage: +this.props.perPage || 20
         }
+    }
 
+    componentWillReceiveProps(newProps){
+        this.setState(_.omit(newProps, 'children'));
     }
 
     computePagination() {
