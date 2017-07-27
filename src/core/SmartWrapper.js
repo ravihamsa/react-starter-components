@@ -51,7 +51,6 @@ class SmartWrapper extends Component {
     }
 
 
-
     checkPropDependencies(newProps, prevProps) {
         let stores = newProps.dataRequests;
         let self = this;
@@ -185,25 +184,28 @@ class SmartWrapper extends Component {
     addRequestWithController(config) {
         const {propName, requestId, params, storeConfig} = config;
         const {controller, controllerKey} = storeConfig;
-        delete this.dataIndex.errors;
-        return this._addRequest(requestId, params, {
-            done: data => {
-                if (propName) {
-                    this.dataIndex[propName] = data;
-                }
-                if (controller && controller.set) {
+        if (controller && controllerKey) {
+            controller.clear(controllerKey);
+            return this._addRequest(requestId, params, {
+                done: data => {
                     controller.set(controllerKey, data);
-                }
-            },
-            catch: error => {
-                if (propName) {
-                    this.dataIndex['errors'] = error;
-                }
-                if (controller && controller.setError) {
+                },
+                catch: error => {
                     controller.setError(controllerKey, error);
                 }
-            }
-        });
+            });
+        } else {
+            delete this.dataIndex.errors;
+            return this._addRequest(requestId, params, {
+                done: data => {
+                    this.dataIndex[propName] = data;
+                },
+                catch: error => {
+                    this.dataIndex['errors'] = error;
+                }
+            });
+        }
+
     }
 
     addRequest(propName, requestId, payload, onProgress) {
@@ -273,6 +275,35 @@ class SmartWrapper extends Component {
 export class NoLoadingSmartWrapper extends SmartWrapper {
     render() {
         return this.renderChildren();
+    }
+}
+
+
+export class ControllerWrapper extends SmartWrapper {
+
+    renderErrors(errors) {
+        return <MessageStack messages={errors}/>
+    }
+
+    render() {
+        let pendingRequests = _.filter(this.props.dataRequests, item => {
+            return !item.controller.hasKey(item.controllerKey) && !item.controller.hasErrorKey(item.controllerKey)
+        });
+
+        let errors = _.map(_.filter(this.props.dataRequests, item => {
+            return item.controller.hasErrorKey(item.controllerKey);
+        }), item => item.controller.getError(item.controllerKey));
+
+        if (pendingRequests.length > 0) {
+            return this.renderLoading();
+        } else {
+            if (errors.length > 0) {
+                return this.renderErrors(errors);
+            } else {
+                return this.renderChildren();
+            }
+
+        }
     }
 }
 

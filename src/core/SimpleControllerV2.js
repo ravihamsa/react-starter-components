@@ -88,6 +88,7 @@ export default class SimpleControllerV2 extends SimpleEmitter {
 
     clear(keyName) {
         this._clear(keyName);
+        this._clear(keyName + 'Error');
     }
 
     _clear(keyName) {
@@ -124,6 +125,22 @@ export default class SimpleControllerV2 extends SimpleEmitter {
 
     resetInList(listName, data) {
         this._dataIndex[listName] = this._dataIndex[listName].update(list => list.findIndex(item => item.get('id') === data.id), () => Map(data));
+    }
+
+    hasKey(keyName){
+        return this._dataIndex[keyName] !== undefined;
+    }
+
+    hasErrorKey(keyName){
+        return this._dataIndex[keyName+'Error'] !== undefined;
+    }
+
+    getError(keyName){
+        return this._dataIndex[keyName+'Error'].toJSON();
+    }
+
+    get(keyName){
+        return this._dataIndex[keyName].toJSON();
     }
 
     toJSON() {
