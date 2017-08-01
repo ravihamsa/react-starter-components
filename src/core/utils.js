@@ -19,6 +19,7 @@ import reduce from 'lodash/reduce';
 import keys from 'lodash/keys';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
+import isArray from 'lodash/isArray';
 import groupBy from 'lodash/groupBy';
 const identity = function(arg1){
     return arg1;
@@ -40,6 +41,7 @@ export const _  = {
     keys:keys,
     debounce:debounce,
     identity:identity,
+    isArray:isArray,
     values:values,
     difference:difference
 }

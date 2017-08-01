@@ -7,6 +7,9 @@ import dataLoader from './dataLoader';
 import Loader from './Loader';
 import MessageStack from './MessageStack';
 import {identity, _} from './utils';
+import utils  from './utils';
+const {cloneChildren} = utils;
+
 
 const NATIVE_PROPS = ['children', 'dataRequests', 'onDataUpdate', 'activeRules']
 
@@ -153,6 +156,18 @@ class SmartWrapper extends Component {
         }
     }
 
+    _updateDataIndex(propName, data) {
+        let propNames = propName;
+        if (!_.isArray(propNames)) {
+            propNames = [propNames];
+        }
+
+        for (var index in propNames) {
+            const key = propNames[index];
+            this.dataIndex[key] = data[key];
+        }
+    }
+
     addRequestIfValid(propName, requestId, filteredProps, storeConfig) {
         let self = this;
         let isRequestValid = storeConfig.validateRequest !== undefined ? storeConfig.validateRequest(filteredProps) : true;
@@ -163,9 +178,9 @@ class SmartWrapper extends Component {
         } else {
             let fallbackResponse = storeConfig.staticFallback !== undefined ? storeConfig.staticFallback(filteredProps) : {data: []};
             let def = dataLoader.getStaticPromise(fallbackResponse);
-            def.done((data) => this.dataIndex[propName] = data)
-            def.catch((error) => this.dataIndex['errors'] = error)
-            def.finally(self.wrapCallBack(function () {
+            def.done((data) => this._updateDataIndex(propName, data));
+            def.catch((error) => this.dataIndex['errors'] = error);
+            def.finally(self.wrapCallBack(() => {
                 self.bumpAndCheckLoading(-1)
             }))
             self.bumpAndCheckLoading(1)
@@ -176,7 +191,7 @@ class SmartWrapper extends Component {
     addDummyRequest(propName, requestId, payload, storeConfig) {
         delete this.dataIndex.errors;
         return this._addRequest(requestId, payload, {
-            done: (data) => this.dataIndex[propName] = data,
+            done: (data) => this._updateDataIndex(propName, data),
             catch: (error) => this.dataIndex['errors'] = error
         })
     }
@@ -198,7 +213,7 @@ class SmartWrapper extends Component {
             delete this.dataIndex.errors;
             return this._addRequest(requestId, params, {
                 done: data => {
-                    this.dataIndex[propName] = data;
+                    this._updateDataIndex(propName, data);
                 },
                 catch: error => {
                     this.dataIndex['errors'] = error;
@@ -211,7 +226,7 @@ class SmartWrapper extends Component {
     addRequest(propName, requestId, payload, onProgress) {
         delete this.dataIndex.errors;
         return this._addRequest(requestId, payload, {
-            done: (data) => this.dataIndex[propName] = data,
+            done: (data) => this._updateDataIndex(propName, data),
             catch: (error) => this.dataIndex['errors'] = error
         }, onProgress)
     }
@@ -248,7 +263,7 @@ class SmartWrapper extends Component {
     }
 
     renderChildren() {
-        return React.cloneElement(this.props.children, {...this.dataIndex, addRequest: this.addRequest.bind(this)})
+        return cloneChildren(this.props.children, {...this.dataIndex, addRequest: this.addRequest.bind(this)})
     }
 
     render() {

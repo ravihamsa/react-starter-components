@@ -144,6 +144,17 @@ class PaginatedTable extends Component {
 
 class Table extends Component {
 
+    renderNoRecords(){
+        let NoRecordsItemProp = this.props.NoRecordsItem;
+        return <NoRecordsItemProp/>
+    }
+
+    renderChildren(){
+        let {attributes, children, records} = this.props;
+        children = cloneChildren(children, {records})
+        return <table className="table" {...attributes}>{children}</table>;
+    }
+
     render() {
         let self = this;
         let props = self.props;
@@ -154,8 +165,7 @@ class Table extends Component {
         if (errors) {
             return <div>{errors.message}</div>
         } else if (zeroLength) {
-            let NoRecordsItemProp = self.props.NoRecordsItem;
-            return <NoRecordsItemProp/>
+            return this.renderNoRecords();
         }
 
         let children = cloneChildren(this.props.children, {records})

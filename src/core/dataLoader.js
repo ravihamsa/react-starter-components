@@ -207,7 +207,7 @@ class DataLoader {
                     parsedResponse = self._executeAfterMiddleWares(requestId,parsedResponse);
                     if (parsedResponse.data) {
                         if (config.parser) {
-                            parsedResponse.data = config.parser(parsedResponse.data);
+                            parsedResponse.data = config.parser(parsedResponse.data, parsedResponse.meta);
                         }
                         if (cache !== 'none') {
                             self._dataCache[requestHash] = {...parsedResponse, body}
