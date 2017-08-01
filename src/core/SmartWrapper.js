@@ -162,9 +162,9 @@ class SmartWrapper extends Component {
             propNames = [propNames];
         }
 
-        for (var index in propNames) {
+        for (const index in propNames) {
             const key = propNames[index];
-            this.dataIndex[key] = data[key];
+            this.dataIndex[key] = data[key] || data;
         }
     }
 
@@ -178,7 +178,7 @@ class SmartWrapper extends Component {
         } else {
             let fallbackResponse = storeConfig.staticFallback !== undefined ? storeConfig.staticFallback(filteredProps) : {data: []};
             let def = dataLoader.getStaticPromise(fallbackResponse);
-            def.done((data) => this._updateDataIndex(propName, data));
+            def.done((data) => this.dataIndex[propName] = data);
             def.catch((error) => this.dataIndex['errors'] = error);
             def.finally(self.wrapCallBack(() => {
                 self.bumpAndCheckLoading(-1)
