@@ -7,7 +7,7 @@ import RXFormElement from './RXFormElement';
 import List from '../common/List'
 import {_} from '../../core/utils';
 
-const returnTrue = function(){
+const returnTrue = function () {
     return true;
 }
 
@@ -52,23 +52,46 @@ export default class RXSelectionElement extends RXFormElement {
         this.changeSubscription = this.selectionManager.on('change', this.onChange.bind(this));
     }
 
-    getPropToStateList(){
+    componentWillReceiveProps(newProps) {
+        const newOptions = newProps['options'];
+        const selected = this.selectionManager.getSelected();
+        if (newOptions && selected) {
+            if (newOptions !== this.props.options) {
+                if (this.multiSelect) {
+                    _.each(selected, item => {
+                        const selectedOption = newOptions.find(optionItem => optionItem.id === item.id);
+                        if (!selectedOption) {
+                            this.selectionManager.deselect(item);
+                        }
+                    })
+                } else {
+                    const selectedOption = newOptions.find(optionItem => optionItem.id === selected.id);
+                    if (!selectedOption) {
+                        this.selectionManager.deselect(selected);
+                    }
+                }
+
+            }
+        }
+    }
+
+    getPropToStateList() {
         return ['active', 'error', 'disabled', 'valid', '__shadowValue', 'value', 'type', 'exposeName', 'exposeSelection', 'serverValid', 'serverError']
     }
 
     applyValue(value = '') {
-        let currentSelectionValue =  this.getFormattedSelection();
-        if(value === currentSelectionValue){
+        let currentSelectionValue = this.getFormattedSelection();
+        if (value === currentSelectionValue) {
             return;
-        }else{
-            if(this.multiSelect){
+        } else {
+            if (this.multiSelect) {
                 let valueArray = value.split(',');
                 let selectedArray = currentSelectionValue.split(',');
-                let toSelect = _.difference(valueArray,selectedArray);
+                let toSelect = _.difference(valueArray, selectedArray);
                 let toDeselect = _.difference(selectedArray, valueArray);
-                _.each(toSelect, (valueId)=>this.findUpdateSelectionById(valueId, 'select'));
-                _.each(toDeselect, (valueId)=>this.findUpdateSelectionById(valueId, 'deselect'));
-            }else{
+                _.each(toSelect, (valueId) => this.findUpdateSelectionById(valueId, 'select'));
+                _.each(toDeselect, (valueId) => this.findUpdateSelectionById(valueId, 'deselect'));
+            } else {
                 this.findUpdateSelectionById(value, 'select');
             }
         }
@@ -83,9 +106,9 @@ export default class RXSelectionElement extends RXFormElement {
                 selectionManager.toggle(toSelectItem)
             } else {
                 let isAlreadySelected = selectionManager.isSelected(toSelectItem);
-                if(!isAlreadySelected){
+                if (!isAlreadySelected) {
                     selectionManager.select(toSelectItem)
-                }else{
+                } else {
                     selectionManager.trigger('change', toSelectItem, toSelectItem);
                 }
 
@@ -93,13 +116,13 @@ export default class RXSelectionElement extends RXFormElement {
         }
     }
 
-    findUpdateSelectionById(id, method){
+    findUpdateSelectionById(id, method) {
         let options = this.props.options;
         let toSelectItem = _.find(options, (item) => item.id === id);
-        if(toSelectItem){
+        if (toSelectItem) {
             this.selectionManager[method](toSelectItem);
-        }else{
-            if(!this.multiSelect){
+        } else {
+            if (!this.multiSelect) {
                 this.selectionManager.clear();
             }
         }
@@ -139,18 +162,22 @@ export default class RXSelectionElement extends RXFormElement {
         this.updateProps(this.getFormattedSelection(value), '__shadowValue');
     }*/
 
-    exposeNameAndSelection(){
-        let  {exposeSelection, exposeName} = this.props;
+    exposeNameAndSelection() {
+        let {exposeSelection, exposeName} = this.props;
         let selected = this.selectionManager.getSelected();
-        if(exposeSelection){
-            this.value$.next({field: this.props.name+'_selection', type: 'selection', value: selected});
+        if (exposeSelection) {
+            this.value$.next({field: this.props.name + '_selection', type: 'selection', value: selected});
         }
-        if(exposeName){
-            this.value$.next({field: this.props.name+'_name', type: 'name', value:  this.getSelectedAttribute(selected, 'name')});
+        if (exposeName) {
+            this.value$.next({
+                field: this.props.name + '_name',
+                type: 'name',
+                value: this.getSelectedAttribute(selected, 'name')
+            });
         }
     }
 
-    onChangeUpdates(){
+    onChangeUpdates() {
 
     }
 
@@ -167,7 +194,7 @@ export default class RXSelectionElement extends RXFormElement {
     onClickHandler(e) {
         let curElement = e.target;
         let listRoot = this.refs.listRoot;
-        if(this.props.disabled || !this.validateSelection()){
+        if (this.props.disabled || !this.validateSelection()) {
             return;
         }
 
@@ -181,9 +208,10 @@ export default class RXSelectionElement extends RXFormElement {
     }
 
     renderElement() {
+        const ListItem = this.props.ListItem || RXSelectionItem;
         return <div onClick={this.onClickHandler.bind(this)} ref="listRoot">
             <List items={this.props.options} selectionManager={this.selectionManager}
-                  selection={this.state.__shadowValue} ListItem={RXSelectionItem}/>
+                  selection={this.state.__shadowValue} ListItem={ListItem}/>
         </div>
     }
 
@@ -195,8 +223,8 @@ export default class RXSelectionElement extends RXFormElement {
         return <fieldset className={formClasses.join(' ')}>
             {this.props.showLabel ? <label className="element-label">{this.props.label}</label> : null}
             {this.renderElement()}
-            {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
-            {error ? <small className="text-danger">{error.message}</small> : '' }
+            {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : ''}
+            {error ? <small className="text-danger">{error.message}</small> : ''}
         </fieldset>
     }
 }
@@ -205,8 +233,8 @@ export default class RXSelectionElement extends RXFormElement {
 RXSelectionElement.propTypes = {
     ...RXFormElement.propTypes,
     options: PropTypes.array.isRequired,
-    exposeName:PropTypes.bool.isRequired,
-    exposeSelection:PropTypes.bool.isRequired,
+    exposeName: PropTypes.bool.isRequired,
+    exposeSelection: PropTypes.bool.isRequired,
 }
 
 RXSelectionElement.defaultProps = {
@@ -215,9 +243,9 @@ RXSelectionElement.defaultProps = {
     placeholder: 'Select',
     label: 'Select',
     options: [],
-    valueType:'idString',
-    exposeName:false,
-    value:'',
-    exposeSelection:false,
-    multiSelect:false
+    valueType: 'idString',
+    exposeName: false,
+    value: '',
+    exposeSelection: false,
+    multiSelect: false
 }
