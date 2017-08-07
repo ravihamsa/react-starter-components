@@ -164,7 +164,7 @@ class SmartWrapper extends Component {
 
         for (const index in propNames) {
             const key = propNames[index];
-            this.dataIndex[key] = data[key] || data;
+            this.dataIndex[key] = data[key] !== undefined ? data[key] : data;
         }
     }
 
