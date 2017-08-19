@@ -34,6 +34,8 @@ export default class RXDatePicker extends RXFormElement {
 
     renderElement() {
         const restProps = this.getRestProps();
+        const value = restProps.value;
+        restProps.value = this.getFormattedDate(value);
         return <div>
             <InlinePopup>
                 <InlineButton>
@@ -41,8 +43,8 @@ export default class RXDatePicker extends RXFormElement {
                         <span className="calendar icon"></span></div>
                 </InlineButton>
                 <InlineBody>
-                    <Month onDateSelect={this.onChange.bind(this)} selectedDate={restProps.value}
-                           displayDate={restProps.value}
+                    <Month onDateSelect={this.onChange.bind(this)} selectedDate={value}
+                           displayDate={value}
                            minDate={this.props.minDate} maxDate={this.props.maxDate}
                            closePopup={this.closePopup.bind(this)}></Month>
                 </InlineBody>
