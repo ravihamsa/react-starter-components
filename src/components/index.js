@@ -3,7 +3,7 @@
  */
 
 import Form from './Form';
-import {RXForm, RXSelect, RXElementGroup, RXFormElement, RXTextInput, RXTextArea, RXRadioList,RXCheckList,RXSelectionElement,RXDropdown,RXCheckbox, RXFileInput, validationRules, activeRules, RXPlainSelect, RXPlainTextInput} from './RXForm';
+import {RXForm, RXSelect, RXElementGroup, RXFormElement, RXTextInput, RXTextArea, RXRadioList,RXCheckList,RXSelectionElement,RXDropdown,RXCheckbox, RXFileInput, validationRules, activeRules, RXPlainSelect, RXPlainTextInput, RXDatePicker} from './RXForm';
 import Table from './Table';
 import common from './common';
 
@@ -23,6 +23,7 @@ export default{
     RXFileInput,
     RXPlainTextInput,
     RXPlainSelect,
+    RXDatePicker,
     validationRules,
     activeRules,
     Table,
