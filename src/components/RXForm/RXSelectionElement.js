@@ -150,26 +150,14 @@ export default class RXSelectionElement extends RXFormElement {
         this.updateValue(this.getFormattedSelection(), 'read');
     }
 
-    /*updateValue(value, type) {
-        let  {exposeSelection, exposeName} = this.props;
-        if(exposeSelection){
-            this.selection$.next({field: this.props.name+'_selection', type: 'selection', value: value});
-        }
-        if(exposeName){
-            this.selection$.next({field: this.props.name+'_name', type: 'name', value:  this.getSelectedAttribute(value, 'name')});
-        }
-        this.value$.next({field: this.props.name, type: type, value: this.getSelectedAttribute(value, 'id')});
-        this.updateProps(this.getFormattedSelection(value), '__shadowValue');
-    }*/
-
     exposeNameAndSelection() {
         let {exposeSelection, exposeName} = this.props;
         let selected = this.selectionManager.getSelected();
         if (exposeSelection) {
-            this.value$.next({field: this.props.name + '_selection', type: 'selection', value: selected});
+            this.selection$.next({field: this.props.name + '_selection', type: 'selection', value: selected});
         }
         if (exposeName) {
-            this.value$.next({
+            this.selection$.next({
                 field: this.props.name + '_name',
                 type: 'name',
                 value: this.getSelectedAttribute(selected, 'name')

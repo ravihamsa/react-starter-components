@@ -59,7 +59,7 @@ export default class RXFormElement extends Component {
         this.unmount$ = new Rx.Subject();
         // this.talkToForm$ = new Rx.Subject();
         this.value$ = new Rx.Subject().debounceTime(debounceTime);
-        // this.selection$ = new Rx.Subject();
+        this.selection$ = new Rx.Subject();
         this.state = _.pick(this.props, this.getPropToStateList());
         this.state.__shadowValue = this.props.value;
         this._value = this.props.value;
@@ -94,6 +94,7 @@ export default class RXFormElement extends Component {
         groupedProps$.mergeMap(group => group.distinctUntilChanged((a, b) => a.value === b.value)).takeUntil(this.unmount$).subscribe(value => this.context.elementProps$.next(value));
 
         this.value$.distinctUntilChanged((a, b) => a.value === b.value).takeUntil(this.unmount$).subscribe(value => this.context.elementValue$.next(value));
+        this.selection$.distinctUntilChanged((a, b) => a.value === b.value).takeUntil(this.unmount$).subscribe(value => this.context.elementValue$.next(value));
 
         this.addValidationListeners();
         this.addServerValidationListeners();

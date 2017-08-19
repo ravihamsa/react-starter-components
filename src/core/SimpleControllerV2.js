@@ -17,7 +17,7 @@ export default class SimpleControllerV2 extends SimpleEmitter {
         super(config);
         this._dataIndex = {};
         this._selectionIndex = {};
-        ['singleSelect', 'multiSelect', 'clearSelect',
+        ['singleSelect', 'multiSelect', 'clearSelection',
             'set', 'setError', 'update', 'clear', 'setList',
             'addToList', 'removeFromList', 'updateInList', 'resetInList'].forEach(methodName => {
             const oldMethod = this[methodName];
@@ -57,12 +57,12 @@ export default class SimpleControllerV2 extends SimpleEmitter {
         this._selectionIndex[keyName].select(data);
     }
 
-    clearSelect(keyName) {
+    clearSelection(keyName) {
         delete this._selectionIndex[keyName];
     }
 
     isSelected(keyName, data) {
-        return this._dataIndex[keyName].isSelected(data);
+        return this._selectionIndex[keyName] && this._selectionIndex[keyName].isSelected(data);
     }
 
     set(keyName, data) {
@@ -99,7 +99,7 @@ export default class SimpleControllerV2 extends SimpleEmitter {
         if (!isArray(data)) {
             return this.set.apply(this, arguments);
         }
-        this._dataIndex[listName] = List(data);
+        this._dataIndex[listName] = fromJS(data);
     }
 
     setList(listName, data) {
@@ -116,31 +116,39 @@ export default class SimpleControllerV2 extends SimpleEmitter {
         if (!isArray(idList)) {
             idList = [id];
         }
-        this._dataIndex[listName] = this._dataIndex[listName].filter(item => idList.indexOf(item.get('id')) > -1);
+        this._dataIndex[listName]  = this._dataIndex[listName].filter(item => idList.indexOf(item.get('id')) === -1);
     }
 
     updateInList(listName, data) {
-        this._dataIndex[listName] = this._dataIndex[listName].update(list => list.findIndex(item => item.get('id') === data.id), item => item.merge(data));
+        const list = this._dataIndex[listName];
+        const recordIndex = list.findIndex(item => item.get('id') === data.id);
+        this._dataIndex[listName] = list.update(recordIndex, item => item.merge(fromJS(data)));
     }
 
     resetInList(listName, data) {
-        this._dataIndex[listName] = this._dataIndex[listName].update(list => list.findIndex(item => item.get('id') === data.id), () => Map(data));
+        const list = this._dataIndex[listName];
+        const recordIndex = list.findIndex(item => item.get('id') === data.id);
+        this._dataIndex[listName] = list.update(recordIndex, () => fromJS(data));
     }
 
-    hasKey(keyName){
+    hasKey(keyName) {
         return this._dataIndex[keyName] !== undefined;
     }
 
-    hasErrorKey(keyName){
-        return this._dataIndex[keyName+'Error'] !== undefined;
+    hasErrorKey(keyName) {
+        return this._dataIndex[keyName + 'Error'] !== undefined;
     }
 
-    getError(keyName){
-        return this._dataIndex[keyName+'Error'].toJSON();
+    getError(keyName) {
+        return this._dataIndex[keyName + 'Error'].toJSON();
     }
 
-    get(keyName){
+    get(keyName) {
         return this._dataIndex[keyName].toJSON();
+    }
+
+    getSelection(keyName) {
+        return this._selectionIndex[keyName].getSelected()
     }
 
     toJSON() {
