@@ -7,9 +7,7 @@ import PropTypes from 'prop-types';
 export default class ActiveWrapper extends Component {
     render() {
         if (this.props.active) {
-            return <div className={this.props.className}>
-                {this.props.children}
-            </div>;
+            return React.Children.only(this.props.children);
         } else {
             return null;
         }
@@ -17,11 +15,11 @@ export default class ActiveWrapper extends Component {
 }
 
 ActiveWrapper.propTypes = {
-    active:PropTypes.bool.isRequired,
-    className:PropTypes.string
+    active: PropTypes.bool.isRequired,
+    className: PropTypes.string
 };
 
 ActiveWrapper.defaultProps = {
-    active:true,
-    className:''
+    active: true,
+    className: ''
 };

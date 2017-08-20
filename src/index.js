@@ -14,7 +14,7 @@ export const {dataLoader, SimpleModel, SimpleEmitter, SmartWrapper, NoLoadingSma
 
 export const {Form,ElementGroup, FormElement, SelectionFormElement, TextInput, TextArea, FileInput, Select, CheckBox, HiddenInput, AutoComplete, DatePicker, SelectableList, SelectableListItem, Dropdown, RadioList} = componentsIm.Form;
 
-export const {RXForm, RXElementGroup, RXFormElement, RXSelect, RXTextInput, RXRadioList, RXTextArea, RXCheckList,RXSelectionElement,RXDropdown,RXCheckbox, RXFileInput,validationRules, activeRules, RXPlainTextInput, RXPlainSelect, RXDatePicker} = componentsIm;
+export const {RXForm, RXElementGroup, RXFormElement, RXSelect, RXTextInput, RXRadioList, RXTextArea, RXCheckList,RXSelectionElement,RXDropdown,RXCheckbox, RXFileInput,validationRules, activeRules, RXPlainTextInput, RXPlainSelect, RXDatePicker,RXHiddenInput} = componentsIm;
 
 export const {PaginatedTable, Table, THEAD, TBODY, TH, TD, TR} = componentsIm.Table;
 
