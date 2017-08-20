@@ -5,9 +5,8 @@ import React, {PropTypes, Component} from "react";
 import core from '../../core';
 import EventEmitter from "events";
 import {_} from '../../core/utils';
+
 const {cloneChildren} = core.utils;
-
-
 
 
 class TH extends Component {
@@ -64,7 +63,6 @@ class TBODY extends Component {
 }
 
 
-
 class PaginatedTable extends Component {
     constructor() {
         super(...arguments);
@@ -74,7 +72,7 @@ class PaginatedTable extends Component {
         }
     }
 
-    componentWillReceiveProps(newProps){
+    componentWillReceiveProps(newProps) {
         this.setState(_.omit(newProps, 'children'));
     }
 
@@ -87,34 +85,34 @@ class PaginatedTable extends Component {
     }
 
     onNext(e) {
-        if(e && e.preventDefault){
+        if (e && e.preventDefault) {
             e.preventDefault();
         }
-        if(this.hasNext()){
+        if (this.hasNext()) {
             this.setState({
-                curPage:this.state.curPage + 1
+                curPage: this.state.curPage + 1
             })
         }
     }
 
-    onPrev(event){
-        if(event && event.preventDefault){
+    onPrev(event) {
+        if (event && event.preventDefault) {
             event.preventDefault();
         }
-        if(this.hasPrev()){
+        if (this.hasPrev()) {
             this.setState({
-                curPage:this.state.curPage - 1
+                curPage: this.state.curPage - 1
             })
         }
     }
 
-    hasNext(){
+    hasNext() {
         let records = this.props.records;
         let totalFullPages = Math.floor(records.length / this.state.perPage);
         return this.state.curPage < totalFullPages - 1;
     }
 
-    hasPrev(){
+    hasPrev() {
         return this.state.curPage > 0;
     }
 
@@ -127,16 +125,17 @@ class PaginatedTable extends Component {
         let totalPages = Math.ceil(records.length / this.state.perPage);
         let children = cloneChildren(this.props.children, {
             records: renderRecords,
-            totalPages:totalPages,
-            curPage:this.state.curPage,
-            perPage:this.state.perPage,
+            totalPages: totalPages,
+            curPage: this.state.curPage,
+            perPage: this.state.perPage,
             start: this.start,
             end: this.end,
-            totalRecords:records.length,
+            totalRecords: records.length,
             onNext: this.onNext.bind(this),
             onPrev: this.onPrev.bind(this),
             hasNext: this.hasNext(),
-            hasPrev: this.hasPrev()})
+            hasPrev: this.hasPrev()
+        })
         return <div className="paginated-table">{children}</div>;
     }
 }
@@ -144,12 +143,12 @@ class PaginatedTable extends Component {
 
 class Table extends Component {
 
-    renderNoRecords(){
+    renderNoRecords() {
         let NoRecordsItemProp = this.props.NoRecordsItem;
         return <NoRecordsItemProp/>
     }
 
-    renderChildren(){
+    renderChildren() {
         let {attributes, children, records} = this.props;
         children = cloneChildren(children, {records})
         return <table className="table" {...attributes}>{children}</table>;
@@ -191,9 +190,34 @@ Table.defaultProps = {
 }
 
 
+class DynamicTable extends Table {
+    renderChildren() {
+        let {attributes, records, columns} = this.props;
+        if (columns.length === 0) {
+            columns = Object.keys(records[0]).map(item => {
+                key:item
+            });
+        }
+        return <table className="table" {...attributes}>
+            <thead>
+            <tr>
+                {columns.map(item => <td key={item.key}>{item.label || item.key}</td>)}
+            </tr>
+            </thead>
+            <tbody>
+            {records.map(rowItem => <tr key={rowItem.id}>
+                {columns.map(item => <td key={item.key}>{rowItem[item.key]}</td>)}
+            </tr>)}
+            </tbody>
+        </table>;
+    }
+}
+
+
 export default {
     PaginatedTable,
     Table,
+    DynamicTable,
     THEAD,
     TBODY,
     TH,

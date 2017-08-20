@@ -16,7 +16,7 @@ export const {Form,ElementGroup, FormElement, SelectionFormElement, TextInput, T
 
 export const {RXForm, RXElementGroup, RXFormElement, RXSelect, RXTextInput, RXRadioList, RXTextArea, RXCheckList,RXSelectionElement,RXDropdown,RXCheckbox, RXFileInput,validationRules, activeRules, RXPlainTextInput, RXPlainSelect, RXDatePicker,RXHiddenInput} = componentsIm;
 
-export const {PaginatedTable, Table, THEAD, TBODY, TH, TD, TR} = componentsIm.Table;
+export const {PaginatedTable, Table, THEAD, TBODY, TH, TD, TR, DynamicTable} = componentsIm.Table;
 
 export const {List, ListItem, SelectableItem, FormCollection,AnchorLink, ActionLink, ToggleActionButton,ViewStateManager, ViewState} = componentsIm.common;
 
