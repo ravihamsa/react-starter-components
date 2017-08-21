@@ -194,9 +194,7 @@ class DynamicTable extends Table {
     renderChildren() {
         let {attributes, records, columns} = this.props;
         if (columns.length === 0) {
-            columns = Object.keys(records[0]).map(item => {
-                key:item
-            });
+            columns = this.parseColumns();
         }
         return <table className="table" {...attributes}>
             <thead>
@@ -205,14 +203,46 @@ class DynamicTable extends Table {
             </tr>
             </thead>
             <tbody>
-            {records.map(rowItem => <tr key={rowItem.id}>
+            {records.map(rowItem => <tr key={rowItem.id || rowItem._id}>
                 {columns.map(item => <td key={item.key}>{rowItem[item.key]}</td>)}
             </tr>)}
             </tbody>
         </table>;
     }
+
+
+    parseColumns(){
+        const {records, columnsToHide} = this.props;
+        const columns = Object.keys(records[0]).map(item => {
+            return {
+                key: item
+            };
+        });
+        return columns.filter(item => columnsToHide.indexOf(item.key) === -1);
+    }
+
+    render() {
+        let self = this;
+        let props = self.props;
+
+        let {records, errors} = props;
+        let zeroLength = records.length === 0;
+
+        if (errors) {
+            return <div>{errors.message}</div>
+        } else if (zeroLength) {
+            return this.renderNoRecords();
+        }
+        return this.renderChildren();
+    }
 }
 
+
+DynamicTable.defaultProps = {
+    ...Table.defaultProps,
+    columns: [],
+    columnsToHide: ['_id']
+}
 
 export default {
     PaginatedTable,
