@@ -192,10 +192,8 @@ Table.defaultProps = {
 
 class DynamicTable extends Table {
     renderChildren() {
-        let {attributes, records, columns} = this.props;
-        if (columns.length === 0) {
-            columns = this.parseColumns();
-        }
+        let {attributes, records} = this.props;
+        const columns = this.parseColumns();
         return <table className="table" {...attributes}>
             <thead>
             <tr>
@@ -211,14 +209,18 @@ class DynamicTable extends Table {
     }
 
 
-    parseColumns(){
+    parseColumns() {
         const {records, columnsToHide} = this.props;
-        const columns = Object.keys(records[0]).map(item => {
-            return {
-                key: item
-            };
-        });
-        return columns.filter(item => columnsToHide.indexOf(item.key) === -1);
+        let {columns} = this.props;
+        if (columns.length === 0) {
+            columns = Object.keys(records[0]).map(item => {
+                return {
+                    key: item
+                };
+            });
+            columns = columns.filter(item => columnsToHide.indexOf(item.key) === -1);
+        }
+        return columns;
     }
 
     render() {

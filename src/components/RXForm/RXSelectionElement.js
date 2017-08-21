@@ -195,10 +195,15 @@ export default class RXSelectionElement extends RXFormElement {
         }
     }
 
+    getFilteredOptions() {
+        const {options, filterQuery, filterField} = this.props;
+        return options.filter(item => item[filterField].toLowerCase().indexOf(filterQuery.toLowerCase()) > -1);
+    }
+
     renderElement() {
-        const ListItem = this.props.ListItem || RXSelectionItem;
+        const {ListItem = RXSelectionItem} = this.props;
         return <div onClick={this.onClickHandler.bind(this)} ref="listRoot">
-            <List items={this.props.options} selectionManager={this.selectionManager}
+            <List items={this.getFilteredOptions()} selectionManager={this.selectionManager}
                   selection={this.state.__shadowValue} ListItem={ListItem}/>
         </div>
     }
@@ -235,5 +240,7 @@ RXSelectionElement.defaultProps = {
     exposeName: false,
     value: '',
     exposeSelection: false,
-    multiSelect: false
+    multiSelect: false,
+    filterQuery: '',
+    filterField: 'name'
 }
