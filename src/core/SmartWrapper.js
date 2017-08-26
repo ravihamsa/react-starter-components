@@ -7,7 +7,7 @@ import dataLoader from './dataLoader';
 import Loader from './Loader';
 import MessageStack from './MessageStack';
 import {identity, _} from './utils';
-import utils  from './utils';
+import utils from './utils';
 const {cloneChildren} = utils;
 
 
@@ -279,6 +279,22 @@ class SmartWrapper extends Component {
                     return this.renderChildren()
                 }
             }
+        } else {
+            return <div></div>;
+        }
+
+    }
+
+}
+
+export class SmartWrapperV2 extends SmartWrapper {
+    render() {
+        if (this.state.active) {
+            return <div className={this.props.className || 'smart-wrapper'}>
+                {this.state.loading ? this.renderLoading() : null}
+                {this.dataIndex.errors && this.props.showError !== false ? this.renderErrors() : null}
+                {this.renderChildren()}
+            </div>;
         } else {
             return <div></div>;
         }

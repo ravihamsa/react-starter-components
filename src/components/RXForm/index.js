@@ -9,7 +9,7 @@ export RXTextInput from './RXTextInput';
 export RXTextArea from './RXTextArea';
 export RXRadioList from './RXRadioList';
 export RXCheckList from './RXCheckList';
-export RXSelectionElement from './RXSelectionElement';
+export RXSelectionElement, {RXSelectionItem} from './RXSelectionElement';
 export RXDropdown from './RXDropdown';
 export RXCheckbox from './RXCheckbox';
 export RXFileInput from './RXFileInput';

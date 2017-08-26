@@ -39,7 +39,7 @@ export default class RXDatePicker extends RXFormElement {
         return <div>
             <InlinePopup>
                 <InlineButton>
-                    <div><input  {...restProps}/>;
+                    <div><input  {...restProps}/>
                         <span className="calendar icon"></span></div>
                 </InlineButton>
                 <InlineBody>
