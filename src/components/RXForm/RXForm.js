@@ -4,6 +4,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Rx} from '../../core/rxutils';
+import {_} from '../../core/utils';
 
 const ensurePropertyIndex = (obj, prop) => {
     obj[prop] = obj[prop] || {};
@@ -29,6 +30,7 @@ export default class RXForm extends Component {
     componentWillMount() {
         const read$ = this.elementValue$.filter(e => e.type === 'read');
         const update$ = this.elementValue$.filter(e => e.type === 'update');
+        const skipValidateUpdate$ = this.elementValue$.filter(e => e.type === 'skipValidateUpdate');
         const selection$ = this.elementValue$.filter(e => e.type === 'selection');
         const name$ = this.elementValue$.filter(e => e.type === 'name');
         const register$ = this.elementProps$.filter(e => e.type === 'register');
@@ -46,13 +48,19 @@ export default class RXForm extends Component {
             this.elementPropIndex[val.field][val.type] = val.value;
         });
 
-        read$.merge(update$, selection$, name$).takeUntil(this.unmount$).subscribe(val => {
+        read$.merge(update$, selection$, name$, skipValidateUpdate$).takeUntil(this.unmount$).subscribe(val => {
             this.valueIndex[val.field] = val.value;
         });
 
 
         update$.takeUntil(this.unmount$).subscribe(val => {
             this.valueChangeHandler({
+                [val.field]: val.value
+            }, this.valueIndex);
+        });
+
+        skipValidateUpdate$.takeUntil(this.unmount$).subscribe(val => {
+            this.selectionReadHandler({
                 [val.field]: val.value
             }, this.valueIndex);
         });
@@ -90,6 +98,14 @@ export default class RXForm extends Component {
         }
         if (controller && name && controller.set) {
             controller.set(name, fullObject);
+        }
+    }
+
+    selectionReadHandler(changed) {
+        // console.log(changed, fullObject);
+        const {onSelectionRead} = this.props;
+        if (onSelectionRead) {
+            onSelectionRead(changed);
         }
     }
 
@@ -158,6 +174,15 @@ export default class RXForm extends Component {
         for (const elementName in map) {
             this.setElementProp(elementName, map[elementName].prop, map[elementName].value);
         }
+    }
+
+    clearFields(fields) {
+        _.each(fields, elementName => {
+            this.communication$.next({
+                field: elementName,
+                type: 'clearElement'
+            });
+        });
     }
 
     forceElementServerValidation(elementName) {

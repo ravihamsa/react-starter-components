@@ -149,8 +149,9 @@ export default class RXSelectionElement extends RXFormElement {
     readInputValue() {
         this.updateValue(this.getFormattedSelection(), 'read');
         let {exposeSelection, exposeName} = this.props;
-        if(exposeSelection || exposeName) {
-            this.exposeNameAndSelection();
+        if (exposeSelection || exposeName) {
+            let selected = this.selectionManager.getSelected();
+            this.value$.next({field: this.props.name + '_selection', type: 'skipValidateUpdate', value: selected})
         }
     }
 

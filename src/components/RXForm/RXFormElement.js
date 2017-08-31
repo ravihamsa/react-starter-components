@@ -10,7 +10,7 @@ import dataLoader from '../../core/dataLoader';
 
 const defaultPropReturnFunction = _.identity;
 
-const returnTrueFunction = ()=> {
+const returnTrueFunction = () => {
     return true;
 };
 
@@ -66,6 +66,7 @@ export default class RXFormElement extends Component {
         this.validations = validations.map(rule => getValidationRule(rule));
         this.activeRules = activeRules.map(rule => getActiveRule(rule));
         this.propRules = propRules.map(rule => getPropRule(rule));
+        this.clearing = false;
     }
 
     getPropToStateList() {
@@ -156,6 +157,16 @@ export default class RXFormElement extends Component {
         setSiblingProp$.takeUntil(this.unmount$).subscribe(val => {
             this.updateProps(val.value, val.prop);
         });
+
+        const clearElement$ = this.context.communication$.filter(val => val.type === 'clearElement' && val.field === this.props.name);
+        clearElement$.takeUntil(this.unmount$).subscribe(val => {
+            this.clearing = true;
+            this.applyValue(this.getClearValue());
+        });
+    }
+
+    getClearValue() {
+        return '';
     }
 
     addServerValidationListeners() {
@@ -185,10 +196,18 @@ export default class RXFormElement extends Component {
         const setError$ = validateRequest$
             .mergeMap(val => Rx.Observable.from(this.validations).filter(rule => rule.func.call(this, rule, val.value) !== true).take(1).defaultIfEmpty(null));
         setError$.takeUntil(this.unmount$).subscribe((rule, val) => {
-            this.updateProps(rule ? false : true, 'valid');
-            this.updateProps(rule, 'error');
+            if (this.clearing) {
+                this.updateProps(true, 'valid');
+                this.updateProps(null, 'error');
+                this.clearing = false;
+            } else {
+                this.updateProps(rule ? false : true, 'valid');
+                this.updateProps(rule, 'error');
+            }
+
         });
     }
+
 
     addActiveListeners() {
 
