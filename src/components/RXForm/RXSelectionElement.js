@@ -151,7 +151,7 @@ export default class RXSelectionElement extends RXFormElement {
         let {exposeSelection, exposeName} = this.props;
         if (exposeSelection || exposeName) {
             let selected = this.selectionManager.getSelected();
-            this.value$.next({field: this.props.name + '_selection', type: 'skipValidateUpdate', value: selected})
+            this.selection$.next({field: this.props.name + '_selection', type: 'skipValidateUpdate', value: selected})
         }
     }
 

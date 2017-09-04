@@ -17,6 +17,7 @@ export default class SimpleControllerV2 extends SimpleEmitter {
         super(config);
         this._dataIndex = {};
         this._selectionIndex = {};
+        this._changing = false;
         ['singleSelect', 'multiSelect', 'clearSelection',
             'set', 'setError', 'update', 'clear', 'setList',
             'addToList', 'removeFromList', 'updateInList', 'resetInList'].forEach(methodName => {
@@ -28,6 +29,15 @@ export default class SimpleControllerV2 extends SimpleEmitter {
         });
 
     }
+
+    mute() {
+        this._changing = true;
+    }
+
+    unmute() {
+        this._changing = false;
+    }
+
 
     execute(action, payload) {
         if (typeof this[action] === 'function') {
@@ -116,7 +126,7 @@ export default class SimpleControllerV2 extends SimpleEmitter {
         if (!isArray(idList)) {
             idList = [id];
         }
-        this._dataIndex[listName]  = this._dataIndex[listName].filter(item => idList.indexOf(item.get('id')) === -1);
+        this._dataIndex[listName] = this._dataIndex[listName].filter(item => idList.indexOf(item.get('id')) === -1);
     }
 
     updateInList(listName, data) {
@@ -167,6 +177,10 @@ export default class SimpleControllerV2 extends SimpleEmitter {
     }
 
     triggerChange() {
-        this.trigger('change', this.toJSON());
+        if (!this._changing) {
+            this.trigger('change', this.toJSON());
+        } else {
+            console.log('trigger change muted');
+        }
     }
 }

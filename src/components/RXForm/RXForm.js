@@ -76,7 +76,7 @@ export default class RXForm extends Component {
                 [val.field]: val.value
             }, this.valueIndex);
         });
-        // selection$.subscribe(e => console.log(e))
+        // this.elementValue$.subscribe(e => console.log(e))
     }
 
     componentWillUnmount() {
