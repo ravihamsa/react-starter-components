@@ -158,7 +158,7 @@ class InlineBody extends Component {
             this.updatePortalElementPosition();
             let style = {position: 'absolute'};
             let buttonBounds = this.props.getButtonBounds();
-            let {halign, valign} = this.props;
+            let {halign, valign, bodyPosition} = this.props;
             switch (halign) {
                 case 'right':
                     style.right = 0;
@@ -176,6 +176,12 @@ class InlineBody extends Component {
                     style.top = -(buttonBounds.height);
                     break;
             }
+            switch (bodyPosition) {
+                case 'up':
+                    delete style.top;
+                    style.bottom = 0;
+                    break;
+            }
             ReactDOM.render(<div className={className + " inline-popup-body"}
                                  style={style}>{React.cloneElement(this.props.children, {closePopup: this.props.closePopup})}</div>, this.portalElement);
         } else {
@@ -186,7 +192,8 @@ class InlineBody extends Component {
 
 InlineBody.defaultProps = {
     valign: 'bottom',
-    halign: 'left'
+    halign: 'left',
+    bodyPosition:'down'
 }
 
 InlinePopup.defaultProps = {
