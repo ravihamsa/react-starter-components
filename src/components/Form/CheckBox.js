@@ -2,16 +2,17 @@
  * Created by ravi.hamsa on 6/29/16.
  */
 
-import React, {PropTypes, Component} from "react";
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 import FormElement from './FormElement'
 
 
 class CheckBox extends FormElement {
 
-    getValueFromNode(node){
+    getValueFromNode(node) {
         return node.checked;
     }
-    
+
     render() {
 
         let defaultValue = this.getDefaultValue();
@@ -26,18 +27,17 @@ class CheckBox extends FormElement {
                            placeholder={this.props.placeholder} onChange={this.onChange.bind(this)}
                            defaultChecked={defaultValue}/> {this.props.label}
                 </label>
-                {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
-                {errors.length > 0 ? <small className="text-danger">{errors[0].message}</small> : '' }
+                {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : ''}
+                {errors.length > 0 ? <small className="text-danger">{errors[0].message}</small> : ''}
             </div>
         </fieldset>
     }
 }
 
 
-
 export default CheckBox;
 
 CheckBox.defaultProps = {
     ...FormElement.defaultProps,
-    type:'check-box'
+    type: 'check-box'
 }

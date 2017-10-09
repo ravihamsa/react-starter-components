@@ -1,7 +1,8 @@
 /**
  * Created by ravi.hamsa on 6/29/16.
  */
-import React, {PropTypes, Component} from "react";
+import React, {Component} from "react";
+import PropTypes from 'prop-types';
 import core from '../../core';
 import {_} from '../../core/utils'
 const {SimpleModel}=core;

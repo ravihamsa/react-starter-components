@@ -1,7 +1,8 @@
 /**
  * Created by ravi.hamsa on 3/26/17.
  */
-import React, {PropTypes, Component} from "react";
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 import Selection from 'selection-manager';
 import RXFormElement from './RXFormElement';
 import List from '../common/List'

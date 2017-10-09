@@ -1,7 +1,8 @@
 /**
  * Created by ravi.hamsa on 3/26/17.
  */
-import React, {PropTypes, Component} from "react";
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 import RXFormElement from './RXFormElement'
 
 export default class RXCheckbox extends RXFormElement {
@@ -10,9 +11,9 @@ export default class RXCheckbox extends RXFormElement {
         this.updateValue(e.target.checked, 'update');
     }
 
-    getFormClasses(){
-        let classArray  = super.getFormClasses();
-        if(this.state.value){
+    getFormClasses() {
+        let classArray = super.getFormClasses();
+        if (this.state.value) {
             classArray.push('checked');
         }
         return classArray;
@@ -32,8 +33,8 @@ export default class RXCheckbox extends RXFormElement {
         let error = this.state.error;
         return <fieldset className={formClasses.join(' ')}>
             <label className="element-label form-check-label">{this.renderElement()}{this.props.label}</label>
-            {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
-            {error ? <small className="text-danger">{error.message}</small> : '' }
+            {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : ''}
+            {error ? <small className="text-danger">{error.message}</small> : ''}
         </fieldset>
     }
 }

@@ -1,7 +1,8 @@
 /**
  * Created by ravi.hamsa on 2/24/17.
  */
-import React, {Component, PropTypes} from "react";
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 import Selection from 'selection-manager';
 import FormElement from './FormElement';
 import SelectionFormElement from './SelectionFormElement';

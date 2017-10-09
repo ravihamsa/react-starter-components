@@ -3,7 +3,8 @@
  */
 
 import 'babel-polyfill';
-import React, {Component, PropTypes} from "react";
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 import Child from './components/Child'
 import NameList from './components/NameList'
 import emptyFunction from 'fbjs/lib/emptyFunction';

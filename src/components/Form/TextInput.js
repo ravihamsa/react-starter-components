@@ -2,9 +2,9 @@
  * Created by ravi.hamsa on 6/29/16.
  */
 
-import React, {PropTypes, Component} from "react";
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 import FormElement from './FormElement';
-
 
 
 class TextInput extends FormElement {
@@ -21,8 +21,8 @@ class TextInput extends FormElement {
                    placeholder={this.props.placeholder} onChange={this.onChange.bind(this)}
                    disabled={this.props.disabled}
                    value={value}/>
-            {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
-            {errors.length > 0 ? <small className="text-danger">{errors[0].message}</small> : '' }
+            {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : ''}
+            {errors.length > 0 ? <small className="text-danger">{errors[0].message}</small> : ''}
         </fieldset>
     }
 }

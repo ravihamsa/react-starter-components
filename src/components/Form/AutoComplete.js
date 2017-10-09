@@ -2,10 +2,12 @@
  * Created by ravi.hamsa on 6/29/16.
  */
 
-import React, {PropTypes, Component} from "react";
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 import FormElement from './FormElement'
 import InlinePopupGroup from '../common/InlinePopupGroup'
 import Selection from 'selection-manager';
+
 const {InlinePopup, InlineButton, InlineBody} = InlinePopupGroup;
 
 class AutoComplete extends FormElement {
@@ -44,7 +46,7 @@ class AutoComplete extends FormElement {
     selectOption(selectedId, event) {
         event.preventDefault();
         this.selection.select(selectedId);
-        if(!this.selection.isMultiSelect()){
+        if (!this.selection.isMultiSelect()) {
             this.refs.popupBody.props.closePopup();
         }
     }
@@ -53,12 +55,12 @@ class AutoComplete extends FormElement {
         this.setState({searchString: this.getValueFromNode(event.target)})
     }
 
-    onClosePopup(){
+    onClosePopup() {
         let selected = this.selection.getSelected();
-        if(selected.id !== '-1'){
-            this.setState({searchString:selected.name})
-        }else{
-            this.setState({searchString:''})
+        if (selected.id !== '-1') {
+            this.setState({searchString: selected.name})
+        } else {
+            this.setState({searchString: ''})
         }
 
     }
@@ -77,10 +79,12 @@ class AutoComplete extends FormElement {
             {this.props.showLabel ? <label className="element-label">{this.props.label}</label> : null}
             <InlinePopup onClosePopup={this.onClosePopup.bind(this)}>
                 <InlineButton>
-                    <div style={{position:'relative'}}>
+                    <div style={{position: 'relative'}}>
                         {/*<span>{selectedOption.name}</span>*/}
-                        <input className="form-control" name={this.props.name} disabled={this.props.disabled} autoComplete="off"
-                               placeholder={this.props.placeholder} onChange={this.localOnChange.bind(this)} value={this.state.searchString}>
+                        <input className="form-control" name={this.props.name} disabled={this.props.disabled}
+                               autoComplete="off"
+                               placeholder={this.props.placeholder} onChange={this.localOnChange.bind(this)}
+                               value={this.state.searchString}>
                         </input>
                     </div>
                     {/*<option value="-1">{selectText}</option>
@@ -88,19 +92,19 @@ class AutoComplete extends FormElement {
                      return <option value={option.id} key={index}>{option.name}</option>
                      },this)}*/}
 
-            </InlineButton>
-            <InlineBody ref="popupBody">
-                <ul style={{maxHeight: '200px', overflow: 'auto'}}>
-                    {filteredOptions.map(function (option, index) {
-                        return <li value={option.id} key={index}
-                                   onClick={this.selectOption.bind(this, option)}>{option.name}</li>
-                    }, this)}
-                </ul>
-            </InlineBody>
-        </InlinePopup>
-    {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : '' }
-    {errors.length > 0 ? <small className="text-danger">{errors[0].message}</small> : '' }
-    </fieldset>
+                </InlineButton>
+                <InlineBody ref="popupBody">
+                    <ul style={{maxHeight: '200px', overflow: 'auto'}}>
+                        {filteredOptions.map(function (option, index) {
+                            return <li value={option.id} key={index}
+                                       onClick={this.selectOption.bind(this, option)}>{option.name}</li>
+                        }, this)}
+                    </ul>
+                </InlineBody>
+            </InlinePopup>
+            {this.props.helperText ? <small className="text-muted">{this.props.helperText}</small> : ''}
+            {errors.length > 0 ? <small className="text-danger">{errors[0].message}</small> : ''}
+        </fieldset>
     }
 }
 
@@ -109,5 +113,5 @@ export default AutoComplete;
 
 AutoComplete.defaultProps = {
     ...FormElement.defaultProps,
-    type:'auto-complete'
+    type: 'auto-complete'
 }

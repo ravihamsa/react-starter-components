@@ -1,7 +1,8 @@
 /**
  * Created by ravi.hamsa on 6/29/16.
  */
-import React, {PropTypes, Component} from "react";
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {_} from '../../core/utils'
 import {Rx} from '../../core/rxutils'
 
@@ -94,7 +95,7 @@ let getPropRule = (item) => {
         element: item.element,
         prop: item.prop,
         value: item.value,
-        valueFunc:item.valueFunc || _.identity,
+        valueFunc: item.valueFunc || _.identity,
         func: item.expr === 'function' ? item.func : activeRulesMap[item.expr]
     }
 }
@@ -103,7 +104,7 @@ class FormElement extends Component {
 
     constructor() {
         super(...arguments);
-        let {validations = [], propRules=[]} = this.props
+        let {validations = [], propRules = []} = this.props
         this.change$ = new Rx.Subject();
         this._changing = false;
         this.state = {
@@ -122,8 +123,8 @@ class FormElement extends Component {
         });
     }
 
-    setState(arg1, arg2){
-        if(this.props.name === 'stateIds'){
+    setState(arg1, arg2) {
+        if (this.props.name === 'stateIds') {
             //console.log(arg1, arg2, 'stateIds')
         }
         super.setState(arg1, arg2);
@@ -197,7 +198,7 @@ class FormElement extends Component {
         this.context.valueStore.set(toSet);
     }
 
-    validateSiblingsOnChange(changed){
+    validateSiblingsOnChange(changed) {
         let toValidateIds = this.siblingValidations.map((item) => item.element);
         let changedKey = _.keys(changed)[0];
         if (toValidateIds.indexOf(changedKey) > -1) {
@@ -209,20 +210,20 @@ class FormElement extends Component {
         }
     }
 
-    handlePropRules(changed, fullObjecdt){
+    handlePropRules(changed, fullObjecdt) {
         let toValidateIds = this.propRules.map((item) => item.element);
         let changedKey = _.keys(changed)[0];
         if (toValidateIds.indexOf(changedKey) > -1) {
-            let propValue =   _.reduce(this.propRules, (memo, rule)=>{
+            let propValue = _.reduce(this.propRules, (memo, rule) => {
                 return !memo && rule.func.call(this, {value: fullObjecdt[rule.element]}, rule) === true
             }, false)
             //console.log(propValue);
         }
     }
 
-    validateSiblings(){
+    validateSiblings() {
         let changedKey = this.props.name;
-        let valueStore =  this.context.valueStore;
+        let valueStore = this.context.valueStore;
         let errors = this.siblingValidations.filter((item) => {
             return item.func.call(this, item, valueStore.get(item.element)) === false;
         })
@@ -237,7 +238,7 @@ class FormElement extends Component {
         })
         this.context.errorStore.set({[name]: errors})
         this.setState({errors: errors})
-        if(errors.length === 0){
+        if (errors.length === 0) {
             this.validateSiblings();
         }
     }
@@ -286,7 +287,7 @@ class FormElement extends Component {
         if (errors.length > 0) {
             classArray.push('has-error');
         }
-        if(this.props.disabled){
+        if (this.props.disabled) {
             classArray.push('disabled')
         }
         return classArray.join(' ')

@@ -1,7 +1,8 @@
 /**
  * Created by ravi.hamsa on 7/2/16.
  */
-import React, {PropTypes, Component} from 'react';
+import React, {Component} from 'react';
+import PropTypes from "prop-types";
 import {escapePress$} from '../../core/rxutils';
 
 const popupStyles = {

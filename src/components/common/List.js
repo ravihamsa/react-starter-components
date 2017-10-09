@@ -1,7 +1,8 @@
 /**
  * Created by ravi.hamsa on 6/30/16.
  */
-import React, {Component, PropTypes} from "react";
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {_} from '../../core/utils'
 
 export class ListItem extends Component {

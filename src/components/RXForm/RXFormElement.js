@@ -1,7 +1,8 @@
 /**
  * Created by ravi.hamsa on 3/26/17.
  */
-import React, {PropTypes, Component} from 'react';
+import React, {Component} from 'react';
+import PropTypes from "prop-types";
 import {Rx} from '../../core/rxutils';
 import {_} from '../../core/utils';
 import validatorMap from './validationRules';

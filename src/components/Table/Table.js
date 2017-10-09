@@ -1,7 +1,8 @@
 /**
  * Created by ravi.hamsa on 7/4/16.
  */
-import React, {PropTypes, Component} from "react";
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 import core from '../../core';
 import EventEmitter from "events";
 import {_} from '../../core/utils';

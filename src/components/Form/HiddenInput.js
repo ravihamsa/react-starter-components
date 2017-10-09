@@ -2,9 +2,9 @@
  * Created by ravi.hamsa on 6/29/16.
  */
 
-import React, {PropTypes, Component} from "react";
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 import FormElement from './FormElement';
-
 
 
 class HiddenInput extends FormElement {
@@ -26,6 +26,6 @@ export default HiddenInput;
 
 HiddenInput.defaultProps = {
     ...FormElement.defaultProps,
-    type:'hidden'
+    type: 'hidden'
 }
 

@@ -1,11 +1,13 @@
 /**
  * Created by ravi.hamsa on 3/26/17.
  */
-import React, {PropTypes, Component} from "react";
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 import Selection from 'selection-manager';
 import RXSelectionElement from './RXSelectionElement';
 import List from '../common/List'
 import InlinePopupGroup from '../common/InlinePopupGroup'
+
 const {InlinePopup, InlineButton, InlineBody} = InlinePopupGroup
 import {_} from '../../core/utils';
 
@@ -55,8 +57,8 @@ export default class RXDropdown extends RXSelectionElement {
 
     getSummaryText() {
         let {selectionManager, multiSelect} = this;
-        let  {options} = this.props;
-        if(options ===undefined || options.length === 0){
+        let {options} = this.props;
+        if (options === undefined || options.length === 0) {
             return this.props.noOptionsLabel
         }
 
@@ -67,10 +69,10 @@ export default class RXDropdown extends RXSelectionElement {
         if (!multiSelect) {
             return selected.name;
         } else {
-            if(selected.length ===options.length){
+            if (selected.length === options.length) {
                 return this.props.allSelectedLabel
-            }else{
-                return selected.length + ' '+this.props.optionsSelectedLabel;
+            } else {
+                return selected.length + ' ' + this.props.optionsSelectedLabel;
             }
 
         }
@@ -93,7 +95,7 @@ export default class RXDropdown extends RXSelectionElement {
     }
 
     renderElement() {
-        let {valign="top", bodyPosition} = this.props;
+        let {valign = "top", bodyPosition} = this.props;
         let filteredOptions = _.filter(this.props.options, (item) => {
             return item.name.toLowerCase().indexOf(this.state.query.toLowerCase()) > -1;
         })
@@ -107,9 +109,9 @@ export default class RXDropdown extends RXSelectionElement {
                 <div className="drop-down-body">
                     {this.props.showSearch ? <div className="drop-down-search-container">
                         <input type="text" autoFocus defaultValue={this.state.query} ref="searchBox"
-                           onChange={this.onKeyPressHandler} className="drop-down-input"
-                           placeholder={this.props.placeholder}/>
-                    </div>:null}
+                               onChange={this.onKeyPressHandler} className="drop-down-input"
+                               placeholder={this.props.placeholder}/>
+                    </div> : null}
                     <div onClick={this.onClickHandler.bind(this)} ref="listRoot">
                         <List items={filteredOptions} selectionManager={this.selectionManager}
                               selection={this.state.value} ListItem={RXDropdownItem}/>
@@ -125,11 +127,11 @@ export default class RXDropdown extends RXSelectionElement {
 
 RXDropdown.defaultProps = {
     ...RXSelectionElement.defaultProps,
-    type:'drop-down',
-    noOptionsLabel:'No Options',
-    noSelectionLabel:'Select',
-    allSelectedLabel:'All Selected',
-    optionsSelectedLabel:'Options Selected',
-    bodyPosition:'down'
+    type: 'drop-down',
+    noOptionsLabel: 'No Options',
+    noSelectionLabel: 'Select',
+    allSelectedLabel: 'All Selected',
+    optionsSelectedLabel: 'Options Selected',
+    bodyPosition: 'down'
 }
 

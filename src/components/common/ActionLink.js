@@ -1,7 +1,8 @@
 /**
  * Created by ravi.hamsa on 10/22/16.
  */
-import React, {Component, PropTypes} from "react";
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {_} from '../../core/utils'
 export default class ActionLink extends Component {
 
