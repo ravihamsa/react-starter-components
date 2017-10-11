@@ -95,7 +95,7 @@ export default class RXDropdown extends RXSelectionElement {
     }
 
     renderElement() {
-        let {valign = "top", bodyPosition} = this.props;
+        const {valign = "top", bodyPosition, ListItem = RXDropdownItem} = this.props;
         let filteredOptions = _.filter(this.props.options, (item) => {
             return item.name.toLowerCase().indexOf(this.state.query.toLowerCase()) > -1;
         })
@@ -114,7 +114,7 @@ export default class RXDropdown extends RXSelectionElement {
                     </div> : null}
                     <div onClick={this.onClickHandler.bind(this)} ref="listRoot">
                         <List items={filteredOptions} selectionManager={this.selectionManager}
-                              selection={this.state.value} ListItem={RXDropdownItem}/>
+                              selection={this.state.value} ListItem={ListItem}/>
                     </div>
                 </div>
             </InlineBody>

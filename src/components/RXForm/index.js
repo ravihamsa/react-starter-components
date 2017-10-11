@@ -10,7 +10,7 @@ export RXTextArea from './RXTextArea';
 export RXRadioList from './RXRadioList';
 export RXCheckList from './RXCheckList';
 export RXSelectionElement, {RXSelectionItem} from './RXSelectionElement';
-export RXDropdown from './RXDropdown';
+export RXDropdown, {RXDropdownItem} from './RXDropdown';
 export RXCheckbox from './RXCheckbox';
 export RXFileInput from './RXFileInput';
 export validationRules, {addValidationRule} from './validationRules';
