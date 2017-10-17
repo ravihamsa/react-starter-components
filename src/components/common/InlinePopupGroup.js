@@ -35,20 +35,22 @@ class InlinePopup extends Component {
         this.setState({open: true})
         openPopup = this;
         clickSubscription = bodyClick$
-            .filter(event => {
-                let isWithinPopup = false;
-                let target = event.target;
-                let bodyRoot = this.refs.inlineBody.portalElement;
-                while (target.parentNode && !isWithinPopup) {
-                    if (target === bodyRoot) {
-                        isWithinPopup = true;
-                    }
-                    target = target.parentNode;
-                }
-                return !isWithinPopup;
-            }).take(1)
-            .subscribe(event => this.closePopup());
+            .filter(event => this.isClickedOutside(event, this)).take(1)
+            .subscribe(() => this.closePopup());
 
+    }
+
+    isClickedOutside(event, popup){
+        let isWithinPopup = false;
+        let target = event.target;
+        const bodyRoot = popup.refs.inlineBody.portalElement;
+        while (target.parentNode && !isWithinPopup) {
+            if (target === bodyRoot) {
+                isWithinPopup = true;
+            }
+            target = target.parentNode;
+        }
+        return !isWithinPopup;
     }
 
     closePopup() {
