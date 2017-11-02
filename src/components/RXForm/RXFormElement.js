@@ -71,7 +71,7 @@ export default class RXFormElement extends Component {
     }
 
     getPropToStateList() {
-        return ['active', 'error', 'disabled', 'valid', 'value', 'type', 'serverValid', 'serverError', 'placeholder', 'name', 'autoFocus'];
+        return ['active', 'error', 'disabled', 'valid', 'value', 'type', 'serverValid', 'serverError', 'placeholder', 'name', 'autoFocus', 'inProgress', 'isDirty'];
     }
 
 
@@ -178,14 +178,18 @@ export default class RXFormElement extends Component {
             const validateRequest$ = this.value$.filter(val => val.type === 'update').merge(forceServerValidation$)
                 .debounceTime(400)
                 .filter(() => this.state.valid)
+                .do(() => this.updateProps(true, 'inProgress'))
+                .do(() => this.updateProps(true, 'isDirty'))
                 .filter(val => serverValidation.validateRequest(val, this.context.elementValueIndex));
             const setError$ = validateRequest$.mergeMap(val => Rx.Observable.fromPromise(dataLoader.getRequestDef(serverValidation.requestId, serverValidation.getParams(val, this.context.elementValueIndex)))).combineLatest().defaultIfEmpty(null);
             setError$.takeUntil(this.unmount$).subscribe(resp => {
                 this.updateProps(resp[0], 'serverError');
                 this.updateProps(resp[0] ? false : true, 'serverValid');
+                this.updateProps(false, 'inProgress');
             }, resp => {
                 this.updateProps(resp[0], 'serverError');
                 this.updateProps(resp[0] ? false : true, 'serverValid');
+                this.updateProps(false, 'inProgress');
             });
         }
 
@@ -287,7 +291,7 @@ export default class RXFormElement extends Component {
     getRestProps() {
         const props = _.omit(this.state, 'showLabel', 'debounceTime', 'options', 'helperText', 'active', 'error',
             'validations', 'activeRules', 'valid', 'serverValidation', '__shadowValue', 'register', 'clear',
-            'exposeName', 'exposeSelection', 'serverValid', 'serverError');
+            'exposeName', 'exposeSelection', 'serverValid', 'serverError', 'inProgress', 'isDirty');
         props.className = (props.className || '') + ' form-control';
         return props;
     }
@@ -303,6 +307,16 @@ export default class RXFormElement extends Component {
         if (this.props.disabled) {
             classArray.push('disabled');
         }
+        if (this.state.isDirty) {
+            classArray.push('changed');
+        }
+        if (this.state.inProgress) {
+            classArray.push('in-progress');
+        }
+        if (!this.state.inProgress && this.state.isDirty && this.state.serverValid) {
+            classArray.push('server-valid');
+        }
+
         return classArray;
     }
 
@@ -367,6 +381,8 @@ RXFormElement.propTypes = {
     disabled: PropTypes.bool.isRequired,
     valid: PropTypes.bool.isRequired,
     serverValid: PropTypes.bool.isRequired,
+    isDirty: PropTypes.bool.isRequired,
+    inProgress: PropTypes.bool.isRequired,
     error: PropTypes.object,
     debounceTime: PropTypes.number.isRequired,
     validations: PropTypes.array,
@@ -385,6 +401,8 @@ RXFormElement.defaultProps = {
     disabled: false,
     valid: true,
     serverValid: true,
+    inProgress: false,
+    isDirty: false,
     debounceTime: 0,
     error: null,
     serverError: null,
