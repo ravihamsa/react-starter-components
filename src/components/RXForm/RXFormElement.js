@@ -274,7 +274,11 @@ export default class RXFormElement extends Component {
         return this._value;
     }
 
-    updateValue(value, type) {
+    updateValue(raWvalue, type) {
+        let value = raWvalue;
+        if (this.props.trimValue) {
+            value = _.trim(raWvalue);
+        }
         this._value = value;
         this.value$.next({
             field: this.props.name, type, value
@@ -383,6 +387,7 @@ RXFormElement.propTypes = {
     serverValid: PropTypes.bool.isRequired,
     isDirty: PropTypes.bool.isRequired,
     inProgress: PropTypes.bool.isRequired,
+    trimValue: PropTypes.bool.isRequired,
     error: PropTypes.object,
     debounceTime: PropTypes.number.isRequired,
     validations: PropTypes.array,
@@ -403,6 +408,7 @@ RXFormElement.defaultProps = {
     serverValid: true,
     inProgress: false,
     isDirty: false,
+    trimValue: false,
     debounceTime: 0,
     error: null,
     serverError: null,
