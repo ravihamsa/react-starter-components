@@ -80,8 +80,12 @@ export default class RXSelectionElement extends RXFormElement {
         return ['active', 'error', 'disabled', 'valid', '__shadowValue', 'value', 'type', 'exposeName', 'exposeSelection', 'serverValid', 'serverError']
     }
 
-    applyValue(value = '') {
-        let currentSelectionValue = this.getFormattedSelection();
+    applyValue(toApplyValue = '') {
+        let value = toApplyValue;
+        const currentSelectionValue = this.getFormattedSelection();
+        if (this.props.useSelectionAsValue && value !== '') {
+            value = this.getFormattedSelection(value);
+        }
         if (value === currentSelectionValue) {
             return;
         } else {
@@ -99,7 +103,7 @@ export default class RXSelectionElement extends RXFormElement {
     }
 
     selectById(value) {
-        let options = this.props.options;
+        let options = this.getOptions();
         let {selectionManager} = this;
         let toSelectItem = _.find(options, (item) => item.id === value);
         if (toSelectItem) {
@@ -118,7 +122,7 @@ export default class RXSelectionElement extends RXFormElement {
     }
 
     findUpdateSelectionById(id, method) {
-        let options = this.props.options;
+        let options = this.getOptions();
         let toSelectItem = _.find(options, (item) => item.id === id);
         if (toSelectItem) {
             this.selectionManager[method](toSelectItem);
@@ -130,8 +134,7 @@ export default class RXSelectionElement extends RXFormElement {
 
     }
 
-    getFormattedSelection() {
-        let selection = this.selectionManager.getSelected();
+    getFormattedSelection(selection = this.selectionManager.getSelected()) {
         if (this.multiSelect) {
             return _.map(selection, 'id').join(',');
         } else {
@@ -180,7 +183,7 @@ export default class RXSelectionElement extends RXFormElement {
     }
 
     onChange(e) {
-        this.updateValue(this.getFormattedSelection(), 'update');
+        this.updateValue(this.props.useSelectionAsValue ? this.selectionManager.getSelected() : this.getFormattedSelection(), 'update');
         this.exposeNameAndSelection();
         this.onChangeUpdates();
     }
@@ -200,9 +203,13 @@ export default class RXSelectionElement extends RXFormElement {
             this.selectById(dataId);
         }
     }
+    getOptions(){
+        return this.props.options;
+    }
 
     getFilteredOptions() {
-        const {options, filterQuery, filterField} = this.props;
+        const {filterQuery, filterField} = this.props;
+        const options = this.getOptions();
         return options.filter(item => item[filterField].toLowerCase().indexOf(filterQuery.toLowerCase()) > -1);
     }
 
@@ -247,6 +254,7 @@ RXSelectionElement.defaultProps = {
     value: '',
     exposeSelection: false,
     multiSelect: false,
+    useSelectionAsValue: false,
     filterQuery: '',
     filterField: 'name'
 }

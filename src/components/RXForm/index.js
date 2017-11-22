@@ -18,4 +18,5 @@ export activeRules from './activeRules';
 export RXPlainTextInput from './RXPlainTextInput';
 export RXPlainSelect from './RXPlainSelect';
 export RXDatePicker from './RXDatePicker';
+export RXDateRangePicker from './RXDateRangePicker';
 export RXHiddenInput from './RXHiddenInput';

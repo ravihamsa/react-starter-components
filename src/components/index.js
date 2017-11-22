@@ -24,6 +24,7 @@ import {
     RXPlainSelect,
     RXPlainTextInput,
     RXDatePicker,
+    RXDateRangePicker,
     RXHiddenInput
 } from './RXForm';
 import Table from './Table';
@@ -48,6 +49,7 @@ export default {
     RXPlainTextInput,
     RXPlainSelect,
     RXDatePicker,
+    RXDateRangePicker,
     RXHiddenInput,
     validationRules,
     addValidationRule,

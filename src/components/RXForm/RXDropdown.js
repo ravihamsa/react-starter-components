@@ -57,7 +57,7 @@ export default class RXDropdown extends RXSelectionElement {
 
     getSummaryText() {
         let {selectionManager, multiSelect} = this;
-        let {options} = this.props;
+        const options = this.getOptions();
         if (options === undefined || options.length === 0) {
             return this.props.noOptionsLabel
         }
@@ -94,11 +94,15 @@ export default class RXDropdown extends RXSelectionElement {
         </div>
     }
 
+
+    getFilteredOptions() {
+        const options = this.getOptions();
+        return options.filter(item => item.name.toLowerCase().indexOf(this.state.query.toLowerCase()) > -1);
+    }
+
     renderElement() {
         const {valign = "top", bodyPosition, ListItem = RXDropdownItem} = this.props;
-        let filteredOptions = _.filter(this.props.options, (item) => {
-            return item.name.toLowerCase().indexOf(this.state.query.toLowerCase()) > -1;
-        })
+        let filteredOptions = this.getFilteredOptions();
 
 
         return <InlinePopup ref="inlinePopup" disabled={this.props.disabled}>
