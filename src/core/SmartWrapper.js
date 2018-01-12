@@ -2,7 +2,7 @@
  * Created by ravi.hamsa on 6/28/16.
  */
 
-import React, {Component} from "react";
+import React, {Component} from 'react';
 import dataLoader from './dataLoader';
 import Loader from './Loader';
 import MessageStack from './MessageStack';
@@ -11,30 +11,29 @@ import utils from './utils';
 const {cloneChildren} = utils;
 
 
-const NATIVE_PROPS = ['children', 'dataRequests', 'onDataUpdate', 'activeRules']
+const NATIVE_PROPS = ['children', 'dataRequests', 'onDataUpdate', 'activeRules'];
 
 class SmartWrapper extends Component {
 
     constructor() {
         super(...arguments);
         this._loadingCount = 0;
-        this._pendingRequests = [];
         this.isInDom = false;
         this.dataIndex = {};
         this.state = {
             loading: false,
             active: true
-        }
+        };
     }
 
     componentWillMount() {
         if (this.checkActiveRules(this.props)) {
-            let stores = this.props.dataRequests;
+            const stores = this.props.dataRequests;
             if (stores) {
                 for (let i = 0; i < stores.length; i++) {
-                    let storeConfig = stores[i];
-                    let filteredProps = _.omit(this.props, NATIVE_PROPS);
-                    this.addRequestIfValid(storeConfig.propKey, storeConfig.requestId, filteredProps, storeConfig)
+                    const storeConfig = stores[i];
+                    const filteredProps = _.omit(this.props, NATIVE_PROPS);
+                    this.addRequestIfValid(storeConfig.propKey, storeConfig.requestId, filteredProps, storeConfig);
 
                 }
             }
@@ -47,7 +46,7 @@ class SmartWrapper extends Component {
     }
 
     componentWillReceiveProps(newProps) {
-        let prevProps = this.props;
+        const prevProps = this.props;
         if (this.checkActiveRules(newProps, prevProps)) {
             this.checkPropDependencies(newProps, prevProps);
         }
@@ -55,32 +54,32 @@ class SmartWrapper extends Component {
 
 
     checkPropDependencies(newProps, prevProps) {
-        let stores = newProps.dataRequests;
-        let self = this;
+        const stores = newProps.dataRequests;
+        const self = this;
         if (stores) {
             for (let i = 0; i < stores.length; i++) {
-                let storeConfig = stores[i];
-                let propDependency = storeConfig.propDependency
+                const storeConfig = stores[i];
+                const propDependency = storeConfig.propDependency;
                 if (propDependency !== undefined) {
-                    let newPropValue = newProps[propDependency];
-                    let oldPropValue = prevProps[propDependency];
+                    const newPropValue = newProps[propDependency];
+                    const oldPropValue = prevProps[propDependency];
                     if (newPropValue !== oldPropValue) {
-                        let filteredProps = _.omit(newProps, NATIVE_PROPS)
-                        self.addRequestIfValid(storeConfig.propKey, storeConfig.requestId, filteredProps, storeConfig)
+                        const filteredProps = _.omit(newProps, NATIVE_PROPS);
+                        self.addRequestIfValid(storeConfig.propKey, storeConfig.requestId, filteredProps, storeConfig);
                     }
                 }
 
 
-                let propDependencies = storeConfig.propDependencies;
+                const propDependencies = storeConfig.propDependencies;
                 if (propDependencies !== undefined && propDependencies.length !== undefined && propDependencies.length > 0) {
-                    _.each(propDependencies, (propDependency) => {
-                        let newPropValue = newProps[propDependency];
-                        let oldPropValue = prevProps[propDependency];
+                    _.each(propDependencies, propDependency => {
+                        const newPropValue = newProps[propDependency];
+                        const oldPropValue = prevProps[propDependency];
                         if (newPropValue !== oldPropValue) {
-                            let filteredProps = _.omit(newProps, NATIVE_PROPS)
-                            self.addRequestIfValid(storeConfig.propKey, storeConfig.requestId, filteredProps, storeConfig)
+                            const filteredProps = _.omit(newProps, NATIVE_PROPS);
+                            self.addRequestIfValid(storeConfig.propKey, storeConfig.requestId, filteredProps, storeConfig);
                         }
-                    })
+                    });
                 }
                 // this.loadStore(storeConfig.propKey, storeConfig.store, getParams.call(this, storeConfig), true)
             }
@@ -90,22 +89,25 @@ class SmartWrapper extends Component {
 
 
     checkActiveRules(props) {
-        let activeRules = props.activeRules, active = true;
+        let activeRules = props.activeRules,
+                active = true;
         if (props.activeRules) {
-            for (var i = 0; i < activeRules.length; i++) {
+            for (let i = 0; i < activeRules.length; i++) {
                 active = this.evaluateActiveRule(activeRules[i], props);
                 if (!active) {
                     break;
                 }
             }
-            this.setState({active: active});
+            this.setState({
+                active
+            });
         }
         return active;
     }
 
     evaluateActiveRule(rule, props) {
-        let stateValue = props[rule.prop];
-        let ruleValue = rule.value;
+        const stateValue = props[rule.prop];
+        const ruleValue = rule.value;
         switch (rule.expr) {
             case 'equal':
                 return stateValue === ruleValue;
@@ -133,14 +135,14 @@ class SmartWrapper extends Component {
     }
 
     _addRequest(requestId, payload, handlers, onProgress) {
-        let self = this;
-        let def = dataLoader.getRequestDef(requestId, payload, onProgress);
-        def.done(self.wrapCallBack(handlers.done))
-        def.catch(self.wrapCallBack(handlers.catch))
-        def.finally(self.wrapCallBack(function () {
-            self.bumpAndCheckLoading(-1)
-        }))
-        self.bumpAndCheckLoading(1)
+        const self = this;
+        const def = dataLoader.getRequestDef(requestId, payload, onProgress);
+        def.done(self.wrapCallBack(handlers.done));
+        def.catch(self.wrapCallBack(handlers.catch));
+        def.finally(self.wrapCallBack(() => {
+            self.bumpAndCheckLoading(-1);
+        }));
+        self.bumpAndCheckLoading(1);
         return def;
     }
 
@@ -148,12 +150,12 @@ class SmartWrapper extends Component {
         if (!fn) {
             return identity;
         }
-        let self = this;
-        return function () {
+        const self = this;
+        return function() {
             if (self.isInDom) {
-                fn.apply(null, arguments)
+                fn.apply(null, arguments);
             }
-        }
+        };
     }
 
     _updateDataIndex(propName, data) {
@@ -169,21 +171,25 @@ class SmartWrapper extends Component {
     }
 
     addRequestIfValid(propName, requestId, filteredProps, storeConfig) {
-        let self = this;
-        let isRequestValid = storeConfig.validateRequest !== undefined ? storeConfig.validateRequest(filteredProps) : true;
-        let getParams = storeConfig.getParams;
+        const self = this;
+        const isRequestValid = storeConfig.validateRequest !== undefined ? storeConfig.validateRequest(filteredProps) : true;
+        const getParams = storeConfig.getParams;
         if (isRequestValid) {
-            let params = getParams ? getParams.call(self, filteredProps) : filteredProps
-            this.addRequestWithController({propName, requestId, params, storeConfig})
+            const params = getParams ? getParams.call(self, filteredProps) : filteredProps;
+            this.addRequestWithController({
+                propName, requestId, params, storeConfig
+            });
         } else {
-            let fallbackResponse = storeConfig.staticFallback !== undefined ? storeConfig.staticFallback(filteredProps) : {data: []};
-            let def = dataLoader.getStaticPromise(fallbackResponse);
-            def.done((data) => this.dataIndex[propName] = data);
-            def.catch((error) => this.dataIndex['errors'] = error);
+            const fallbackResponse = storeConfig.staticFallback !== undefined ? storeConfig.staticFallback(filteredProps) : {
+                data: []
+            };
+            const def = dataLoader.getStaticPromise(fallbackResponse);
+            def.done(data => this.dataIndex[propName] = data);
+            def.catch(error => this.dataIndex['errors'] = error);
             def.finally(self.wrapCallBack(() => {
-                self.bumpAndCheckLoading(-1)
-            }))
-            self.bumpAndCheckLoading(1)
+                self.bumpAndCheckLoading(-1);
+            }));
+            self.bumpAndCheckLoading(1);
             return def;
         }
     }
@@ -191,9 +197,9 @@ class SmartWrapper extends Component {
     addDummyRequest(propName, requestId, payload, storeConfig) {
         delete this.dataIndex.errors;
         return this._addRequest(requestId, payload, {
-            done: (data) => this._updateDataIndex(propName, data),
-            catch: (error) => this.dataIndex['errors'] = error
-        })
+            done: data => this._updateDataIndex(propName, data),
+            catch: error => this.dataIndex['errors'] = error
+        });
     }
 
     addRequestWithController(config) {
@@ -226,57 +232,67 @@ class SmartWrapper extends Component {
     addRequest(propName, requestId, payload, onProgress) {
         delete this.dataIndex.errors;
         return this._addRequest(requestId, payload, {
-            done: (data) => this._updateDataIndex(propName, data),
-            catch: (error) => this.dataIndex['errors'] = error
-        }, onProgress)
+            done: data => this._updateDataIndex(propName, data),
+            catch: error => this.dataIndex['errors'] = error
+        }, onProgress);
     }
 
     addStateRequest(stateName, requestId, payload, defaultValue) {
         if (defaultValue === undefined) {
-            defaultValue = null
+            defaultValue = null;
         }
-        this.setState({[stateName]: defaultValue})
+        this.setState({
+            [stateName]: defaultValue
+        });
         return this._addRequest(requestId, payload, {
-            done: (data) => this.setState({[stateName]: data}),
-            catch: (error) => this.setState({[stateName]: defaultValue, [`${stateName}Error`]: error})
-        })
+            done: data => this.setState({
+                [stateName]: data
+            }),
+            catch: error => this.setState({
+                [stateName]: defaultValue, [`${stateName}Error`]: error
+            })
+        });
     }
 
 
     bumpAndCheckLoading(diff) {
         this._loadingCount += diff;
-        let loadingDone = this._loadingCount === 0;
+        const loadingDone = this._loadingCount === 0;
         if (loadingDone) {
             if (this.props.onDataUpdate) {
                 this.props.onDataUpdate(this.dataIndex);
             }
         }
-        this.setState({loading: this._loadingCount > 0})
+        this.setState({
+            loading: this._loadingCount > 0
+        });
     }
 
     renderLoading() {
-        return <Loader/>
+        return <Loader/>;
     }
 
     renderErrors() {
-        return <MessageStack messages={this.dataIndex.errors}/>
+        return <MessageStack messages={this.dataIndex.errors}/>;
     }
 
     renderChildren() {
-        return cloneChildren(this.props.children, {...this.dataIndex, addRequest: this.addRequest.bind(this)})
+        return cloneChildren(this.props.children, {
+            ...this.dataIndex
+        });
     }
 
     render() {
         if (this.state.active) {
             if (this.state.loading) {
-                return this.renderLoading()
+                return this.renderLoading();
             } else if (this.dataIndex.errors && this.props.showError !== false) {
-                return this.renderErrors()
+                return this.renderErrors();
             } else {
                 if (this.props.showIf === false) {
-                    return null
+                    return null;
                 } else {
-                    return this.renderChildren()
+                    return this.renderChildren();
                 }
             }
         } else {
@@ -313,17 +329,13 @@ export class NoLoadingSmartWrapper extends SmartWrapper {
 export class ControllerWrapper extends SmartWrapper {
 
     renderErrors(errors) {
-        return <MessageStack messages={errors}/>
+        return <MessageStack messages={errors}/>;
     }
 
     render() {
-        let pendingRequests = _.filter(this.props.dataRequests, item => {
-            return !item.controller.hasKey(item.controllerKey) && !item.controller.hasErrorKey(item.controllerKey)
-        });
+        const pendingRequests = _.filter(this.props.dataRequests, item => !item.controller.hasKey(item.controllerKey) && !item.controller.hasErrorKey(item.controllerKey));
 
-        let errors = _.map(_.filter(this.props.dataRequests, item => {
-            return item.controller.hasErrorKey(item.controllerKey);
-        }), item => item.controller.getError(item.controllerKey));
+        const errors = _.map(_.filter(this.props.dataRequests, item => item.controller.hasErrorKey(item.controllerKey)), item => item.controller.getError(item.controllerKey));
 
         if (pendingRequests.length > 0) {
             return this.renderLoading();
