@@ -44,7 +44,7 @@ class InlinePopup extends Component {
     isClickedOutside(event, popup) {
         let isWithinPopup = false;
         let target = event.target;
-        const bodyRoot = popup.refs.inlineBody.portalElement;
+        const bodyRoot = popup.ref_inlineBody.portalElement;
         while (target.parentNode && !isWithinPopup) {
             if (target === bodyRoot) {
                 isWithinPopup = true;

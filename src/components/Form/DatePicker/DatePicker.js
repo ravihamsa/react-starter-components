@@ -17,9 +17,6 @@ class DatePicker extends FormElement {
 
     onDateSelect(value) {
         const name = this.props.name;
-        /*this.context.valueStore.set({[name]: value});
-        this.setState({defaultValue:value})
-        this.refs.inputField.value = value;*/
         this.setValue(value);
         this.setState({
             defaultValue: value

@@ -221,7 +221,7 @@ export class SelectableList extends List {
                 let fullList = _.flatten([selection, prevSelection]);
                 _.each(fullList, function (item) {
                     if (item) {
-                        self.refs[item.id].updateSelectionState();
+                        self['ref_'+item.id].updateSelectionState();
                     }
                 })
             })
@@ -246,7 +246,7 @@ export class SelectableList extends List {
         otherProps.className = this.props.itemClassName || 'list-item';
 
         var listItems = itemArray.map(function (item, index) {
-            return <ListItemClass key={item.id} ref={item.id} itemIndex={index} itemData={item} {...otherProps}/>
+            return <ListItemClass key={item.id} ref={element => this.ref_[item.id] = element} itemIndex={index} itemData={item} {...otherProps}/>
         });
 
         return this.renderChildren(listItems);
