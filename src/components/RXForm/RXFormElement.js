@@ -2,7 +2,7 @@
  * Created by ravi.hamsa on 3/26/17.
  */
 import React, {Component} from 'react';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 import {Rx} from '../../core/rxutils';
 import {_} from '../../core/utils';
 import validatorMap from './validationRules';
@@ -11,19 +11,15 @@ import dataLoader from '../../core/dataLoader';
 
 const defaultPropReturnFunction = _.identity;
 
-const returnTrueFunction = () => {
-    return true;
-};
+const returnTrueFunction = () => true;
 
-const getValidationRule = item => {
-    return {
-        type: item.expr,
-        value: item.value,
-        length: item.length,
-        func: item.expr === 'function' ? item.func : validatorMap[item.expr],
-        message: item.message || item.expr
-    };
-};
+const getValidationRule = item => ({
+    type: item.expr,
+    value: item.value,
+    length: item.length,
+    func: item.expr === 'function' ? item.func : validatorMap[item.expr],
+    message: item.message || item.expr
+});
 
 const getActiveRule = item => ({
     type: item.expr,
@@ -42,13 +38,11 @@ const getPropRule = item => ({
     func: item.expr === 'function' ? item.func : activeRulesMap[item.expr]
 });
 
-const getServerValidationRule = rule => {
-    return {
-        requestId: rule.requestId,
-        getParams: rule.getParams || _.identity,
-        validateRequest: rule.validateRequest || returnTrueFunction
-    };
-};
+const getServerValidationRule = rule => ({
+    requestId: rule.requestId,
+    getParams: rule.getParams || _.identity,
+    validateRequest: rule.validateRequest || returnTrueFunction
+});
 
 
 export default class RXFormElement extends Component {
@@ -356,7 +350,12 @@ export default class RXFormElement extends Component {
 
     render() {
         if (this.state.active) {
-            return this.renderElementWithWrapper();
+            if (this.props.stripWrapper){
+                return this.renderElement();
+            } else {
+                return this.renderElementWithWrapper();
+            }
+
         } else {
             return null;
         }
@@ -388,6 +387,7 @@ RXFormElement.propTypes = {
     isDirty: PropTypes.bool.isRequired,
     inProgress: PropTypes.bool.isRequired,
     trimValue: PropTypes.bool.isRequired,
+	stripWrapper: PropTypes.bool.isRequired,
     error: PropTypes.object,
     debounceTime: PropTypes.number.isRequired,
     validations: PropTypes.array,
@@ -409,6 +409,7 @@ RXFormElement.defaultProps = {
     inProgress: false,
     isDirty: false,
     trimValue: false,
+    stripWrapper:false,
     debounceTime: 0,
     error: null,
     serverError: null,
