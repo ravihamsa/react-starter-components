@@ -48,7 +48,7 @@ export default class RXDropdown extends RXSelectionElement {
     }
 
     _onKeyPressHandler() {
-        const target = this.refs.searchBox;
+        const target = this.ref_searchBox;
         const value = target.value;
         this.setState({
             query: value
@@ -80,8 +80,8 @@ export default class RXDropdown extends RXSelectionElement {
 
     onChangeUpdates(value) {
         if (!this.multiSelect) {
-            if (this.refs['inlinePopup']) {
-                this.refs['inlinePopup'].closePopup();
+            if (this.ref_inlinePopup) {
+                this.ref_inlinePopup.closePopup();
             }
         }
     }
@@ -105,18 +105,18 @@ export default class RXDropdown extends RXSelectionElement {
         const filteredOptions = this.getFilteredOptions();
 
 
-        return <InlinePopup ref="inlinePopup" disabled={this.props.disabled}>
+        return <InlinePopup ref={inlinePopup => this.ref_inlinePopup = inlinePopup} disabled={this.props.disabled}>
             <InlineButton>
                 {this.renderButton()}
             </InlineButton>
             <InlineBody valign={valign} bodyPosition={bodyPosition} className={listBodyClassName}>
                 <div className="drop-down-body">
                     {this.props.showSearch ? <div className="drop-down-search-container">
-                        <input type="text" autoFocus defaultValue={this.state.query} ref="searchBox"
+                        <input type="text" autoFocus defaultValue={this.state.query} ref={searchBox => this.ref_searchBox = searchBox}
                             onChange={this.onKeyPressHandler} className="drop-down-input"
                             placeholder={this.props.placeholder}/>
                     </div> : null}
-                    <div onClick={this.onClickHandler.bind(this)} ref="listRoot">
+                    <div onClick={this.onClickHandler.bind(this)} ref={listRoot => this.ref_listRoot = listRoot}>
                         <List items={filteredOptions} selectionManager={this.selectionManager}
                             selection={this.state.value} ListItem={ListItem}/>
                     </div>
