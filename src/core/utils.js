@@ -22,6 +22,7 @@ import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
 import groupBy from 'lodash/groupBy';
 import trim from 'lodash/trim';
+import clone from 'lodash/clone';
 const identity = function(arg1){
     return arg1;
 }
@@ -45,6 +46,7 @@ export const _  = {
     isArray:isArray,
     values:values,
     trim:trim,
+    clone:clone,
     difference:difference
 }
 

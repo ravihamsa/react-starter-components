@@ -13,7 +13,7 @@ export const {dataLoader, SimpleModel, SimpleEmitter, SmartWrapper, NoLoadingSma
 
 export const {RXForm, RXElementGroup, RXFormElement, RXSelect, RXTextInput, RXRadioList, RXTextArea, RXCheckList, RXSelectionElement, RXSelectionItem, RXDropdown, RXDropdownItem, RXCheckbox, RXFileInput, validationRules, addValidationRule, activeRules, RXPlainTextInput, RXPlainSelect, RXDatePicker, RXDateRangePicker, RXHiddenInput} = componentsIm;
 
-export const {PaginatedTable, Table, THEAD, TBODY, TH, TD, TR, DynamicTable} = componentsIm.Table;
+export const {PaginatedTable, Table, THEAD, TBODY, TH, TD, TR, DynamicTable, PaginationWrapper, Pagination} = componentsIm.Table;
 
 export const {List, ListItem, SelectableItem, FormCollection, AnchorLink, ActionLink, ToggleActionButton, ViewStateManager, ViewState} = componentsIm.common;
 

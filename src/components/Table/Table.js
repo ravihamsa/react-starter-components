@@ -1,19 +1,157 @@
 /**
  * Created by ravi.hamsa on 7/4/16.
  */
-import React, {Component} from "react";
-import PropTypes from "prop-types";
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import core from '../../core';
-import EventEmitter from "events";
 import {_} from '../../core/utils';
+import SimpleEmitter from '../../core/SimpleEmitter';
 
 const {cloneChildren} = core.utils;
+
+const tableConfigDetauls = {
+    start: 1,
+	perPage: 20,
+    sortKey: '_id',
+    sortOrder: 'dsc',
+    filterKey: '',
+    filterQuery: '',
+    totalRecords: 0
+};
+
+class TableConfigManager extends SimpleEmitter {
+    constructor(config) {
+        super(config);
+        this.config = _.extend({}, tableConfigDetauls, config);
+        this.computeOtherConfigs();
+    }
+
+    setConfig(map, isSilent) {
+        this.config = _.extend(this.config, map);
+        this.computeOtherConfigs();
+        if (!isSilent) {
+            this.triggerChange();
+        }
+    }
+
+    computeOtherConfigs() {
+        const computed = {};
+        const {start, perPage, totalRecords} = this.config;
+        computed['end'] = Math.min(start + perPage - 1, totalRecords);
+        computed['hasNext'] = computed['end'] < totalRecords;
+        computed['hasPrev'] = start > 1;
+        computed['showPagination'] = totalRecords > perPage;
+        this.config = _.extend(this.config, computed);
+    }
+
+    bumpPage(diff) {
+        const {start, perPage} = this.config;
+        this.setConfig({
+            start: start + (diff * perPage)
+        });
+    }
+
+    nextPage() {
+        if (this.config.hasNext) {
+            this.bumpPage(1);
+        }
+    }
+
+    prevPage() {
+        if (this.config.hasPrev) {
+            this.bumpPage(-1);
+        }
+    }
+
+    triggerChange() {
+        this.trigger('change', this.config);
+    }
+
+    getConfig() {
+        return _.clone(this.config);
+    }
+}
+
+class Pagination extends Component {
+    prevClick(e) {
+        e.preventDefault();
+        this.props.paginationManager.prevPage();
+    }
+
+    nextClick(e) {
+        e.preventDefault();
+        this.props.paginationManager.nextPage();
+    }
+
+    render() {
+        const {paginationManager, children, totalRecords} = this.props;
+        const props = paginationManager.getConfig();
+        if (!props.showPagination) {
+            return null;
+        }
+        return <div className="pagination">
+            <div>{props.start} to {props.end} of {totalRecords}</div>
+            <div>
+                {props.hasPrev ? <a href="#" onClick={this.prevClick.bind(this)}>Prev</a> : null}
+                {props.hasNext ? <a href="#" onClick={this.nextClick.bind(this)}>Next</a> : null}
+            </div>
+        </div>;
+    }
+}
+
+
+class PaginationWrapper extends Component {
+    constructor(props) {
+        super(props);
+        this.paginationManager = new TableConfigManager({
+            ..._.omit(props, 'children', 'records'), totalRecords: props.records.length
+        });
+    }
+
+    componentWillMount() {
+        const paginationManager = this.paginationManager;
+        this.paginationSubscription = paginationManager.on('change', this.paginationChangeHandler.bind(this));
+    }
+
+    componentWillUnmount() {
+        this.paginationSubscription && this.paginationSubscription();
+    }
+
+    paginationChangeHandler() {
+        this.forceUpdate();
+    }
+
+    getFilteredRecords(records) {
+        return records;
+    }
+
+    getSortedRecords(records) {
+        return records;
+    }
+
+    getPaginatedRecords(records) {
+        const {start, end} = this.paginationManager.getConfig();
+        return records.slice(start - 1, end);
+    }
+
+    getProcessedRecords() {
+        return this.getPaginatedRecords(this.getSortedRecords(this.getFilteredRecords(this.props.records)));
+    }
+
+    render() {
+        const props = this.paginationManager.getConfig();
+        props.records = this.getProcessedRecords();
+        props.paginationManager = this.paginationManager;
+        const clonedChildren = cloneChildren(this.props.children, props);
+        return clonedChildren;
+    }
+}
 
 
 class TH extends Component {
 
     render() {
-        return <th>{this.props.label}</th>
+        return <th>{this.props.label}</th>;
     }
 }
 
@@ -21,11 +159,11 @@ class TH extends Component {
 class TD extends Component {
 
     render() {
-        let self = this;
-        let props = self.props;
-        let attributes = props.attributes;
-        let {record, recordIndex, dataKey} = props;
-        return <td {...attributes}>{record[dataKey]}</td>
+        const self = this;
+        const props = self.props;
+        const attributes = props.attributes;
+        const {record, recordIndex, dataKey} = props;
+        return <td {...attributes}>{record[dataKey]}</td>;
 
     }
 }
@@ -33,32 +171,38 @@ class TD extends Component {
 
 class TR extends Component {
     render() {
-        let self = this;
-        let props = self.props;
-        let {records, record} = props;
-        let attributes = props.attributes;
-        let children = cloneChildren(this.props.children, {records, record})
+        const self = this;
+        const props = self.props;
+        const {records, record} = props;
+        const attributes = props.attributes;
+        const children = cloneChildren(this.props.children, {
+            records, record
+        });
         return <tr {...attributes}>{children}</tr>;
     }
 }
 
 class THEAD extends Component {
     render() {
-        let self = this;
-        let {records} = this.props;
-        let children = cloneChildren(this.props.children, {records: records})
+        const self = this;
+        const {records} = this.props;
+        const children = cloneChildren(this.props.children, {
+            records
+        });
         return <thead>{children}</thead>;
     }
 }
 
 class TBODY extends Component {
     render() {
-        let self = this;
-        let props = self.props;
-        let {records} = props;
-        let children = records.map(function (record, recordIndex) {
-            return cloneChildren(this.props.children, {records, record, recordIndex, key: recordIndex})
-        }, this)
+        const self = this;
+        const props = self.props;
+        const {records} = props;
+        const children = records.map(function(record, recordIndex) {
+            return cloneChildren(this.props.children, {
+                records, record, recordIndex, key: recordIndex
+            });
+        }, this);
         return <tbody>{children}</tbody>;
     }
 }
@@ -70,7 +214,7 @@ class PaginatedTable extends Component {
         this.state = {
             curPage: +this.props.curPage || 0,
             perPage: +this.props.perPage || 20
-        }
+        };
     }
 
     componentWillReceiveProps(newProps) {
@@ -78,8 +222,8 @@ class PaginatedTable extends Component {
     }
 
     computePagination() {
-        let {curPage, perPage} = this.state;
-        let records = this.props.records;
+        const {curPage, perPage} = this.state;
+        const records = this.props.records;
         this.start = curPage * perPage;
         this.end = Math.min(this.start + perPage, records.length);
         this.renderRecords = records.slice(this.start, this.end);
@@ -92,7 +236,7 @@ class PaginatedTable extends Component {
         if (this.hasNext()) {
             this.setState({
                 curPage: this.state.curPage + 1
-            })
+            });
         }
     }
 
@@ -103,13 +247,13 @@ class PaginatedTable extends Component {
         if (this.hasPrev()) {
             this.setState({
                 curPage: this.state.curPage - 1
-            })
+            });
         }
     }
 
     hasNext() {
-        let records = this.props.records;
-        let totalFullPages = Math.floor(records.length / this.state.perPage);
+        const records = this.props.records;
+        const totalFullPages = Math.floor(records.length / this.state.perPage);
         return this.state.curPage < totalFullPages - 1;
     }
 
@@ -119,14 +263,14 @@ class PaginatedTable extends Component {
 
     render() {
 
-        let self = this;
+        const self = this;
         this.computePagination();
-        let records = this.props.records;
-        let renderRecords = this.renderRecords;
-        let totalPages = Math.ceil(records.length / this.state.perPage);
-        let children = cloneChildren(this.props.children, {
+        const records = this.props.records;
+        const renderRecords = this.renderRecords;
+        const totalPages = Math.ceil(records.length / this.state.perPage);
+        const children = cloneChildren(this.props.children, {
             records: renderRecords,
-            totalPages: totalPages,
+            totalPages,
             curPage: this.state.curPage,
             perPage: this.state.perPage,
             start: this.start,
@@ -136,7 +280,7 @@ class PaginatedTable extends Component {
             onPrev: this.onPrev.bind(this),
             hasNext: this.hasNext(),
             hasPrev: this.hasPrev()
-        })
+        });
         return <div className="paginated-table">{children}</div>;
     }
 }
@@ -145,66 +289,70 @@ class PaginatedTable extends Component {
 class Table extends Component {
 
     renderNoRecords() {
-        let NoRecordsItemProp = this.props.NoRecordsItem;
-        return <NoRecordsItemProp/>
+        const NoRecordsItemProp = this.props.NoRecordsItem;
+        return <NoRecordsItemProp/>;
     }
 
     renderChildren() {
         let {attributes, children, records} = this.props;
-        children = cloneChildren(children, {records})
+        children = cloneChildren(children, {
+            records
+        });
         return <table className="table" {...attributes}>{children}</table>;
     }
 
     render() {
-        let self = this;
-        let props = self.props;
-        let attributes = props.attributes;
-        let {records, errors} = props;
-        let zeroLength = records.length === 0;
+        const self = this;
+        const props = self.props;
+        const attributes = props.attributes;
+        const {records, errors} = props;
+        const zeroLength = records.length === 0;
 
         if (errors) {
-            return <div>{errors.message}</div>
+            return <div>{errors.message}</div>;
         } else if (zeroLength) {
             return this.renderNoRecords();
         }
 
-        let children = cloneChildren(this.props.children, {records})
+        const children = cloneChildren(this.props.children, {
+            records
+        });
         return <table className="table" {...attributes}>{children}</table>;
     }
 }
 
 Table.propTypes = {
     records: PropTypes.array
-}
+};
 
 
 class NoRecordsItem extends Component {
     render() {
-        return <div className="no-data">No Records Returned</div>
+        return <div className="no-data">No Records Returned</div>;
     }
 }
 
 
 Table.defaultProps = {
     records: [],
-    NoRecordsItem: NoRecordsItem
-}
+    NoRecordsItem
+};
 
 
 class DynamicTable extends Table {
     renderChildren() {
-        let {attributes, records} = this.props;
+        const {attributes, records} = this.props;
         const columns = this.parseColumns();
         return <table className="table" {...attributes}>
             <thead>
-            <tr>
-                {columns.map(item => <td key={item.key}>{item.label || item.key}</td>)}
-            </tr>
+                <tr>
+                    {columns.map(item => <td key={item.key}>{item.label || item.key}</td>)}
+                </tr>
             </thead>
             <tbody>
-            {records.map(rowItem => <tr key={rowItem.id || rowItem._id}>
-                {columns.map(item => <td key={item.key}>{rowItem[item.key]}</td>)}
-            </tr>)}
+                {records.map(rowItem => <tr key={rowItem.id || rowItem._id}>
+                    {columns.map(item => <td key={item.key}>{rowItem[item.key]}</td>)}
+                </tr>)}
             </tbody>
         </table>;
     }
@@ -214,25 +362,23 @@ class DynamicTable extends Table {
         const {records, columnsToHide} = this.props;
         let {columns} = this.props;
         if (columns.length === 0) {
-            columns = Object.keys(records[0]).map(item => {
-                return {
-                    key: item
-                };
-            });
+            columns = Object.keys(records[0]).map(item => ({
+                key: item
+            }));
             columns = columns.filter(item => columnsToHide.indexOf(item.key) === -1);
         }
         return columns;
     }
 
     render() {
-        let self = this;
-        let props = self.props;
+        const self = this;
+        const props = self.props;
 
-        let {records, errors} = props;
-        let zeroLength = records.length === 0;
+        const {records, errors} = props;
+        const zeroLength = records.length === 0;
 
         if (errors) {
-            return <div>{errors.message}</div>
+            return <div>{errors.message}</div>;
         } else if (zeroLength) {
             return this.renderNoRecords();
         }
@@ -245,7 +391,7 @@ DynamicTable.defaultProps = {
     ...Table.defaultProps,
     columns: [],
     columnsToHide: ['_id']
-}
+};
 
 export default {
     PaginatedTable,
@@ -255,5 +401,7 @@ export default {
     TBODY,
     TH,
     TD,
-    TR
-}
+    TR,
+	Pagination,
+    PaginationWrapper
+};
