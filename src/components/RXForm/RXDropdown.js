@@ -5,6 +5,7 @@ import React, {Component} from 'react';
 import RXSelectionElement from './RXSelectionElement';
 import List from '../common/List';
 import InlinePopupGroup from '../common/InlinePopupGroup';
+import InlineModal, {InlineModalBody, InlineModalButton} from '../common/InlineModal';
 
 const {InlinePopup, InlineButton, InlineBody} = InlinePopupGroup;
 import {_} from '../../core/utils';
@@ -105,11 +106,11 @@ export default class RXDropdown extends RXSelectionElement {
         const filteredOptions = this.getFilteredOptions();
 
 
-        return <InlinePopup ref={inlinePopup => this.ref_inlinePopup = inlinePopup} disabled={this.props.disabled}>
-            <InlineButton>
+        return <InlineModal ref={inlinePopup => this.ref_inlinePopup = inlinePopup} disabled={this.props.disabled}>
+            <InlineModalButton>
                 {this.renderButton()}
-            </InlineButton>
-            <InlineBody valign={valign} bodyPosition={bodyPosition} className={listBodyClassName}>
+            </InlineModalButton>
+            <InlineModalBody valign={valign} bodyPosition={bodyPosition} className={listBodyClassName}>
                 <div className="drop-down-body">
                     {this.props.showSearch ? <div className="drop-down-search-container">
                         <input type="text" autoFocus defaultValue={this.state.query} ref={searchBox => this.ref_searchBox = searchBox}
@@ -121,8 +122,8 @@ export default class RXDropdown extends RXSelectionElement {
                             selection={this.state.value} ListItem={ListItem}/>
                     </div>
                 </div>
-            </InlineBody>
-        </InlinePopup>;
+            </InlineModalBody>
+        </InlineModal>;
 
     }
 
