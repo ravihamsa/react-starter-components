@@ -11,9 +11,9 @@ const {cloneChildren} = core.utils;
 
 const tableConfigDetauls = {
     start: 1,
-	perPage: 20,
-    sortKey: '_id',
-    sortOrder: 'dsc',
+    perPage: 20,
+    sortKey: '',
+    sortOrder: 'asc',
     filterKey: '',
     filterQuery: '',
     totalRecords: 0
@@ -36,11 +36,11 @@ class TableConfigManager extends SimpleEmitter {
 
     computeOtherConfigs() {
         const computed = {};
-        const {start, perPage, totalRecords} = this.config;
-        computed['end'] = Math.min(start + perPage - 1, totalRecords);
-        computed['hasNext'] = computed['end'] < totalRecords;
+        const {start, perPage, totalRecords, totalProcessedRecords} = this.config;
+        computed['end'] = Math.min(start + perPage - 1, totalProcessedRecords);
+        computed['hasNext'] = computed['end'] < totalProcessedRecords;
         computed['hasPrev'] = start > 1;
-        computed['showPagination'] = totalRecords > perPage;
+        computed['showPagination'] = totalProcessedRecords > perPage;
         this.config = _.extend(this.config, computed);
     }
 
@@ -84,13 +84,13 @@ class Pagination extends Component {
     }
 
     render() {
-        const {paginationManager, children, totalRecords} = this.props;
+        const {paginationManager, children, totalRecords, totalProcessedRecords} = this.props;
         const props = paginationManager.getConfig();
         if (!props.showPagination) {
             return null;
         }
         return <div className="pagination">
-            <div>{props.start} to {props.end} of {totalRecords}</div>
+            <div>{props.start} to {props.end} of {totalProcessedRecords}({totalRecords})</div>
             <div>
                 {props.hasPrev ? <a href="#" onClick={this.prevClick.bind(this)}>Prev</a> : null}
                 {props.hasNext ? <a href="#" onClick={this.nextClick.bind(this)}>Next</a> : null}
@@ -104,8 +104,17 @@ class PaginationWrapper extends Component {
     constructor(props) {
         super(props);
         this.paginationManager = new TableConfigManager({
-            ..._.omit(props, 'children', 'records'), totalRecords: props.records.length
+            ..._.omit(props, 'children', 'records'),
+            totalRecords: props.records.length,
+            totalProcessedRecords: props.records.length
         });
+    }
+
+    setConfig(config) {
+        if (config.filterQuery || config.filterKey || config.perPage) {
+            config.start = 1;
+        }
+        this.paginationManager.setConfig(config);
     }
 
     componentWillMount() {
@@ -117,16 +126,32 @@ class PaginationWrapper extends Component {
         this.paginationSubscription && this.paginationSubscription();
     }
 
-    paginationChangeHandler() {
+    paginationChangeHandler(changed) {
         this.forceUpdate();
     }
 
     getFilteredRecords(records) {
-        return records;
+        let {filterKey, filterQuery} = this.paginationManager.getConfig();
+        filterQuery = filterQuery.toLowerCase();
+        if (filterQuery === '') {
+            return records;
+        } else if (filterKey === '') {
+            return records.filter(item => {
+                const values = Object.values(item).join('');
+                return values.toLowerCase().indexOf(filterQuery) > -1;
+            });
+        } else {
+            return records;
+        }
     }
 
     getSortedRecords(records) {
-        return records;
+        const {sortKey, sortOrder} = this.paginationManager.getConfig();
+        if (sortKey === '') {
+            return records;
+        } else {
+            return sortOrder === 'asc' ? records.sort((a, b) => a[sortKey] - b[sortKey]) : records.sort((b, a) => a[sortKey] - b[sortKey]);
+        }
     }
 
     getPaginatedRecords(records) {
@@ -135,12 +160,18 @@ class PaginationWrapper extends Component {
     }
 
     getProcessedRecords() {
-        return this.getPaginatedRecords(this.getSortedRecords(this.getFilteredRecords(this.props.records)));
+        const processedRecords = this.getSortedRecords(this.getFilteredRecords(this.props.records));
+        this.paginationManager.setConfig({
+            totalProcessedRecords: processedRecords.length
+        }, true);
+        const getPaginatedRecords = this.getPaginatedRecords(processedRecords);
+        return getPaginatedRecords;
     }
 
     render() {
+        const records = this.getProcessedRecords();
         const props = this.paginationManager.getConfig();
-        props.records = this.getProcessedRecords();
+        props.records = records;
         props.paginationManager = this.paginationManager;
         const clonedChildren = cloneChildren(this.props.children, props);
         return clonedChildren;
@@ -148,22 +179,41 @@ class PaginationWrapper extends Component {
 }
 
 
-class TH extends Component {
 
+class TH extends Component {
+    getClassNames(){
+        const classes = [this.props.className];
+        if (this.props.enableSort){
+            classes.push('sortable');
+        }
+        if (this.props.sortKey === '' + this.props.dataKey){
+            classes.push('sorted');
+        }
+        return classes.join(' ');
+    }
     render() {
-        return <th>{this.props.label}</th>;
+        return <th data-key={this.props.dataKey} data-sortkey={this.props.sortKey} className={this.getClassNames()}>{this.props.label}</th>;
     }
 }
 
 
 class TD extends Component {
 
+    getClassNames(){
+        const classes = [this.props.className];
+
+        if (this.props.sortKey === '' + this.props.dataKey){
+            classes.push('sorted');
+        }
+        return classes.join(' ');
+    }
+
     render() {
         const self = this;
         const props = self.props;
         const attributes = props.attributes;
         const {record, recordIndex, dataKey} = props;
-        return <td {...attributes}>{record[dataKey]}</td>;
+        return <td {...attributes} className={this.getClassNames()}>{record[dataKey]}</td>;
 
     }
 }
@@ -173,10 +223,10 @@ class TR extends Component {
     render() {
         const self = this;
         const props = self.props;
-        const {records, record} = props;
+        const {records, record, sortKey} = props;
         const attributes = props.attributes;
         const children = cloneChildren(this.props.children, {
-            records, record
+            records, record, sortKey
         });
         return <tr {...attributes}>{children}</tr>;
     }
@@ -185,9 +235,10 @@ class TR extends Component {
 class THEAD extends Component {
     render() {
         const self = this;
-        const {records} = this.props;
+        const {records, sortKey} = this.props;
         const children = cloneChildren(this.props.children, {
-            records
+            records,
+            sortKey
         });
         return <thead>{children}</thead>;
     }
@@ -197,10 +248,10 @@ class TBODY extends Component {
     render() {
         const self = this;
         const props = self.props;
-        const {records} = props;
+        const {records, sortKey} = props;
         const children = records.map(function(record, recordIndex) {
             return cloneChildren(this.props.children, {
-                records, record, recordIndex, key: recordIndex
+                records, record, recordIndex, key: recordIndex, sortKey
             });
         }, this);
         return <tbody>{children}</tbody>;
@@ -286,6 +337,11 @@ class PaginatedTable extends Component {
 }
 
 
+const reverseSortOrderMap = {
+    asc:'dsc',
+    dsc:'asc'
+};
+
 class Table extends Component {
 
     renderNoRecords() {
@@ -293,19 +349,29 @@ class Table extends Component {
         return <NoRecordsItemProp/>;
     }
 
-    renderChildren() {
-        let {attributes, children, records} = this.props;
-        children = cloneChildren(children, {
-            records
-        });
-        return <table className="table" {...attributes}>{children}</table>;
+    tableClickHandler(event) {
+        const target = event.target;
+        const thNode = target.closest('th.sortable');
+        const {sortKey, sortOrder} = this.props;
+        if (thNode && thNode.dataset.key !== undefined && this.props.paginationManager) {
+            const newSortKey = thNode.dataset.key;
+            if (sortKey === newSortKey) {
+	            this.props.paginationManager.setConfig({
+		            sortOrder: reverseSortOrderMap[sortOrder]
+	            });
+            } else {
+	            this.props.paginationManager.setConfig({
+		            sortOrder: 'asc',
+                    sortKey:newSortKey
+	            });
+            }
+        }
     }
 
     render() {
         const self = this;
         const props = self.props;
-        const attributes = props.attributes;
-        const {records, errors} = props;
+        const {records, errors, attributes, sortKey} = props;
         const zeroLength = records.length === 0;
 
         if (errors) {
@@ -315,9 +381,10 @@ class Table extends Component {
         }
 
         const children = cloneChildren(this.props.children, {
-            records
+            records,
+            sortKey
         });
-        return <table className="table" {...attributes}>{children}</table>;
+        return <table className="table" {...attributes} onClick={this.tableClickHandler.bind(this)}>{children}</table>;
     }
 }
 
@@ -402,6 +469,6 @@ export default {
     TH,
     TD,
     TR,
-	Pagination,
+    Pagination,
     PaginationWrapper
 };
