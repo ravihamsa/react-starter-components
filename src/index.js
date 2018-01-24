@@ -18,6 +18,7 @@ export const {PaginatedTable, Table, THEAD, TBODY, TH, TD, TR, DynamicTable, Pag
 export const {List, ListItem, SelectableItem, FormCollection, AnchorLink, ActionLink, ToggleActionButton, ViewStateManager, ViewState} = componentsIm.common;
 
 export const {InlinePopup, InlineButton, InlineBody} = componentsIm.common.InlinePopupGroup;
+export const {InlineModal, InlineModalButton, InlineModalBody} = componentsIm.common.InlineModal;
 
 export const {Popup, PopupButton, PopupBody} = componentsIm.common.PopupGroup
 
