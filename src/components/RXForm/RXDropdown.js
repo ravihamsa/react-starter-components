@@ -5,7 +5,7 @@ import React, {Component} from 'react';
 import RXSelectionElement from './RXSelectionElement';
 import List from '../common/List';
 import InlinePopupGroup from '../common/InlinePopupGroup';
-import {InlineModal, InlineModalBody, InlineModalButton} from '../common/InlineModal';
+import {InlineModal, InlineModalBody, InlineModalButton} from '../common/InlineModalGroup';
 
 const {InlinePopup, InlineButton, InlineBody} = InlinePopupGroup;
 import {_} from '../../core/utils';
