@@ -82,12 +82,13 @@ export class InlineModalBody extends Component {
         super(props);
         this.el = document.createElement('div');
         this.el.style.position = 'relative';
+        this.el.style.display = 'none';
         this.el.className = this.props.className || ''
     }
 
     componentDidMount() {
+	    this.positionElement();
         inlineModalRoot.appendChild(this.el);
-        this.positionElement();
         this.clickSubscription = bodyClick$
             .filter(event => this.isClickedOutside(event)).take(1)
             .subscribe(() => this.props.closePopup());
@@ -98,6 +99,7 @@ export class InlineModalBody extends Component {
             const {placeholder} = this.props.getPosition();
             this.el.style.left = placeholder.x + 'px';
             this.el.style.top = placeholder.y + 'px';
+            this.el.style.display = 'block';
         });
     }
 

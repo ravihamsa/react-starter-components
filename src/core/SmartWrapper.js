@@ -289,11 +289,7 @@ class SmartWrapper extends Component {
             } else if (this.dataIndex.errors && this.props.showError !== false) {
                 return this.renderErrors();
             } else {
-                if (this.props.showIf === false) {
-                    return null;
-                } else {
-                    return this.renderChildren();
-                }
+	            return this.renderChildren();
             }
         } else {
             return <div></div>;

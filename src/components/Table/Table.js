@@ -36,18 +36,23 @@ class TableConfigManager extends SimpleEmitter {
 
     computeOtherConfigs() {
         const computed = {};
-        const {start, perPage, totalRecords, totalProcessedRecords} = this.config;
+        const {start, perPage, totalProcessedRecords} = this.config;
         computed['end'] = Math.min(start + perPage - 1, totalProcessedRecords);
         computed['hasNext'] = computed['end'] < totalProcessedRecords;
         computed['hasPrev'] = start > 1;
         computed['showPagination'] = totalProcessedRecords > perPage;
+        computed['curPage'] = Math.floor(start / perPage);
+        computed['totalPages'] = Math.ceil(totalProcessedRecords / perPage);
         this.config = _.extend(this.config, computed);
     }
 
     bumpPage(diff) {
-        const {start, perPage} = this.config;
+        const {start, perPage, totalPages} = this.config;
+        let newStart = start + (diff * perPage);
+        newStart = Math.max(1, newStart);
+        newStart = Math.min(newStart, ((totalPages - 1) * perPage))
         this.setConfig({
-            start: start + (diff * perPage)
+            start: newStart
         });
     }
 
