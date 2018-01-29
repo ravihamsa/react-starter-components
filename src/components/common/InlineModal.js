@@ -17,7 +17,7 @@ for (const i in rootStyle) {
 document.body.appendChild(inlineModalRoot);
 
 
-export default class InlineModal extends Component {
+export class InlineModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
