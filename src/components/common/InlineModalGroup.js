@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
-import utils from '../../core/utils';
+import utils, {_} from '../../core/utils';
 import {bodyClick$} from './../../core/rxutils';
 
 const rootStyle = {
@@ -8,6 +8,32 @@ const rootStyle = {
     top: 0,
     left: 0
 };
+
+const popups = [];
+
+const addToModalRoot = modal => {
+    inlineModalRoot.appendChild(modal.bodyEl);
+    popups.push(modal);
+};
+
+const removeFromModalRoot = modal => {
+    inlineModalRoot.removeChild(modal.bodyEl);
+    const elementIndex = _.indexOf(popups, item => item === modal);
+    popups.splice(elementIndex, 1);
+};
+
+bodyClick$.filter(() => popups.length > 0).subscribe(event => {
+    let count = popups.length;
+    while (count--) {
+        const curPopup = popups[count];
+        const isClickedOutside = curPopup.isClickedOutside(event);
+        if (!isClickedOutside) {
+            break;
+        } else {
+            curPopup.closePopup();
+        }
+    }
+});
 
 const inlineModalRoot = document.createElement('div');
 inlineModalRoot.className = 'modal-root';
@@ -23,6 +49,8 @@ export class InlineModal extends Component {
         this.state = {
             isOpen: false
         };
+        this.bodyEl = null;
+        this.buttonEl = null;
     }
 
     setOpen(bool) {
@@ -46,8 +74,47 @@ export class InlineModal extends Component {
     getPosition() {
         return {
             placeholder: this.placeholderEl.getBoundingClientRect(),
-            root: this.modalContainerEl.getBoundingClientRect()
+            button: this.buttonEl.getBoundingClientRect(),
+            body: this.bodyEl.getBoundingClientRect()
         };
+    }
+
+    setButtonElement(button) {
+        this.buttonEl = button;
+
+    }
+
+    setBodyElement(element) {
+        this.bodyEl = element;
+        addToModalRoot(this);
+    }
+
+    unsetBodyElement() {
+        removeFromModalRoot(this);
+        this.bodyEl = null;
+    }
+
+    isClickedOutside(event) {
+        let isWithinBody = false;
+        let isWithinButton = false;
+        let target = event.target;
+        let bodyRoot = this.bodyEl;
+        while (target.parentNode && !isWithinBody) {
+            if (target === bodyRoot) {
+                isWithinBody = true;
+            }
+            target = target.parentNode;
+        }
+
+        bodyRoot = this.buttonEl;
+        target = event.target;
+        while (target.parentNode && !isWithinButton) {
+            if (target === bodyRoot) {
+                isWithinButton = true;
+            }
+            target = target.parentNode;
+        }
+        return !isWithinButton && !isWithinBody;
     }
 
     render() {
@@ -55,11 +122,14 @@ export class InlineModal extends Component {
             position: 'relative'
         }} className={'modal-open-' + this.state.isOpen} ref={element => this.modalContainerEl = element}>
             {utils.cloneChildren(this.props.children[0], {
-                togglePopup: this.togglePopup.bind(this)
+                togglePopup: this.togglePopup.bind(this),
+                setButtonElement: this.setButtonElement.bind(this)
             })}
             {this.state.isOpen ? utils.cloneChildren(this.props.children[1], {
                 closePopup: this.closePopup.bind(this),
-                getPosition: this.getPosition.bind(this)
+                getPosition: this.getPosition.bind(this),
+                setBodyElement: this.setBodyElement.bind(this),
+                unsetBodyElement: this.unsetBodyElement.bind(this),
             }) : null}
             <div ref={element => this.placeholderEl = element}></div>
         </div>;
@@ -70,9 +140,16 @@ export class InlineModal extends Component {
 
 export class InlineModalButton extends Component {
 
+    componentDidMount() {
+        const domNode = ReactDOM.findDOMNode(this.rootEl);
+        this.props.setButtonElement(domNode);
+    }
+
     render() {
-        return React.cloneElement(this.props.children, {
-            onClick: this.props.togglePopup
+        const childNode = React.Children.only(this.props.children);
+        return React.cloneElement(childNode, {
+            onClick: this.props.togglePopup,
+            ref: element => this.rootEl = element
         });
     }
 }
@@ -81,43 +158,64 @@ export class InlineModalBody extends Component {
     constructor(props) {
         super(props);
         this.el = document.createElement('div');
-        this.el.style.position = 'relative';
-        this.el.style.display = 'none';
-        this.el.className = this.props.className || ''
+        this.el.style.position = 'absolute';
+        this.el.style.visibility = 'hidden';
+        this.el.className = this.props.className || '';
     }
 
     componentDidMount() {
-	    this.positionElement();
-        inlineModalRoot.appendChild(this.el);
-        this.clickSubscription = bodyClick$
-            .filter(event => this.isClickedOutside(event)).take(1)
-            .subscribe(() => this.props.closePopup());
+        this.positionElement();
+        this.props.setBodyElement(this.el);
+        /*this.clickSubscription = bodyClick$
+			.filter(event => this.isClickedOutside(event)).take(1)
+			.subscribe(() => this.props.closePopup());*/
     }
 
     positionElement() {
         setTimeout(() => {
-            const {placeholder} = this.props.getPosition();
-            this.el.style.left = placeholder.x + 'px';
-            this.el.style.top = placeholder.y + 'px';
-            this.el.style.display = 'block';
+            const {placeholder, button, body} = this.props.getPosition();
+            let left = placeholder.x;
+            let top = placeholder.y;
+
+            switch (this.props.valign) {
+	            case 'top':
+					 top -= button.height;
+	            	break;
+
+	            case 'bottom':
+	            	//do nothing
+	            	break;
+            }
+
+            switch (this.props.halign) {
+	            case 'left':
+	                //do nothing
+	            	break;
+
+                case 'right':
+	                left -= (body.width - button.width);
+	            	break;
+
+	            case 'center':
+		            left -= (body.width - button.width) / 2;
+	            	break;
+            }
+
+            switch(this.props.bodyPosition) {
+                case 'up':
+                    top -= (button.height + body.height)
+                    break;
+            }
+
+	        this.el.style.left = left + 'px';
+	        this.el.style.top = top + 'px';
+	        this.el.style.visibility = 'visible';
         });
     }
 
-    isClickedOutside(event) {
-        let isWithinPopup = false;
-        let target = event.target;
-        const bodyRoot = this.el;
-        while (target.parentNode && !isWithinPopup) {
-            if (target === bodyRoot) {
-                isWithinPopup = true;
-            }
-            target = target.parentNode;
-        }
-        return !isWithinPopup;
-    }
 
     componentWillUnmount() {
-        inlineModalRoot.removeChild(this.el);
+        this.props.unsetBodyElement(this.el);
         if (this.clickSubscription) {
             this.clickSubscription.unsubscribe();
         }
@@ -130,3 +228,9 @@ export class InlineModalBody extends Component {
         );
     }
 }
+
+InlineModalBody.defaultProps = {
+    valign: 'bottom',
+    halign: 'left',
+	bodyPosition: 'down'
+};

@@ -23,6 +23,7 @@ import isArray from 'lodash/isArray';
 import groupBy from 'lodash/groupBy';
 import trim from 'lodash/trim';
 import clone from 'lodash/clone';
+import indexOf from 'lodash/indexOf';
 const identity = function(arg1){
     return arg1;
 };
@@ -47,7 +48,8 @@ export const _  = {
     values,
     trim,
     clone,
-    difference
+    difference,
+	indexOf
 };
 
 
