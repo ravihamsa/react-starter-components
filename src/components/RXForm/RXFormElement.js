@@ -295,7 +295,7 @@ export default class RXFormElement extends Component {
     }
 
     getFormClasses() {
-        const classArray = ['form-group'];
+        const classArray = ['form-group', this.props.className];
         classArray.push('element');
         classArray.push('element-type-' + this.props.type);
         classArray.push('element-' + this.props.name);
@@ -416,6 +416,7 @@ RXFormElement.defaultProps = {
     validations: [],
     activeRules: [],
     propRules: [],
+	className:'',
     getPropValue: (prop, value) => value,
     serverValidation: null
 };
