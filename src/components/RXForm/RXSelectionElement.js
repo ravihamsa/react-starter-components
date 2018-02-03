@@ -153,7 +153,15 @@ export default class RXSelectionElement extends RXFormElement {
     }
 
     readInputValue() {
-        this.updateValue(this.getFormattedSelection(), 'read');
+        let selection = this.getFormattedSelection();
+	    if (selection === '', this.props.selectDefaultFirst){
+            const {options} = this.props;
+            if (options && options.length > 0){
+                this.selectionManager.select(options[0]);
+	            selection = this.getFormattedSelection();
+            }
+	    }
+        this.updateValue(selection, 'read');
         const {exposeSelection, exposeName} = this.props;
         if (exposeSelection || exposeName) {
             const selected = this.selectionManager.getSelected();
@@ -161,6 +169,7 @@ export default class RXSelectionElement extends RXFormElement {
                 field: this.props.name + '_selection', type: 'skipValidateUpdate', value: selected
             });
         }
+
     }
 
     exposeNameAndSelection() {
@@ -260,6 +269,7 @@ RXSelectionElement.defaultProps = {
     exposeSelection: false,
     multiSelect: false,
     useSelectionAsValue: false,
+    selectDefaultFirst:false,
     filterQuery: '',
     filterField: 'name'
 };

@@ -52,6 +52,12 @@ export default class RXForm extends Component {
             this.valueIndex[val.field] = val.value;
         });
 
+        read$.takeUntil(this.unmount$).subscribe(val => {
+	        this.valueReadHandler({
+		        [val.field]: val.value
+	        }, this.valueIndex);
+        });
+
 
         update$.takeUntil(this.unmount$).subscribe(val => {
             this.valueChangeHandler({
@@ -99,6 +105,16 @@ export default class RXForm extends Component {
         if (controller && name && controller.set) {
             controller.set(name, fullObject);
         }
+    }
+
+    valueReadHandler(changed, fullObject){
+	    const {controller, name, onValueRead} = this.props;
+	    if (onValueRead) {
+		    onValueRead(changed, fullObject);
+	    }
+	    if (controller && name && controller.set) {
+		    controller.set(name, fullObject);
+	    }
     }
 
     selectionReadHandler(changed) {
@@ -227,4 +243,4 @@ RXForm.childContextTypes = {
 RXForm.propTypes = {
     ...Component.propTypes,
     onSubmitHandler: PropTypes.func
-}
+};
