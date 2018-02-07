@@ -120,7 +120,7 @@ export class InlineModal extends Component {
     render() {
         return <div style={{
             position: 'relative'
-        }} className={'modal-open-' + this.state.isOpen} ref={element => this.modalContainerEl = element}>
+        }} className={'inline-modal modal-open-' + this.state.isOpen} ref={element => this.modalContainerEl = element}>
             {utils.cloneChildren(this.props.children[0], {
                 togglePopup: this.togglePopup.bind(this),
                 setButtonElement: this.setButtonElement.bind(this)
@@ -201,15 +201,18 @@ export class InlineModalBody extends Component {
 	            	break;
             }
 
-            switch(this.props.bodyPosition) {
+            switch (this.props.bodyPosition) {
                 case 'up':
-                    top -= (button.height + body.height)
+                    top -= (button.height + body.height);
                     break;
             }
 
 	        this.el.style.left = left + 'px';
 	        this.el.style.top = top + 'px';
 	        this.el.style.visibility = 'visible';
+	        this.el.classList.add('valign-' + this.props.valign);
+	        this.el.classList.add('halign-' + this.props.halign);
+	        this.el.classList.add('body-pos-' + this.props.bodyPosition);
         });
     }
 
@@ -232,5 +235,5 @@ export class InlineModalBody extends Component {
 InlineModalBody.defaultProps = {
     valign: 'bottom',
     halign: 'left',
-	bodyPosition: 'down'
+    bodyPosition: 'down'
 };

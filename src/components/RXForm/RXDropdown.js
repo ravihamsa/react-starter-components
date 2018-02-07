@@ -102,7 +102,7 @@ export default class RXDropdown extends RXSelectionElement {
     }
 
     renderElement() {
-        const {valign = 'top', bodyPosition, ListItem = RXDropdownItem, listBodyClassName} = this.props;
+        const {valign = 'top', bodyPosition, ListItem = RXDropdownItem, listBodyClassName = 'drop-down-body'} = this.props;
         const filteredOptions = this.getFilteredOptions();
 
 
