@@ -50,7 +50,7 @@ class TableConfigManager extends SimpleEmitter {
         const {start, perPage, totalPages} = this.config;
         let newStart = start + (diff * perPage);
         newStart = Math.max(1, newStart);
-        newStart = Math.min(newStart, ((totalPages - 1) * perPage))
+        newStart = Math.min(newStart, ((totalPages - 1) * perPage));
         this.setConfig({
             start: newStart
         });
@@ -354,6 +354,14 @@ class Table extends Component {
         return <NoRecordsItemProp/>;
     }
 
+    renderChildren() {
+        let {attributes, children, records} = this.props;
+        children = cloneChildren(children, {
+            records
+        });
+        return <table className="table" {...attributes}>{children}</table>;
+    }
+
     tableClickHandler(event) {
         const target = event.target;
         const thNode = target.closest('th.sortable');
@@ -385,11 +393,7 @@ class Table extends Component {
             return this.renderNoRecords();
         }
 
-        const children = cloneChildren(this.props.children, {
-            records,
-            sortKey
-        });
-        return <table className="table" {...attributes} onClick={this.tableClickHandler.bind(this)}>{children}</table>;
+        return this.renderChildren();
     }
 }
 

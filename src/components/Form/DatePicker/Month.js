@@ -2,7 +2,7 @@
  * Created by ravi.hamsa on 7/2/16.
  */
 
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 import moment from 'moment';
 import List from '../../common/List'
 import {_} from '../../../core/utils'
