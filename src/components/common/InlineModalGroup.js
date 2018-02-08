@@ -207,9 +207,12 @@ export class InlineModalBody extends Component {
                     break;
             }
 
+            if(this.props.useButtonWidth) {
+	            this.el.style.width =  button.width + 'px';
+            }
+
 	        this.el.style.left = left + 'px';
 	        this.el.style.top = top + 'px';
-	        this.el.style.width =  button.width + 'px';
 	        this.el.style.visibility = 'visible';
 	        this.el.classList.add('valign-' + this.props.valign);
 	        this.el.classList.add('halign-' + this.props.halign);
@@ -236,5 +239,6 @@ export class InlineModalBody extends Component {
 InlineModalBody.defaultProps = {
     valign: 'bottom',
     halign: 'left',
-    bodyPosition: 'down'
+    bodyPosition: 'down',
+	useButtonWidth:false
 };

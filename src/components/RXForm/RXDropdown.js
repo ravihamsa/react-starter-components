@@ -102,7 +102,7 @@ export default class RXDropdown extends RXSelectionElement {
     }
 
     renderElement() {
-        const {valign = 'top', bodyPosition, ListItem = RXDropdownItem, listBodyClassName = 'drop-down-body'} = this.props;
+        const {valign = 'top', bodyPosition, ListItem = RXDropdownItem, listBodyClassName = 'drop-down-body', useButtonWidth} = this.props;
         const filteredOptions = this.getFilteredOptions();
 
 
@@ -110,7 +110,7 @@ export default class RXDropdown extends RXSelectionElement {
             <InlineModalButton>
                 {this.renderButton()}
             </InlineModalButton>
-            <InlineModalBody valign={valign} bodyPosition={bodyPosition} className={listBodyClassName}>
+            <InlineModalBody valign={valign} bodyPosition={bodyPosition} className={listBodyClassName} useButtonWidth={useButtonWidth}>
                 <div className="drop-down-body">
                     {this.props.showSearch ? <div className="drop-down-search-container">
                         <input type="text" autoFocus defaultValue={this.state.query} ref={searchBox => this.ref_searchBox = searchBox}
@@ -138,6 +138,7 @@ RXDropdown.defaultProps = {
     allSelectedLabel: 'All Selected',
     optionsSelectedLabel: 'Options Selected',
     bodyPosition: 'down',
+    useButtonWidth:true,
     listBodyClassName:'inline-popup-body-fullwidth'
 };
 
