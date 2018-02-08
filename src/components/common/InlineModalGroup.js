@@ -209,6 +209,7 @@ export class InlineModalBody extends Component {
 
 	        this.el.style.left = left + 'px';
 	        this.el.style.top = top + 'px';
+	        this.el.style.width =  button.width + 'px';
 	        this.el.style.visibility = 'visible';
 	        this.el.classList.add('valign-' + this.props.valign);
 	        this.el.classList.add('halign-' + this.props.halign);
