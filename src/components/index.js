@@ -30,6 +30,8 @@ import {
 import Table from './Table';
 import common from './common';
 
+import {SimpleForm, SimpleElement, SimpleSelectionElement, SimpleDropdown} from './SimpleForm';
+
 export default {
     Form,
     RXForm,
@@ -55,5 +57,9 @@ export default {
     addValidationRule,
     activeRules,
     Table,
-    common
-}
+    common,
+    SimpleForm,
+    SimpleElement,
+	SimpleSelectionElement,
+	SimpleDropdown
+};

@@ -1,7 +1,9 @@
+import React from 'react';
 import RXFormElement from './RXFormElement';
 import Month from '../Form/DatePicker/Month';
 import InlinePopupGroup from '../common/InlinePopupGroup';
 import moment from 'moment';
+import _ from 'lodash';
 
 const {InlinePopup, InlineButton, InlineBody} = InlinePopupGroup;
 

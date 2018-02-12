@@ -1,3 +1,4 @@
+import React from 'react';
 import RXDropdown, {RXDropdownItem} from './RXDropdown';
 import Month from '../Form/DatePicker/Month';
 import InlinePopupGroup from '../common/InlinePopupGroup';

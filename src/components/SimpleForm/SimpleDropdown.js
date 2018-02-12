@@ -2,12 +2,12 @@
  * Created by ravi.hamsa on 3/26/17.
  */
 import React, {Component} from 'react';
-import RXSelectionElement from './RXSelectionElement';
+import SimpleSelectionElement from './SimpleSelectionElement';
 import List from '../common/List';
 import {InlineModal, InlineModalBody, InlineModalButton} from '../common/InlineModalGroup';
 import {_} from '../../core/utils';
 
-export class RXDropdownItem extends Component {
+export class SimpleDropdownItem extends Component {
 
     getClassName() {
         const {itemData, selectionManager} = this.props;
@@ -37,12 +37,14 @@ export class RXDropdownItem extends Component {
     }
 }
 
-export default class RXDropdown extends RXSelectionElement {
+export default class SimpleDropdown extends SimpleSelectionElement {
 
     constructor(props) {
         super(props);
         this.onKeyPressHandler = _.debounce(this._onKeyPressHandler.bind(this), 300);
-        this.state.query = '';
+        this.state = {
+        	query:''
+        };
     }
 
     _onKeyPressHandler() {
@@ -76,7 +78,7 @@ export default class RXDropdown extends RXSelectionElement {
         }
     }
 
-    onChangeUpdates(value) {
+    onChangeUpdates() {
         if (!this.multiSelect) {
             if (this.ref_inlinePopup) {
                 this.ref_inlinePopup.closePopup();
@@ -86,7 +88,7 @@ export default class RXDropdown extends RXSelectionElement {
 
     renderButton() {
         const selectionSummary = this.getSummaryText(this.props.placeholder);
-        return <div className="drop-down-button">
+        return <div className="drop-down-button form-control">
             <span className="drop-down-text"> {selectionSummary}</span>
             <span className="glyphicon glyphicon-chevron-down drop-down-icon"></span>
         </div>;
@@ -98,37 +100,39 @@ export default class RXDropdown extends RXSelectionElement {
         return options.filter(item => item.name.toLowerCase().indexOf(this.state.query.toLowerCase()) > -1);
     }
 
-    renderElement() {
-        const {valign = 'top', bodyPosition, ListItem = RXDropdownItem, listBodyClassName = 'drop-down-body', useButtonWidth} = this.props;
+    render() {
+        const {valign = 'top', bodyPosition, ListItem = SimpleDropdownItem, listBodyClassName, useButtonWidth} = this.props;
         const filteredOptions = this.getFilteredOptions();
 
 
-        return <InlineModal ref={inlinePopup => this.ref_inlinePopup = inlinePopup} disabled={this.props.disabled}>
-            <InlineModalButton>
-                {this.renderButton()}
-            </InlineModalButton>
-            <InlineModalBody valign={valign} bodyPosition={bodyPosition} className={listBodyClassName} useButtonWidth={useButtonWidth}>
-                <div className="drop-down-body">
-                    {this.props.showSearch ? <div className="drop-down-search-container">
-                        <input type="text" autoFocus defaultValue={this.state.query} ref={searchBox => this.ref_searchBox = searchBox}
-                            onChange={this.onKeyPressHandler} className="drop-down-input"
-                            placeholder={this.props.placeholder}/>
-                    </div> : null}
-                    <div onClick={this.onClickHandler.bind(this)} ref={listRoot => this.ref_listRoot = listRoot}>
-                        <List items={filteredOptions} selectionManager={this.selectionManager}
-                            selection={this.state.value} ListItem={ListItem}/>
-                    </div>
-                </div>
-            </InlineModalBody>
-        </InlineModal>;
+        return <div className={this.getClassNames()}>
+	        <InlineModal ref={inlinePopup => this.ref_inlinePopup = inlinePopup} disabled={this.props.disabled}>
+		        <InlineModalButton>
+			        {this.renderButton()}
+		        </InlineModalButton>
+		        <InlineModalBody valign={valign} bodyPosition={bodyPosition} className={listBodyClassName} useButtonWidth={useButtonWidth}>
+			        <div className="drop-down-body">
+				        {this.props.showSearch ? <div className="drop-down-search-container">
+					        <input type="text" autoFocus defaultValue={this.state.query} ref={searchBox => this.ref_searchBox = searchBox}
+					               onChange={this.onKeyPressHandler} className="drop-down-input"
+					               placeholder={this.props.placeholder}/>
+				        </div> : null}
+				        <div onClick={this.onClickHandler.bind(this)} ref={listRoot => this.ref_listRoot = listRoot}>
+					        <List items={filteredOptions} selectionManager={this.selectionManager}
+					              selection={this.state.value} ListItem={ListItem}/>
+				        </div>
+			        </div>
+		        </InlineModalBody>
+	        </InlineModal>
+        </div>;
 
     }
 
 }
 
 
-RXDropdown.defaultProps = {
-    ...RXSelectionElement.defaultProps,
+SimpleDropdown.defaultProps = {
+    ...SimpleSelectionElement.defaultProps,
     type: 'drop-down',
     noOptionsLabel: 'No Options',
     noSelectionLabel: 'Select',
@@ -136,6 +140,6 @@ RXDropdown.defaultProps = {
     optionsSelectedLabel: 'Options Selected',
     bodyPosition: 'down',
     useButtonWidth:true,
-    listBodyClassName:'inline-popup-body-fullwidth'
+    listBodyClassName:'drop-down-body'
 };
 

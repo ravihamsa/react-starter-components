@@ -17,9 +17,10 @@ export default class SimpleControllerV2 extends SimpleEmitter {
         super(config);
         this._dataIndex = {};
         this._selectionIndex = {};
+        this.setDefaults();
         this._changing = false;
         ['singleSelect', 'multiSelect', 'clearSelection',
-            'set', 'setError', 'update', 'clear', 'setList',
+            'setError', 'update', 'clear', 'setList',
             'addToList', 'removeFromList', 'updateInList', 'resetInList'].forEach(methodName => {
             const oldMethod = this[methodName];
             this[methodName] = (arg1, arg2, arg3, arg4) => {
@@ -28,6 +29,10 @@ export default class SimpleControllerV2 extends SimpleEmitter {
             };
         });
 
+    }
+
+	setDefaults(){
+        //do nothing to be extended
     }
 
     mute() {
@@ -39,9 +44,9 @@ export default class SimpleControllerV2 extends SimpleEmitter {
     }
 
 
-    execute(action, payload) {
+    execute(action, arg1, arg2, arg3) {
         if (typeof this[action] === 'function') {
-            this[action](payload);
+            this[action](arg1, arg2, arg3);
         } else {
             throw new Error(`unhandled action ${action}`);
         }
@@ -82,6 +87,7 @@ export default class SimpleControllerV2 extends SimpleEmitter {
         } else {
             this._dataIndex[keyName] = fromJS(data);
         }
+	    this.triggerChange();
     }
 
     setError(keyName, error) {

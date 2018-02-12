@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 export default class ActiveWrapper extends Component {
     render() {
         if (this.props.active) {
-            return React.Children.only(this.props.children);
+            return this.props.children;
         } else {
             return null;
         }
