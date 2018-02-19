@@ -4,39 +4,34 @@
 
 import React, {Component} from 'react';
 import moment from 'moment';
-import List from '../../common/List'
-import {_} from '../../../core/utils'
+import List from '../../common/List';
+import util, {_} from '../../../core/utils';
 
-const DATE_FORMAT = 'DD/MM/YYYY';
 
-let shortDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(function (nm, index) {
-    return {
-        id: index,
-        name: nm
-    }
-})
+const shortDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((nm, index) => ({
+    id: index,
+    name: nm
+}));
 
-let today = moment();
+const today = moment();
 
 
 class Day extends Component {
     render() {
-        var item = this.props.itemData;
+        const item = this.props.itemData;
 
-        var booleanClasses = _.map(['today', 'selected', 'selectable'], function (className) {
-            return item[className] === true ? className : '';
-        });
+        const booleanClasses = _.map(['today', 'selected', 'selectable'], className => item[className] === true ? className : '');
         booleanClasses.push('day');
         return <td id={item.id}
-                   onClick={this.onClickHandler.bind(this)}>
+            onClick={this.onClickHandler.bind(this)}>
             <div className={booleanClasses.join(' ')}>{item.date}</div>
-        </td>
+        </td>;
     }
 
     onClickHandler() {
         if (this.props.itemData.selectable) {
             //this.props.selectionStore.onSelect(this.props.itemData);
-            this.props.onDateClick(this.props.itemData)
+            this.props.onDateClick(this.props.itemData);
         }
 
     }
@@ -44,63 +39,66 @@ class Day extends Component {
 
 class WeekHeading extends Component {
     render() {
-        return <td className='day-heading'>{this.props.itemData.name}</td>
+        return <td className='day-heading'>{this.props.itemData.name}</td>;
     }
 }
 
 
 class Month extends Component {
     constructor(props) {
-        super(...arguments)
+        super(...arguments);
         this.selectionStore = props.selectionStore;
+        this.DATE_FORMAT = util.getStarterConfig('dateFormat');
         this.state = {
-            displayDate: props.displayDate || today.format(DATE_FORMAT),
+            displayDate: props.displayDate || today.format(this.DATE_FORMAT),
             selectedDate: props.selectedDate || null,
-            minDate: props.minDate || today.format(DATE_FORMAT),
+            minDate: props.minDate || today.format(this.DATE_FORMAT),
             maxDate: props.maxDate
-        }
+        };
     }
 
 
     bumpMonth(diff) {
-        var displayDate = moment(this.state.displayDate, DATE_FORMAT);
-        this.setState({'displayDate': displayDate.add(diff, 'month').format(DATE_FORMAT)});
+        const displayDate = moment(this.state.displayDate, this.DATE_FORMAT);
+        this.setState({
+            displayDate: displayDate.add(diff, 'month').format(this.DATE_FORMAT)
+        });
     }
 
     nextMonth(event) {
         event.preventDefault();
-        this.bumpMonth(1)
+        this.bumpMonth(1);
     }
 
     prevMonth(event) {
         event.preventDefault();
-        this.bumpMonth(-1)
+        this.bumpMonth(-1);
     }
 
 
     onDateClick(dateObject){
-        let dateValue =  dateObject.dateObject.format(DATE_FORMAT);
+        const dateValue =  dateObject.dateObject.format(this.DATE_FORMAT);
         this.setState({
-            selectedDate: dateObject.dateObject.format(DATE_FORMAT)
-        })
-        this.props.onDateSelect(dateValue)
+            selectedDate: dateObject.dateObject.format(this.DATE_FORMAT)
+        });
+        this.props.onDateSelect(dateValue);
         this.props.closePopup();
     }
 
     render() {
-        let displayDate = moment(this.state.displayDate, DATE_FORMAT);
-        let selectedDate = moment(this.state.selectedDate, DATE_FORMAT);
-        let minDate = moment(this.state.minDate, DATE_FORMAT);
-        let maxDate = moment(this.state.maxDate, DATE_FORMAT);
-        let today = moment();
+        const displayDate = moment(this.state.displayDate, this.DATE_FORMAT);
+        const selectedDate = moment(this.state.selectedDate, this.DATE_FORMAT);
+        const minDate = moment(this.state.minDate, this.DATE_FORMAT);
+        const maxDate = moment(this.state.maxDate, this.DATE_FORMAT);
+        const today = moment();
 
-        var startDate = displayDate.clone().startOf('month').startOf('week');
+        const startDate = displayDate.clone().startOf('month').startOf('week');
 
-        var rows = []
-        var cols = [];
+        const rows = [];
+        let cols = [];
         rows.push(
             <List items={shortDays} tagName="tr" ListItem={WeekHeading} key={rows.length}></List>
-        )
+        );
         for (let i = 0; i < 42; i++) {
             cols.push({
                 id: 7 + i,
@@ -117,7 +115,7 @@ class Month extends Component {
             if (cols.length === 7) {
                 rows.push(
                     <List items={cols} ListItem={Day} tagName="tr" key={i} onDateClick={this.onDateClick.bind(this)}></List>
-                )
+                );
                 cols = [];
             }
         }
@@ -127,17 +125,17 @@ class Month extends Component {
             <div className='month'>
                 <div className={'month-header' + ' row no-gutters'}>
                     <div className="col-md-3"><a href="#" className='month-prev'
-                                                 onClick={this.prevMonth.bind(this)}>&lt;</a></div>
+                        onClick={this.prevMonth.bind(this)}>&lt;</a></div>
                     <div className={'month-name' + ' col-md-6'}>{displayDate.format('MMM - YYYY')}</div>
                     <div className="col-md-3"><a href="#" className={'month-next'}
-                                                 onClick={this.nextMonth.bind(this)}>&gt;</a></div>
+                        onClick={this.nextMonth.bind(this)}>&gt;</a></div>
                 </div>
                 <table>
                     <tbody>{rows}</tbody>
                 </table>
             </div>
 
-        )
+        );
     }
 }
 

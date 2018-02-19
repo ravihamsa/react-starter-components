@@ -127,7 +127,16 @@ export const getDomProps =  props => {
     return filteredProps;
 };
 
+const starterConfig = {
+    dateFormat:'DD/MM/YYYY'
+}
+const setStarterConfig = (key, value) => {
+	starterConfig[key] = value;
+}
+
+const getStarterConfig = key => starterConfig[key];
+
 
 export default {
-    identity, cloneChildren, connectToStore, getUniqueId
+    identity, cloneChildren, connectToStore, getUniqueId, setStarterConfig, getStarterConfig
 };
