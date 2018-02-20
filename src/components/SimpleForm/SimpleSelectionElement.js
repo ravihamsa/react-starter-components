@@ -62,7 +62,6 @@ export default class SimpleSelectionElement extends SimpleElement {
 	    this.forceUpdate();
     }
 
-
     onChangeUpdates(){
         //do nothing
     }
@@ -95,8 +94,8 @@ export default class SimpleSelectionElement extends SimpleElement {
             }
         }
 
-        if (newProps.value){
-	        if (newProps.value !== this.props.value){
+        if (newProps.value !== undefined){
+            if (newProps.value !== this.props.value){
                 this.applyValue(newProps.value);
 	        }
         }
@@ -223,7 +222,7 @@ export default class SimpleSelectionElement extends SimpleElement {
         const {exposeSelection, name} = this.props;
         const selected = this.selectionManager.getSelected();
         if (exposeSelection) {
-	        this.context.collector.updateValue(`${name}_selection`, selected);
+	        this.context.collector.mutedUpdateValue(`${name}_selection`, selected);
         }
     }
 

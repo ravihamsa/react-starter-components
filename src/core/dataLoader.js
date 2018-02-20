@@ -28,11 +28,11 @@ class DataLoader {
         };
     }
 
-    getRequestConfig(requestId, propKey, propDependency) {
+    getRequestConfig(requestId, propKey, propDependencies) {
         return {
             requestId,
             propKey,
-            propDependency
+	        propDependencies
         };
     }
 

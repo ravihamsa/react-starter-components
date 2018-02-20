@@ -277,8 +277,16 @@ class SmartWrapper extends Component {
     }
 
     renderChildren() {
+	    const proxyObj = {};
+        if (this.props.proxyProps){
+            const propsToProps = this.props.proxyProps.split(',');
+            _.each(propsToProps, propKey => {
+                proxyObj[propKey] = this.props[propKey];
+            });
+        }
         return cloneChildren(this.props.children, {
-            ...this.dataIndex
+            ...this.dataIndex,
+            ...proxyObj
         });
     }
 

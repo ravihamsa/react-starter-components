@@ -6,7 +6,21 @@ import PropTypes from 'prop-types';
 import {getDomProps} from '../../core/utils';
 
 
-export default class SimpleElement extends Component {
+export class CollectorChild extends Component {
+    updateValue(value){
+        this.context.collector.updateValue(this.props.name, value);
+    }
+
+    mutedUpdateValue(value){
+        this.context.collector.mutedUpdateValue(this.props.name, value);
+    }
+
+    sendEvent(eventName, arg1, arg2, arg3){
+        this.context.collector.receiveEvent(eventName, arg1, arg2, arg3);
+    }
+}
+
+export default class SimpleElement extends CollectorChild {
 
     getClassNames(){
         const {className = '', name, type} = this.props;
@@ -28,10 +42,6 @@ export default class SimpleElement extends Component {
         if (value !== undefined){
             this.updateValue(value);
         }
-    }
-
-    updateValue(value){
-	    this.context.collector.updateValue(this.props.name, value);
     }
 
     filterDomProps(props) {
@@ -63,7 +73,7 @@ export default class SimpleElement extends Component {
     }
 }
 
-SimpleElement.contextTypes = {
+CollectorChild.contextTypes = {
     collector: PropTypes.object.isRequired
 };
 

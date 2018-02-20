@@ -8,7 +8,7 @@ import {Map} from 'immutable';
 import SimpleControllerV2 from '../../core/SimpleControllerV2';
 
 
-class Collector extends Component {
+export class Collector extends Component {
     constructor(props) {
         super(props);
         this.model = new Map();
@@ -22,20 +22,36 @@ class Collector extends Component {
 	    }
 	    if (onValueChange) {
 		    onValueChange({
-                [key]:value
-            }, fullObject);
+			    [key]:value
+		    }, fullObject);
 	    }
     }
 
+
     updateValue(key, value) {
         this.model = this.model.set(key, value);
-        this.afterUpdate(key, value);
+	    this.afterUpdate(key, value);
+    }
+
+    mutedUpdateValue(key, value) {
+        this.model = this.model.set(key, value);
+    }
+
+    receiveEvent(eventName, arg1, arg2, arg3){
+    	const {onEvent} = this.props;
+    	if (onEvent){
+    		onEvent(eventName, arg1, arg2, arg3);
+	    }
     }
 
     getChildContext() {
         return {
             collector: this
         };
+    }
+
+    render(){
+    	return this.props.children;
     }
 }
 
@@ -50,6 +66,7 @@ Collector.childContextTypes = {
 };
 
 export default class SimpleForm extends Collector {
+
 
     filterDomProps(props) {
         return getDomProps(props);
