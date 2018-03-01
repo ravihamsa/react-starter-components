@@ -77,6 +77,7 @@ class Month extends Component {
 
 
     onDateClick(dateObject){
+        const DATE_FORMAT = util.getStarterConfig('dateFormat');
         const dateValue =  dateObject.dateObject.format(this.DATE_FORMAT);
         this.setState({
             selectedDate: dateObject.dateObject.format(this.DATE_FORMAT)

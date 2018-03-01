@@ -31,7 +31,7 @@ export default class SimpleDatePicker extends SimpleElement {
         return <div className={className}>
             <InlineModal ref={modal => this.ref_modal = modal}>
                 <InlineModalButton>
-                    <div><input  {...props}/>
+                    <div><span {...props}>{props.value}</span>
                         <span className="calendar icon"></span></div>
                 </InlineModalButton>
                 <InlineModalBody valign={valign} bodyPosition={bodyPosition}>

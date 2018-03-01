@@ -21,7 +21,7 @@ class DataLoader {
         this._responseParser = function(body, resp) {
             return {
                 data: body,
-                statusCode:resp.status,
+                statusCode: resp.status,
                 errors: null,
                 warnings: null
             };
@@ -32,7 +32,7 @@ class DataLoader {
         return {
             requestId,
             propKey,
-	        propDependencies
+            propDependencies
         };
     }
 
@@ -108,36 +108,36 @@ class DataLoader {
         }
     }
 
-    _executeBeforeMiddleWares(requestId, payload){
+    _executeBeforeMiddleWares(requestId, payload) {
         const self = this;
-        for (const i in self._middlewares){
+        for (const i in self._middlewares) {
             const middleware = self._middlewares[i];
-            if (middleware.before){
+            if (middleware.before) {
                 payload = middleware.before.call(null, requestId, payload);
             }
         }
         return payload;
     }
 
-    _executeAfterMiddleWares(requestId, response){
+    _executeAfterMiddleWares(requestId, response) {
         const self = this;
-        for (const i in self._middlewares){
+        for (const i in self._middlewares) {
             const middleware = self._middlewares[i];
-            if (middleware.after){
+            if (middleware.after) {
                 response = middleware.after.call(null, requestId, response);
             }
         }
         return response;
     }
 
-    _getXHRPromise(url, opts = {}, onProgress){
+    _getXHRPromise(url, opts = {}, onProgress) {
         return new Promise((res, rej) => {
             const xhr = new XMLHttpRequest();
             xhr.open(opts.method, url);
             for (const k in opts.headers || {})
                 xhr.setRequestHeader(k, opts.headers[k]);
             xhr.onload = e => res({
-                ok:true, json:() => JSON.parse(e.target.responseText)
+                ok: true, json: () => JSON.parse(e.target.responseText)
             });
             xhr.onerror = rej;
             if (xhr.upload && onProgress)
@@ -172,9 +172,9 @@ class DataLoader {
         url = self.generateGetUrl(url, payLoadToServer);
         if (method === 'post' || method === 'put' || method === 'patch') {
             requestConfig.body = JSON.stringify(payLoadToServer);
-        } else if (method === 'form_post' || method === 'upload'){
+        } else if (method === 'form_post' || method === 'upload') {
             const data = new FormData();
-            for (const i in payLoadToServer){
+            for (const i in payLoadToServer) {
                 data.append(i, payLoadToServer[i]);
             }
             requestConfig.body = data;
@@ -186,7 +186,7 @@ class DataLoader {
 
         return new Promise((resolve, reject) => {
             let fetchPromise;
-            if (method === 'upload'){
+            if (method === 'upload') {
                 fetchPromise = this._getXHRPromise(url, requestConfig, onProgress);
             } else {
                 fetchPromise = fetch(url, requestConfig);
@@ -195,37 +195,36 @@ class DataLoader {
             fetchPromise
                 .then(response => {
                     if (!response.ok) {
-                        if (!response.json){
+                        if (!response.json) {
                             throw new Error(response.statusText);
                         }
                     }
                     return response;
                 })
                 .then(response => {
-	                let jsonParser;
-	                jsonParser = response.json();
-	                jsonParser.then(body => {
-		                let parsedResponse = self._responseParser(body, response);
-		                parsedResponse = self._executeAfterMiddleWares(requestId, parsedResponse);
-		                if (parsedResponse.data) {
-			                if (config.parser) {
-				                parsedResponse.data = config.parser(parsedResponse.data, parsedResponse.meta);
-			                }
-			                if (cache !== 'none') {
-				                self._dataCache[requestHash] = {
-					                ...parsedResponse, body
-				                };
-			                }
-			                resolve(parsedResponse.data, parsedResponse.warnings, body);
-		                } else {
-			                reject(parsedResponse.errors, parsedResponse.warnings, body);
-		                }
+                    let jsonParser;
+                    jsonParser = response.json();
+                    jsonParser.then(body => {
+                        let parsedResponse = self._responseParser(body, response);
+                        parsedResponse = self._executeAfterMiddleWares(requestId, parsedResponse);
+                        if (parsedResponse.data) {
+                            if (config.parser) {
+                                parsedResponse.data = config.parser(parsedResponse.data, parsedResponse.meta);
+                            }
+                            if (cache !== 'none') {
+                                self._dataCache[requestHash] = {
+                                    ...parsedResponse, body
+                                };
+                            }
+                            resolve(parsedResponse.data, parsedResponse.warnings, body);
+                        } else {
+                            reject(parsedResponse.errors, parsedResponse.warnings, body);
+                        }
                     }).catch(ex => {
-		                throw new Error(ex.message);
+                        reject([{
+                            type: 'error', message: ex.message
+                        }], null, ex);
                     });
-
-
-
                 })
                 .catch(ex => {
                     reject([{
@@ -280,8 +279,8 @@ class DataLoader {
             throw new Error(`Middleware by ${id} already exist`);
         }
         this._middlewares[id] = {
-            before:paramParser,
-            after:responseParser
+            before: paramParser,
+            after: responseParser
         };
     }
 

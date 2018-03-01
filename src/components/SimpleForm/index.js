@@ -7,3 +7,4 @@ export SimpleElement, {CollectorChild} from './SimpleElement';
 export SimpleSelectionElement from './SimpleSelectionElement';
 export SimpleDropdown from './SimpleDropdown';
 export SimpleDatePicker from './SimpleDatePicker';
+export SimpleDateRangePicker from './SimpleDateRangePicker';

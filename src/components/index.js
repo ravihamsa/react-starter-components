@@ -30,7 +30,7 @@ import {
 import Table from './Table';
 import common from './common';
 
-import {SimpleForm, SimpleElement, SimpleSelectionElement, SimpleDropdown, SimpleDatePicker, Collector, CollectorChild} from './SimpleForm';
+import {SimpleForm, SimpleElement, SimpleSelectionElement, SimpleDropdown, SimpleDatePicker,SimpleDateRangePicker, Collector, CollectorChild} from './SimpleForm';
 
 export default {
     Form,
@@ -64,5 +64,6 @@ export default {
     CollectorChild,
 	SimpleSelectionElement,
 	SimpleDropdown,
-	SimpleDatePicker
+	SimpleDatePicker,
+	SimpleDateRangePicker
 };
