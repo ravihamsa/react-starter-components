@@ -44,9 +44,9 @@ export default class SimpleControllerV2 extends SimpleEmitter {
     }
 
 
-    execute(action, arg1, arg2, arg3) {
+    execute(action, arg1, arg2, arg3, arg4) {
         if (typeof this[action] === 'function') {
-            this[action](arg1, arg2, arg3);
+            this[action](arg1, arg2, arg3, arg4);
         } else {
             throw new Error(`unhandled action ${action}`);
         }

@@ -13,6 +13,19 @@ export default class SimpleDatePicker extends SimpleElement {
         this.updateValue(selectedDate);
     }
 
+    getDefaultValue(){
+        const inputFormat = util.getStarterConfig('dateFormat');
+        return  moment().format(inputFormat);
+    }
+
+    applyValue(value){
+        if (value !== undefined && value !== ''){
+            this.updateValue(value);
+        } else {
+            this.updateValue(this.getDefaultValue());
+        }
+    }
+
     closePopup() {
         if (this.ref_modal){
             this.ref_modal.closePopup();
@@ -24,7 +37,7 @@ export default class SimpleDatePicker extends SimpleElement {
 	    const inputFormat = util.getStarterConfig('dateFormat');
         props.className = 'form-control';
 	    props.readOnly = true;
-	    props.value = props.value ||  moment().format(inputFormat);
+	    props.value = props.value || this.getDefaultValue();
         const className = this.getClassNames();
         const {valign, bodyPosition, minDate = moment().format(inputFormat), maxDate = moment().add(10, 'years').format(inputFormat)} = this.props;
 

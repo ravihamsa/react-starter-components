@@ -30,6 +30,10 @@ export default class SimpleElement extends CollectorChild {
         return classes.join(' ');
     }
 
+    getDefaultValue(){
+        return '';
+    }
+
     onChange(event) {
         this.updateValue(event.target.value);
     }
@@ -41,6 +45,8 @@ export default class SimpleElement extends CollectorChild {
     applyValue(value){
         if (value !== undefined){
             this.updateValue(value);
+        } else {
+            this.updateValue(this.getDefaultValue());
         }
     }
 
@@ -63,6 +69,9 @@ export default class SimpleElement extends CollectorChild {
     render() {
 	    const props = this.filterDomProps(this.props);
 	    props.className = 'form-control';
+	    if (props.value === undefined){
+	    	props.value = this.getDefaultValue();
+	    }
 	    const className = this.getClassNames();
 	    if (props.type === 'hidden'){
 	        return <input {...props}/>;
