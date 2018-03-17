@@ -4,25 +4,26 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {getDomProps} from '../../core/utils';
+import _ from 'lodash';
 
 
 export class CollectorChild extends Component {
-    updateValue(value){
+    updateValue(value) {
         this.context.collector.updateValue(this.props.name, value);
     }
 
-    mutedUpdateValue(value){
+    mutedUpdateValue(value) {
         this.context.collector.mutedUpdateValue(this.props.name, value);
     }
 
-    sendEvent(eventName, arg1, arg2, arg3){
+    sendEvent(eventName, arg1, arg2, arg3) {
         this.context.collector.receiveEvent(eventName, arg1, arg2, arg3);
     }
 }
 
 export default class SimpleElement extends CollectorChild {
 
-    getClassNames(){
+    getClassNames() {
         const {className = '', name, type} = this.props;
         const classes = [className, 'simple-element'];
         classes.push(`element-${name}`);
@@ -30,7 +31,7 @@ export default class SimpleElement extends CollectorChild {
         return classes.join(' ');
     }
 
-    getDefaultValue(){
+    getDefaultValue() {
         return '';
     }
 
@@ -42,8 +43,8 @@ export default class SimpleElement extends CollectorChild {
         this.applyValue(this.props.value);
     }
 
-    applyValue(value){
-        if (value !== undefined){
+    applyValue(value) {
+        if (value !== undefined) {
             this.updateValue(value);
         } else {
             this.updateValue(this.getDefaultValue());
@@ -67,18 +68,18 @@ export default class SimpleElement extends CollectorChild {
     }
 
     render() {
-	    const props = this.filterDomProps(this.props);
-	    props.className = 'form-control';
-	    if (props.value === undefined){
-	    	props.value = this.getDefaultValue();
-	    }
-	    const className = this.getClassNames();
-	    if (props.type === 'hidden'){
-	        return <input {...props}/>;
+        const props = this.filterDomProps(this.props);
+        props.className = 'form-control';
+        if (props.value === undefined) {
+            props.value = this.getDefaultValue();
+        }
+        const className = this.getClassNames();
+        if (props.type === 'hidden') {
+            return <input {...props}/>;
         }
         return <div className={className}>
-	        <input {...props}/>
-        </div> ;
+            <input {...props}/>
+        </div>;
     }
 }
 

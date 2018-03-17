@@ -19,6 +19,7 @@ class SmartWrapper extends Component {
         super(...arguments);
         this._loadingCount = 0;
         this.isInDom = false;
+        this.renderedOnce = false;
         this.dataIndex = {};
         this.state = {
             loading: false,
@@ -284,6 +285,7 @@ class SmartWrapper extends Component {
                 proxyObj[propKey] = this.props[propKey];
             });
         }
+        this.renderedOnce = true;
         return cloneChildren(this.props.children, {
             ...this.dataIndex,
             ...proxyObj
@@ -310,11 +312,21 @@ class SmartWrapper extends Component {
 export class SmartWrapperV2 extends SmartWrapper {
     render() {
         if (this.state.active) {
-            return <div className={this.props.className || 'smart-wrapper'}>
-                {this.state.loading ? this.renderLoading() : null}
-                {this.dataIndex.errors && this.props.showError !== false ? this.renderErrors() : null}
-                {this.renderChildren()}
-            </div>;
+            if (this.renderedOnce) {
+	            return <div className={this.props.className || 'smart-wrapper'}>
+		            {this.state.loading ? this.renderLoading() : null}
+		            {this.renderChildren()}
+	            </div>;
+            } else {
+	            if (this.state.loading) {
+		            return this.renderLoading();
+	            } else if (this.dataIndex.errors && this.props.showError !== false) {
+		            return this.renderErrors();
+	            } else {
+		            return this.renderChildren();
+	            }
+            }
+
         } else {
             return <div></div>;
         }

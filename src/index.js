@@ -9,7 +9,7 @@ import componentsIm from './components';
 export core from './core';
 export components from './components';
 
-export const {dataLoader, SimpleModel, SimpleEmitter, SmartWrapper, NoLoadingSmartWrapper, Loader, MessageStack, utils, rxutils, ActiveWrapper, SimpleControllerV2, ControllerWrapper} = coreIm;
+export const {dataLoader, SimpleModel, SimpleEmitter, SmartWrapper, SmartWrapperV2, NoLoadingSmartWrapper, Loader, MessageStack, utils, rxutils, ActiveWrapper, HidingWrapper, SimpleControllerV2, ControllerWrapper} = coreIm;
 
 export const {RXForm, RXElementGroup, RXFormElement, RXSelect, RXTextInput, RXRadioList, RXTextArea, RXCheckList, RXSelectionElement, RXSelectionItem, RXDropdown, RXDropdownItem, RXCheckbox, RXFileInput, validationRules, addValidationRule, activeRules, RXPlainTextInput, RXPlainSelect, RXDatePicker, RXDateRangePicker, RXHiddenInput, SimpleForm, SimpleElement, SimpleSelectionElement, SimpleDropdown, SimpleDatePicker, SimpleDateRangePicker,CollectorChild, Collector} = componentsIm;
 

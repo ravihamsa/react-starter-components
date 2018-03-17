@@ -2,7 +2,6 @@
  * Created by ravi.hamsa on 3/26/17.
  */
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import {_, getDomProps} from '../../core/utils';
 import SimpleElement from './SimpleElement';
 import Selection from 'selection-manager';
@@ -40,40 +39,40 @@ export class SelectionItem extends Component {
 
 export default class SimpleSelectionElement extends SimpleElement {
 
-    constructor(props){
+    constructor(props) {
         super(props);
-	    this.multiSelect = props.multiSelect;
-	    this.selectionManager = new Selection({
-		    multiSelect: props.multiSelect
-	    });
+        this.multiSelect = props.multiSelect;
+        this.selectionManager = new Selection({
+            multiSelect: props.multiSelect
+        });
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this.applyValue(this.props.value);
         this.readInputValue();
-	    this.changeSubscription = this.selectionManager.on('change', this.onChange.bind(this));
+        this.changeSubscription = this.selectionManager.on('change', this.onChange.bind(this));
     }
 
 
-    onChange(){
-	    this.exposeNameAndSelection();
-	    this.updateValue(this.props.useSelectionAsValue ? this.selectionManager.getSelected() : this.getFormattedSelection());
-	    this.onChangeUpdates();
-	    this.forceUpdate();
+    onChange() {
+        this.exposeNameAndSelection();
+        this.updateValue(this.props.useSelectionAsValue ? this.selectionManager.getSelected() : this.getFormattedSelection());
+        this.onChangeUpdates();
+        this.forceUpdate();
     }
 
-    onChangeUpdates(){
+    onChangeUpdates() {
         //do nothing
     }
 
-    componentWillUnmount(){
-        if (this.changeSubscription){
+    componentWillUnmount() {
+        if (this.changeSubscription) {
             this.changeSubscription();
         }
     }
 
     componentWillReceiveProps(newProps) {
-    	const newOptions = newProps['options'];
+        const newOptions = newProps['options'];
         const selected = this.selectionManager.getSelected();
         if (newOptions && selected) {
             if (newOptions !== this.props.options) {
@@ -94,15 +93,15 @@ export default class SimpleSelectionElement extends SimpleElement {
             }
         }
 
-        if (newProps.value !== undefined){
-            if (newProps.value !== this.props.value){
+        if (newProps.value !== undefined) {
+            if (newProps.value !== this.props.value) {
                 this.applyValue(newProps.value);
-	        }
+            }
         }
 
     }
 
-    validateSelection(){
+    validateSelection() {
         return true;
     }
 
@@ -121,7 +120,8 @@ export default class SimpleSelectionElement extends SimpleElement {
             this.selectById(dataId);
         }
     }
-    getOptions(){
+
+    getOptions() {
         return this.props.options;
     }
 
@@ -159,7 +159,19 @@ export default class SimpleSelectionElement extends SimpleElement {
         const toSelectItem = _.find(options, item => item.id === value);
         if (toSelectItem) {
             if (this.multiSelect) {
-                selectionManager.toggle(toSelectItem);
+                const selected = selectionManager.getSelected();
+                const isAlreadySelected = selectionManager.isSelected(toSelectItem);
+                const forceMinimumSelection = this.props.forceMinimumSelection;
+                const forceMaxSelection = this.props.forceMaxSelection;
+                if (!isAlreadySelected) {
+                    if (selected.length < forceMaxSelection) {
+                        selectionManager.toggle(toSelectItem);
+                    }
+                } else {
+                    if (selected.length > forceMinimumSelection) {
+                        selectionManager.toggle(toSelectItem);
+                    }
+                }
             } else {
                 const isAlreadySelected = selectionManager.isSelected(toSelectItem);
                 if (!isAlreadySelected) {
@@ -203,9 +215,9 @@ export default class SimpleSelectionElement extends SimpleElement {
 
     readInputValue() {
         let selection = this.getFormattedSelection();
-        if (selection === '' && this.props.selectDefaultFirst){
+        if (selection === '' && this.props.selectDefaultFirst) {
             const {options} = this.props;
-            if (options && options.length > 0){
+            if (options && options.length > 0) {
                 this.selectionManager.select(options[0]);
                 selection = this.getFormattedSelection();
             }
@@ -214,7 +226,7 @@ export default class SimpleSelectionElement extends SimpleElement {
         if (exposeSelection || exposeName) {
             this.exposeNameAndSelection();
         }
-	    this.onChange();
+        this.onChange();
 
     }
 
@@ -222,17 +234,18 @@ export default class SimpleSelectionElement extends SimpleElement {
         const {exposeSelection, name} = this.props;
         const selected = this.selectionManager.getSelected();
         if (exposeSelection) {
-	        this.context.collector.mutedUpdateValue(`${name}_selection`, selected);
+            this.context.collector.mutedUpdateValue(`${name}_selection`, selected);
         }
     }
 
     render() {
-	    const domProps = getDomProps(this.props);
-	    domProps.className = this.getClassNames();
-	    const {ListItem = SelectionItem} = this.props;
-	    const selected = this.selectionManager.getSelected();
+        const domProps = getDomProps(this.props);
+        domProps.className = this.getClassNames();
+        const {ListItem = SelectionItem} = this.props;
+        const selected = this.selectionManager.getSelected();
         return <div {...domProps} onClick={this.onClickHandler.bind(this)} ref={element => this.ref_listRoot = element}>
-	        <List items={this.getFilteredOptions()} selectionManager={this.selectionManager} selection={selected} ListItem={ListItem}/>
+            <List items={this.getFilteredOptions()} selectionManager={this.selectionManager} selection={selected}
+			      ListItem={ListItem}/>
         </div>;
     }
 }
@@ -240,6 +253,9 @@ export default class SimpleSelectionElement extends SimpleElement {
 
 SimpleSelectionElement.defaultProps = {
     ...SimpleElement.defaultProps,
-    type:'selection'
+    type: 'selection',
+    selectDefaultFirst: false,
+    forceMinimumSelection: 0,
+    forceMaxSelection: Infinity
 };
 

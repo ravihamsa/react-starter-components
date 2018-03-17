@@ -104,6 +104,8 @@ class Pagination extends Component {
     }
 }
 
+const stringSorter = (item, sortKey) => item[sortKey].toLowerCase();
+const nonStringSorter = (item, sortKey) => item[sortKey];
 
 class PaginationWrapper extends Component {
     constructor(props) {
@@ -152,10 +154,14 @@ class PaginationWrapper extends Component {
 
     getSortedRecords(records) {
         const {sortKey, sortOrder} = this.paginationManager.getConfig();
-        if (sortKey === '') {
+	    const firstRecord = records[0];
+        if (sortKey === '' || firstRecord === undefined) {
             return records;
         } else {
-            return sortOrder === 'asc' ? records.sort((a, b) => a[sortKey] - b[sortKey]) : records.sort((b, a) => a[sortKey] - b[sortKey]);
+            const firstValue = firstRecord[sortKey];
+
+            return _.orderBy(records, [item => typeof firstValue === 'string' ? stringSorter(item, sortKey) : nonStringSorter(item, sortKey)], [sortOrder]);
+            // return sortOrder === 'asc' ? records.sort((a, b) => a[sortKey] - b[sortKey]) : records.sort((b, a) => a[sortKey] - b[sortKey]);
         }
     }
 
@@ -343,8 +349,8 @@ class PaginatedTable extends Component {
 
 
 const reverseSortOrderMap = {
-    asc:'dsc',
-    dsc:'asc'
+    asc:'desc',
+    desc:'asc'
 };
 
 class Table extends Component {
@@ -355,9 +361,10 @@ class Table extends Component {
     }
 
     renderChildren() {
-        let {attributes, children, records} = this.props;
+        let {attributes, children, records, sortKey} = this.props;
         children = cloneChildren(children, {
-            records
+            records,
+	        sortKey
         });
         return <table className="table" {...attributes}>{children}</table>;
     }

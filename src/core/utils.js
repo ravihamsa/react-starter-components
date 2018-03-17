@@ -21,6 +21,7 @@ import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
 import groupBy from 'lodash/groupBy';
+import orderBy from 'lodash/orderBy';
 import trim from 'lodash/trim';
 import clone from 'lodash/clone';
 import indexOf from 'lodash/indexOf';
@@ -49,7 +50,8 @@ export const _  = {
     trim,
     clone,
     difference,
-	indexOf
+	indexOf,
+	orderBy
 };
 
 
