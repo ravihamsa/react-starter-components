@@ -146,18 +146,11 @@ class DataLoader {
         });
     }
 
-    _getFetchPromise(config, payload, requestId, requestHash, onProgress) {
+    _getFetchPromise(config, payload, payLoadToServer, requestId, requestHash, onProgress) {
         const self = this;
-        let {url, method, queue, cache, paramParser} = config;
+        let {url, method, queue, cache} = config;
         method = method.toLowerCase();
-
         payload = this._executeBeforeMiddleWares(requestId, payload);
-
-        let payLoadToServer = payload;
-        if (paramParser) {
-            payLoadToServer = paramParser(payload);
-        }
-
         if (typeof  url === 'function') {
             url = url(payload, payLoadToServer);
         }
@@ -260,7 +253,7 @@ class DataLoader {
                     return queuePromise;
                 }
 
-                const fetchPromise = this._getFetchPromise(config, payload, requestId, requestHash, onProgress);
+                const fetchPromise = this._getFetchPromise(config, payload, payLoadToServer, requestId, requestHash, onProgress);
                 if (queue !== 'none') {
                     self._requestQue[requestHash] = fetchPromise;
                     fetchPromise.finally(() => {

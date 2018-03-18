@@ -10,6 +10,6 @@ import PopupGroup from './Popup';
 import AnchorLink from './AnchorLink';
 import ActionLink from './ActionLink';
 import ToggleActionButton from './ToggleActionButton';
-import {InlineModal, InlineModalBody, InlineModalButton} from './InlineModalGroup';
+import { InlineModal, InlineModalBody, InlineModalButton, PageModal, PageModalBody } from './InlineModalGroup';
 
-export default {List,ListItem,SelectableList, SelectableItem, LayoutList, ViewState, ViewStateManager, FormCollection, InlinePopupGroup, PopupGroup, AnchorLink, ActionLink, ToggleActionButton, InlineModal, InlineModalBody, InlineModalButton}
+export default {List,ListItem,SelectableList, SelectableItem, LayoutList, ViewState, ViewStateManager, FormCollection, InlinePopupGroup, PopupGroup, AnchorLink, ActionLink, ToggleActionButton, InlineModal, InlineModalBody, InlineModalButton, PageModal, PageModalBody}

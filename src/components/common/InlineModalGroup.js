@@ -178,27 +178,27 @@ export class InlineModalBody extends Component {
             let top = placeholder.y;
 
             switch (this.props.valign) {
-	            case 'top':
-					 top -= button.height;
-	            	break;
+                case 'top':
+                    top -= button.height;
+                    break;
 
-	            case 'bottom':
-	            	//do nothing
-	            	break;
+                case 'bottom':
+                    //do nothing
+                    break;
             }
 
             switch (this.props.halign) {
-	            case 'left':
-	                //do nothing
-	            	break;
+                case 'left':
+                    //do nothing
+                    break;
 
                 case 'right':
-	                left -= (body.width - button.width);
-	            	break;
+                    left -= (body.width - button.width);
+                    break;
 
-	            case 'center':
-		            left -= (body.width - button.width) / 2;
-	            	break;
+                case 'center':
+                    left -= (body.width - button.width) / 2;
+                    break;
             }
 
             switch (this.props.bodyPosition) {
@@ -207,16 +207,16 @@ export class InlineModalBody extends Component {
                     break;
             }
 
-            if(this.props.useButtonWidth) {
-	            this.el.style.width =  button.width + 'px';
+            if (this.props.useButtonWidth) {
+                this.el.style.width = button.width + 'px';
             }
 
-	        this.el.style.left = left + 'px';
-	        this.el.style.top = top + 'px';
-	        this.el.style.visibility = 'visible';
-	        this.el.classList.add('valign-' + this.props.valign);
-	        this.el.classList.add('halign-' + this.props.halign);
-	        this.el.classList.add('body-pos-' + this.props.bodyPosition);
+            this.el.style.left = left + 'px';
+            this.el.style.top = top + 'px';
+            this.el.style.visibility = 'visible';
+            this.el.classList.add('valign-' + this.props.valign);
+            this.el.classList.add('halign-' + this.props.halign);
+            this.el.classList.add('body-pos-' + this.props.bodyPosition);
         });
     }
 
@@ -240,5 +240,94 @@ InlineModalBody.defaultProps = {
     valign: 'bottom',
     halign: 'left',
     bodyPosition: 'down',
-	useButtonWidth:false
+    useButtonWidth: false
 };
+
+export class PageModal extends React.Component {
+    constructor(props) {
+        super(props);
+        this.bodyEl = document.createElement('div');
+        this.bodyEl.style.position = 'fixed';
+        this.bodyEl.className = 'page-modal';
+        this.state = {
+            isOpen: false
+        };
+    }
+
+    isClickedOutside() {
+        let isWithinBody = false;
+        const target = event.target;
+        isWithinBody = target.classList.contains('js-close-modal');
+        return isWithinBody;
+    }
+
+    setOpen(bool) {
+        this.setState({
+            isOpen: bool
+        });
+    }
+
+    closePopup() {
+        this.setOpen(false);
+    }
+
+    openPopup() {
+        this.setOpen(true);
+    }
+
+    togglePopup() {
+        this.setOpen(!this.state.isOpen);
+    }
+
+    componentDidMount() {
+        addToModalRoot(this);
+    }
+
+    componentWillUnmount() {
+        removeFromModalRoot(this);
+    }
+
+    updatePosition() {
+        if (this.state.isOpen) {
+            this.bodyEl.style.left = 0;
+            this.bodyEl.style.right = 0;
+            this.bodyEl.style.bottom = 0;
+            this.bodyEl.style.top = 0;
+        } else {
+            this.bodyEl.style.left = 'auto';
+            this.bodyEl.style.right = 'auto';
+            this.bodyEl.style.bottom = 'auto';
+            this.bodyEl.style.top = 'auto';
+        }
+    }
+
+    render() {
+        this.updatePosition();
+        return this.state.isOpen ? ReactDOM.createPortal(
+	        utils.cloneChildren(this.props.children, {
+                closePopup:this.closePopup.bind(this)
+            }),
+            this.bodyEl,
+        ) : null;
+    }
+}
+
+export class PageModalBody extends React.Component {
+    render() {
+        return <div className="page-modal-mask js-close-modal" style={{
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            position: 'absolute',
+            alignItems: 'center'
+        }}>
+            <div className="page-modal-container">
+                {utils.cloneChildren(this.props.children, {closePopup:this.props.closePopup})}
+            </div>
+
+        </div>;
+    }
+}
