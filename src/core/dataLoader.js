@@ -137,7 +137,9 @@ class DataLoader {
             for (const k in opts.headers || {})
                 xhr.setRequestHeader(k, opts.headers[k]);
             xhr.onload = e => res({
-                ok: true, json: () => JSON.parse(e.target.responseText)
+                ok: true, json: () => new Promise(res => {
+                    res(JSON.parse(e.target.responseText));
+                })
             });
             xhr.onerror = rej;
             if (xhr.upload && onProgress)
