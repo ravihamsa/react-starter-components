@@ -152,7 +152,7 @@ class DataLoader {
         const self = this;
         let {url, method, queue, cache} = config;
         method = method.toLowerCase();
-        payload = this._executeBeforeMiddleWares(requestId, payload);
+	    payLoadToServer = this._executeBeforeMiddleWares(requestId, payLoadToServer);
         if (typeof  url === 'function') {
             url = url(payload, payLoadToServer);
         }
