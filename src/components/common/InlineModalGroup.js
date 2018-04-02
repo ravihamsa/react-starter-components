@@ -4,7 +4,7 @@ import utils, {_} from '../../core/utils';
 import {bodyClick$} from './../../core/rxutils';
 
 const rootStyle = {
-    position: 'fixed',
+    position: 'absolute',
     top: 0,
     left: 0
 };
