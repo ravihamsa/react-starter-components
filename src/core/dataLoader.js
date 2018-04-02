@@ -165,7 +165,7 @@ class DataLoader {
         requestConfig.method = requestConfig.method.toUpperCase();
 
         url = self.generateGetUrl(url, payLoadToServer);
-        if (method === 'post' || method === 'put' || method === 'patch' || method === 'delete') {
+        if (['post', 'delete', 'put', 'patch'].indexOf(method) > -1) {
             requestConfig.body = JSON.stringify(payLoadToServer);
         } else if (method === 'form_post' || method === 'upload') {
             const data = new FormData();
