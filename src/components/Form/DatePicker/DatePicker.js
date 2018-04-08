@@ -6,7 +6,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import FormElement from '../FormElement';
 import common from '../../common';
-import Month from './Month';
+import Month from '../../common/Month';
 import moment from 'moment';
 
 const {InlinePopup, InlineButton, InlineBody} = common.InlinePopupGroup;

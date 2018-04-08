@@ -1,6 +1,6 @@
 import React from 'react';
 import SimpleElement from './SimpleElement';
-import Month from '../Form/DatePicker/Month';
+import Month from '../common/Month';
 import {InlineModal, InlineModalBody, InlineModalButton} from '../common/InlineModalGroup';
 import moment from 'moment';
 import util from '../../core/utils';

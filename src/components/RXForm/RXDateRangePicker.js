@@ -1,16 +1,18 @@
 import React from 'react';
-import RXDropdown from './RXDropdown';
-import Month from '../Form/DatePicker/Month';
+import RXFormElement from './RXFormElement';
+import Month from '../common/Month';
 import {InlineModal, InlineModalButton, InlineModalBody} from '../common/InlineModalGroup';
 import moment from 'moment';
 import util from '../../core/utils';
+import RXDatePicker from './RXDatePicker';
 const dateRangeSplitter = '<=>';
 
-export default class RXDateRangePicker extends RXDropdown {
+export default class RXDateRangePicker extends RXFormElement {
 
     getDefaultDate(){
+        const {rangeDuration, rangeUnit} = this.props;
         const inputFormat = util.getStarterConfig('dateFormat');
-        return moment().format(inputFormat) + dateRangeSplitter + moment().format(inputFormat);
+        return moment().format(inputFormat) + dateRangeSplitter + moment().add(rangeDuration, rangeUnit).format(inputFormat);
     }
 
     onChange(dateType, selectedDate) {
@@ -48,7 +50,7 @@ export default class RXDateRangePicker extends RXDropdown {
                 <InlineModalBody valign={valign} bodyPosition={bodyPosition}>
                     <Month onDateSelect={this.onChange.bind(this, 'from')} selectedDate={valueArr[0]}
 					       displayDate={valueArr[0]}
-					       minDate={minDate} maxDate={maxDate}
+					       minDate={minDate} maxDate={valueArr[1]}
 					       closePopup={this.closePopup.bind(this, 'from')}></Month>
                 </InlineModalBody>
             </InlineModal>
@@ -60,10 +62,20 @@ export default class RXDateRangePicker extends RXDropdown {
                 <InlineModalBody valign={valign} bodyPosition={bodyPosition}>
                     <Month onDateSelect={this.onChange.bind(this, 'to')} selectedDate={valueArr[1]}
 					       displayDate={valueArr[1]}
-					       minDate={minDate} maxDate={maxDate}
+					       minDate={valueArr[0]} maxDate={maxDate}
 					       closePopup={this.closePopup.bind(this, 'to')}></Month>
                 </InlineModalBody>
             </InlineModal>
         </div>;
     }
 }
+
+
+
+RXDateRangePicker.defaultProps = {
+    ...RXFormElement.defaultProps,
+    type: 'date-picker',
+    bodyPosition: 'down',
+    rangeDuration:1,
+    rangeUnit:'month'
+};
