@@ -4,7 +4,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Rx} from '../../core/rxutils';
-import {_} from '../../core/utils';
+import {_, getDomProps} from '../../core/utils';
 import validatorMap from './validationRules';
 import activeRulesMap from './activeRules';
 import dataLoader from '../../core/dataLoader';
@@ -66,6 +66,22 @@ export default class RXFormElement extends Component {
 
     getPropToStateList() {
         return ['active', 'error', 'disabled', 'valid', 'value', 'type', 'serverValid', 'serverError', 'placeholder', 'name', 'autoFocus', 'inProgress', 'isDirty'];
+    }
+
+    filterDomProps(props) {
+        const filteredProps = getDomProps(props);
+        const onChangeHandler = filteredProps.onChange;
+        if (onChangeHandler !== undefined) {
+            filteredProps.onChange = event => {
+                this.onChange(event);
+                onChangeHandler(event);
+            };
+        } else {
+            filteredProps.onChange = event => {
+                this.onChange(event);
+            };
+        }
+        return filteredProps;
     }
 
 
@@ -387,7 +403,7 @@ RXFormElement.propTypes = {
     isDirty: PropTypes.bool.isRequired,
     inProgress: PropTypes.bool.isRequired,
     trimValue: PropTypes.bool.isRequired,
-	stripWrapper: PropTypes.bool.isRequired,
+    stripWrapper: PropTypes.bool.isRequired,
     error: PropTypes.object,
     debounceTime: PropTypes.number.isRequired,
     validations: PropTypes.array,
@@ -416,7 +432,7 @@ RXFormElement.defaultProps = {
     validations: [],
     activeRules: [],
     propRules: [],
-	className:'',
+    className:'',
     getPropValue: (prop, value) => value,
     serverValidation: null
 };

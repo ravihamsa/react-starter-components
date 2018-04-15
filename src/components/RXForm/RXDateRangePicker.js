@@ -1,58 +1,81 @@
 import React from 'react';
-import RXDropdown, {RXDropdownItem} from './RXDropdown';
-import Month from '../Form/DatePicker/Month';
-import InlinePopupGroup from '../common/InlinePopupGroup';
-import List from '../common/List';
+import RXFormElement from './RXFormElement';
+import Month from '../common/Month';
+import {InlineModal, InlineModalButton, InlineModalBody} from '../common/InlineModalGroup';
 import moment from 'moment';
+import util from '../../core/utils';
+import RXDatePicker from './RXDatePicker';
+const dateRangeSplitter = '<=>';
 
-const {InlinePopup, InlineButton, InlineBody} = InlinePopupGroup;
+export default class RXDateRangePicker extends RXFormElement {
 
-export default class RXDateRangePicker extends RXDropdown {
-
-    constructor(props){
-        super(props);
-        this.state.showCalendar = false;
+    getDefaultDate(){
+        const {rangeDuration, rangeUnit} = this.props;
+        const inputFormat = util.getStarterConfig('dateFormat');
+        return moment().format(inputFormat) + dateRangeSplitter + moment().add(rangeDuration, rangeUnit).format(inputFormat);
     }
 
-    toggleCustomCalendar(){
-        this.setState({
-            showCalendar:!this.state.showCalendar
-        });
+    onChange(dateType, selectedDate) {
+        const value = this.state.value || this.getDefaultDate();
+        const valueArr = value.split(dateRangeSplitter);
+        if (dateType === 'from') {
+            valueArr[0] = selectedDate;
+        } else if (dateType === 'to') {
+            valueArr[1] = selectedDate;
+        }
+        this.updateValue(valueArr.join(dateRangeSplitter), 'update');
+    }
+
+    closePopup(dateType) {
+        if (this['ref_modal_' + dateType]) {
+            this['ref_modal_' + dateType].closePopup();
+        }
     }
 
     renderElement() {
-        const {valign = 'top', bodyPosition, ListItem = RXDropdownItem} = this.props;
-        const filteredOptions = _.filter(this.props.options, item => item.name.toLowerCase().indexOf(this.state.query.toLowerCase()) > -1);
+        const props = this.filterDomProps(this.props);
+        const inputFormat = util.getStarterConfig('dateFormat');
+        props.className = 'form-control';
+        props.readOnly = true;
+        props.value = this.state.value || this.getDefaultDate();
+        const valueArr =  props.value.split(dateRangeSplitter);
+        const {valign, bodyPosition, minDate = moment().format(inputFormat), maxDate = moment().add(10, 'years').format(inputFormat)} = this.props;
 
-
-        return <InlinePopup ref={element => this.ref_inlinePopup = element} disabled={this.props.disabled}>
-            <InlineButton>
-                {this.renderButton()}
-            </InlineButton>
-            <InlineBody valign={valign} bodyPosition={bodyPosition} className="inline-popup-body-fullwidth">
-                <div className="drop-down-body">
-                    {this.props.showSearch ? <div className="drop-down-search-container">
-                        <input type="text" autoFocus defaultValue={this.state.query} ref={element => this.ref_searchBox = element}
-                            onChange={this.onKeyPressHandler} className="drop-down-input"
-                            placeholder={this.props.placeholder}/>
-                    </div> : null}
-                    <div onClick={this.onClickHandler.bind(this)} ref={element => this.ref_listRoot = element}>
-                        <List items={filteredOptions} selectionManager={this.selectionManager}
-                            selection={this.state.value} ListItem={ListItem}/>
-                    </div>
-                    <div style={{
-                        position: 'relative'
-                    }} onClick={this.toggleCustomCalendar.bind(this)}>
-                        <span>show custom calendar</span>
-                        {this.state.showCalendar ? <div style={{
-                            position: 'absolute'
-                        }}>
-                            <Month/>
-                        </div> : null}
-                    </div>
-                </div>
-            </InlineBody>
-        </InlinePopup>;
-
+        return <div>
+            <InlineModal ref={modal => this.ref_modal_from = modal}>
+                <InlineModalButton>
+                    <div><span {...props}>{valueArr[0]}</span>
+                        <span className="calendar icon"></span></div>
+                </InlineModalButton>
+                <InlineModalBody valign={valign} bodyPosition={bodyPosition}>
+                    <Month onDateSelect={this.onChange.bind(this, 'from')} selectedDate={valueArr[0]}
+					       displayDate={valueArr[0]}
+					       minDate={minDate} maxDate={valueArr[1]}
+					       closePopup={this.closePopup.bind(this, 'from')}></Month>
+                </InlineModalBody>
+            </InlineModal>
+            <InlineModal ref={modal => this.ref_modal_to = modal}>
+                <InlineModalButton>
+                    <div><span {...props}>{valueArr[1]}</span>
+                        <span className="calendar icon"></span></div>
+                </InlineModalButton>
+                <InlineModalBody valign={valign} bodyPosition={bodyPosition}>
+                    <Month onDateSelect={this.onChange.bind(this, 'to')} selectedDate={valueArr[1]}
+					       displayDate={valueArr[1]}
+					       minDate={valueArr[0]} maxDate={maxDate}
+					       closePopup={this.closePopup.bind(this, 'to')}></Month>
+                </InlineModalBody>
+            </InlineModal>
+        </div>;
     }
 }
+
+
+
+RXDateRangePicker.defaultProps = {
+    ...RXFormElement.defaultProps,
+    type: 'date-picker',
+    bodyPosition: 'down',
+    rangeDuration:1,
+    rangeUnit:'month'
+};

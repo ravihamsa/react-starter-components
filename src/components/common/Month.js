@@ -4,8 +4,8 @@
 
 import React, {Component} from 'react';
 import moment from 'moment';
-import List from '../../common/List';
-import util, {_} from '../../../core/utils';
+import List from './List';
+import util, {_} from '../../core/utils';
 
 
 const shortDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((nm, index) => ({

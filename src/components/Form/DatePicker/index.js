@@ -4,9 +4,11 @@
 
 
 import DatePicker from './DatePicker'
+import Month from '../../common/Month'
 
 
 export default{
 
-    DatePicker
+    DatePicker,
+    Month
 }
