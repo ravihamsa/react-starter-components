@@ -175,7 +175,7 @@ export class InlineModalBody extends Component {
         setTimeout(() => {
             const {placeholder, button, body} = this.props.getPosition();
             let left = placeholder.x;
-            let top = placeholder.y;
+            let top = placeholder.y + window.pageYOffset;
 
             switch (this.props.valign) {
                 case 'top':
