@@ -1,11 +1,10 @@
 import React from 'react';
 import RXFormElement from './RXFormElement';
 import Month from '../common/Month';
-import InlinePopupGroup from '../common/InlinePopupGroup';
 import moment from 'moment';
 import _ from 'lodash';
 
-const {InlinePopup, InlineButton, InlineBody} = InlinePopupGroup;
+import { InlineModal, InlineModalBody, InlineModalButton } from '../common/InlineModalGroup';
 
 const inputFormat = 'DD/MM/YYYY';
 
@@ -32,7 +31,7 @@ export default class RXDatePicker extends RXFormElement {
     }
 
     closePopup() {
-
+        this.ref_inlineModal.closePopup();
     }
 
     renderElement() {
@@ -40,20 +39,18 @@ export default class RXDatePicker extends RXFormElement {
         const value = restProps.value;
         restProps.value = this.getFormattedDate(value);
         const {valign = 'top', bodyPosition} = this.props;
-        return <div>
-            <InlinePopup>
-                <InlineButton>
-                    <div><input  {...restProps}/>
-                        <span className="calendar icon"></span></div>
-                </InlineButton>
-                <InlineBody valign={valign} bodyPosition={bodyPosition}>
-                    <Month onDateSelect={this.onChange.bind(this)} selectedDate={value}
-                           displayDate={value}
-                           minDate={this.props.minDate} maxDate={this.props.maxDate}
-                           closePopup={this.closePopup.bind(this)}></Month>
-                </InlineBody>
-            </InlinePopup>
-        </div>
+        return <InlineModal ref={inlineModal => this.ref_inlineModal = inlineModal}>
+            <InlineModalButton>
+                <div><input  {...restProps}/>
+                    <span className="calendar icon"></span></div>
+            </InlineModalButton>
+            <InlineModalBody valign={valign} bodyPosition={bodyPosition}>
+                <Month onDateSelect={this.onChange.bind(this)} selectedDate={value}
+                        displayDate={value}
+                        minDate={this.props.minDate} maxDate={this.props.maxDate}
+                        closePopup={this.closePopup.bind(this)}></Month>
+            </InlineModalBody>
+        </InlineModal>
     }
 }
 
