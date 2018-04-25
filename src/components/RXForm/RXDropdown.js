@@ -86,7 +86,9 @@ export default class RXDropdown extends RXSelectionElement {
 
     renderButton() {
         const selectionSummary = this.getSummaryText(this.props.placeholder);
-        return <div className="drop-down-button">
+        let dropDownButtonClassName = "drop-down-button" + (this.props.disabled ? " disabled" : " enabled");
+
+        return <div className={dropDownButtonClassName}>
             <span className="drop-down-text"> {selectionSummary}</span>
             <span className="glyphicon glyphicon-chevron-down drop-down-icon"></span>
         </div>;
@@ -101,7 +103,6 @@ export default class RXDropdown extends RXSelectionElement {
     renderElement() {
         const {valign = 'top', bodyPosition, ListItem = RXDropdownItem, listBodyClassName = 'drop-down-body', useButtonWidth} = this.props;
         const filteredOptions = this.getFilteredOptions();
-
 
         return <InlineModal ref={inlinePopup => this.ref_inlinePopup = inlinePopup} disabled={this.props.disabled}>
             <InlineModalButton>

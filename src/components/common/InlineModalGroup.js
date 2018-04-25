@@ -68,7 +68,9 @@ export class InlineModal extends Component {
     }
 
     togglePopup() {
-        this.setOpen(!this.state.isOpen);
+        if (!this.props.disabled) {
+            this.setOpen(!this.state.isOpen);
+        }
     }
 
     getPosition() {
