@@ -35,12 +35,15 @@ bodyClick$.filter(() => popups.length > 0).subscribe(event => {
     }
 });
 
-const inlineModalRoot = document.createElement('div');
-inlineModalRoot.className = 'modal-root';
-for (const i in rootStyle) {
-    inlineModalRoot.style[i] = rootStyle[i];
+if(typeof document !== 'undefined'){
+	const inlineModalRoot = document.createElement('div');
+	inlineModalRoot.className = 'modal-root';
+	for (const i in rootStyle) {
+		inlineModalRoot.style[i] = rootStyle[i];
+	}
+	document.body.appendChild(inlineModalRoot);
 }
-document.body.appendChild(inlineModalRoot);
+
 
 
 export class InlineModal extends Component {

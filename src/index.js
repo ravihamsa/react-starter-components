@@ -11,7 +11,7 @@ export components from './components';
 
 export const {dataLoader, SimpleModel, SimpleEmitter, SmartWrapper, SmartWrapperV2, NoLoadingSmartWrapper, Loader, MessageStack, utils, rxutils, ActiveWrapper, HidingWrapper, SimpleControllerV2, ControllerWrapper} = coreIm;
 
-export const {RXForm, RXElementGroup, RXFormElement, RXSelect, RXTextInput, RXRadioList, RXTextArea, RXCheckList, RXSelectionElement, RXSelectionItem, RXDropdown, RXDropdownItem, RXCheckbox, RXFileInput, validationRules, addValidationRule, activeRules, RXPlainTextInput, RXPlainSelect, RXDatePicker, RXDateRangePicker, RXHiddenInput, SimpleForm, SimpleElement, SimpleSelectionElement, SimpleDropdown, SimpleDatePicker, SimpleDateRangePicker,CollectorChild, Collector} = componentsIm;
+export const {RXForm, RXElementGroup, RXFormElement, RXSelect, RXTextInput, RXRadioList, RXTextArea, RXCheckList, RXSelectionElement, RXSelectionItem, RXDropdown, RXDropdownItem, RXCheckbox, RXFileInput, validationRules, addValidationRule, activeRules, RXPlainTextInput, RXPlainSelect, RXDatePicker, RXDateRangePicker, RXHiddenInput, SimpleForm, SimpleElement, SimpleSelectionElement, SimpleDropdown, SimpleDatePicker, SimpleDateRangePicker,CollectorChild, Collector, SimpleTextArea} = componentsIm;
 
 export const {PaginatedTable, Table, THEAD, TBODY, TH, TD, TR, DynamicTable, PaginationWrapper, Pagination} = componentsIm.Table;
 

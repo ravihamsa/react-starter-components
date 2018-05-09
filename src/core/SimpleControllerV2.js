@@ -31,7 +31,7 @@ export default class SimpleControllerV2 extends SimpleEmitter {
 
     }
 
-	setDefaults(){
+    setDefaults() {
         //do nothing to be extended
     }
 
@@ -53,7 +53,9 @@ export default class SimpleControllerV2 extends SimpleEmitter {
     }
 
     ensureSelection(keyName, multiSelect) {
-        this._selectionIndex[keyName] = this._selectionIndex[keyName] || new Selection({multiSelect});
+        this._selectionIndex[keyName] = this._selectionIndex[keyName] || new Selection({
+            multiSelect
+        });
     }
 
     ensureList(keyName) {
@@ -87,7 +89,7 @@ export default class SimpleControllerV2 extends SimpleEmitter {
         } else {
             this._dataIndex[keyName] = fromJS(data);
         }
-	    this.triggerChange();
+        this.triggerChange();
     }
 
     setError(keyName, error) {

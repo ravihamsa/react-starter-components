@@ -3,7 +3,6 @@
  */
 
 import Promise from 'bluebird';
-import fetch from './fetch';
 import {_} from '../core/utils';
 
 class DataLoader {
@@ -164,7 +163,7 @@ class DataLoader {
 
         requestConfig.method = requestConfig.method.toUpperCase();
 
-        url = self.generateGetUrl(url, payLoadToServer);
+        url = self.generateGetUrl(url, payload);
         if (['post', 'delete', 'put', 'patch'].indexOf(method) > -1) {
             requestConfig.body = JSON.stringify(payLoadToServer);
         } else if (method === 'form_post' || method === 'upload') {
@@ -197,8 +196,7 @@ class DataLoader {
                     return response;
                 })
                 .then(response => {
-                    let jsonParser;
-                    jsonParser = response.json();
+                    const jsonParser = response.json();
                     jsonParser.then(body => {
                         let parsedResponse = self._responseParser(body, response);
                         parsedResponse = self._executeAfterMiddleWares(requestId, parsedResponse);
@@ -232,7 +230,7 @@ class DataLoader {
     getRequestDef(requestId, payload, onProgress) {
         const config = this._resourceConfigIndex[requestId];
         const self = this;
-
+        console.log(requestId, 'getRequestDef');
         switch (config.type) {
             case 'static':
                 return self._getStaticPromise(config);

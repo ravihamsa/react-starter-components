@@ -12,9 +12,8 @@ import Loader from './Loader'
 import MessageStack from './MessageStack'
 import utils from './utils'
 import rxutils from './rxutils'
-import fetch from './fetch';
 import SimpleControllerV2 from './SimpleControllerV2';
 // import navigate from './navigate'
 // import history from './history'
 
-export default {dataLoader, SimpleModel, SimpleEmitter, SmartWrapper,SmartWrapperV2, NoLoadingSmartWrapper,ActiveWrapper,HidingWrapper,Loader, MessageStack, fetch, utils, rxutils, SimpleControllerV2, ControllerWrapper}
+export default {dataLoader, SimpleModel, SimpleEmitter, SmartWrapper,SmartWrapperV2, NoLoadingSmartWrapper,ActiveWrapper,HidingWrapper,Loader, MessageStack, utils, rxutils, SimpleControllerV2, ControllerWrapper}
