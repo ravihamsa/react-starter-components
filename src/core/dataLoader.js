@@ -3,6 +3,7 @@
  */
 
 import Promise from 'bluebird';
+import fetch from 'isomorphic-fetch';
 import {_} from '../core/utils';
 
 class DataLoader {
