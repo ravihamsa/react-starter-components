@@ -11,6 +11,17 @@ const rootStyle = {
 
 const popups = [];
 
+let inlineModalRoot = null;
+
+if (typeof document !== 'undefined'){
+    inlineModalRoot = document.createElement('div');
+    inlineModalRoot.className = 'modal-root';
+    for (const i in rootStyle) {
+        inlineModalRoot.style[i] = rootStyle[i];
+    }
+    document.body.appendChild(inlineModalRoot);
+}
+
 const addToModalRoot = modal => {
     inlineModalRoot.appendChild(modal.bodyEl);
     popups.push(modal);
@@ -35,14 +46,7 @@ bodyClick$.filter(() => popups.length > 0).subscribe(event => {
     }
 });
 
-if(typeof document !== 'undefined'){
-	const inlineModalRoot = document.createElement('div');
-	inlineModalRoot.className = 'modal-root';
-	for (const i in rootStyle) {
-		inlineModalRoot.style[i] = rootStyle[i];
-	}
-	document.body.appendChild(inlineModalRoot);
-}
+
 
 
 
@@ -330,7 +334,9 @@ export class PageModalBody extends React.Component {
             alignItems: 'center'
         }}>
             <div className="page-modal-container">
-                {utils.cloneChildren(this.props.children, {closePopup:this.props.closePopup})}
+                {utils.cloneChildren(this.props.children, {
+                    closePopup:this.props.closePopup
+                })}
             </div>
 
         </div>;
