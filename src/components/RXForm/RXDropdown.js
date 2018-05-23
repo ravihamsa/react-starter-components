@@ -31,10 +31,15 @@ export class RXDropdownItem extends Component {
     render() {
         const itemData = this.props.itemData;
         const className = this.getClassName();
-        return <li data-id={itemData.id} className={className}>
+	    const {idAttribute} = this.props;
+        return <li data-id={itemData[idAttribute]} className={className}>
             {itemData.name}
         </li>;
     }
+}
+
+RXDropdownItem.defaultProps = {
+	idAttribute:'id'
 }
 
 export default class RXDropdown extends RXSelectionElement {

@@ -1,6 +1,6 @@
 {
   "name": "react-starter-components",
-  "version": "1.0.125",
+  "version": "1.0.126",
   "description": "",
   "main": "lib/index.js",
   "repository": "https://github.com/ravihamsa/react-starter-components",
@@ -18,7 +18,7 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "rxjs": "^5.0.0-rc.1",
-    "selection-manager": "1.0.28"
+    "selection-manager": "1.0.29"
   },
   "devDependencies": {
     "eslint": "^4.16.0",
