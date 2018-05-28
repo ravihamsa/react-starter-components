@@ -64,6 +64,11 @@ export class InlineModal extends Component {
         this.setState({
             isOpen: bool
         });
+	    if (bool && this.props.onOpenModal) {
+		    this.props.onOpenModal();
+	    } else if (!bool && this.props.onCloseModal) {
+		    this.props.onCloseModal();
+	    }
     }
 
     closePopup() {
@@ -274,6 +279,11 @@ export class PageModal extends React.Component {
         this.setState({
             isOpen: bool
         });
+	    if (bool && this.props.onOpenModal) {
+		    this.props.onOpenModal();
+	    } else if (!bool && this.props.onCloseModal) {
+		    this.props.onCloseModal();
+	    }
     }
 
     closePopup() {
