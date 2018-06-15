@@ -17,6 +17,7 @@ class DataLoader {
         this._requestQue = {};
         this._dataCache = {};
         this._middlewares = {};
+        this._beforeRequestHandler = _.identity;
 
         this._responseParser = function(body, resp) {
             return {
@@ -70,6 +71,10 @@ class DataLoader {
 
     setSessionHeaders(headers) {
         this._sessionHeaders = _.extend({}, this._sessionHeaders, headers);
+    }
+
+    setBeforeRequestHandler(fn){
+        this._beforeRequestHandler = fn;
     }
 
     _getStaticPromise(config) {
@@ -156,7 +161,7 @@ class DataLoader {
         if (typeof  url === 'function') {
             url = url(payload, payLoadToServer);
         }
-        const requestConfig = {
+        let requestConfig = {
             method,
             headers: Object.assign({}, self._commonHeaders, self._sessionHeaders),
             credentials: 'include'
@@ -178,6 +183,8 @@ class DataLoader {
 
 
         }
+
+        requestConfig = this._beforeRequestHandler(requestConfig);
 
         return new Promise((resolve, reject) => {
             let fetchPromise;
