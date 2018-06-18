@@ -122,13 +122,17 @@ export default class SimpleSelectionElement extends SimpleElement {
     }
 
     getOptions() {
+        console.log(this.props.name, this.props.options);
         return this.props.options;
     }
 
     getFilteredOptions() {
         const {filterQuery = '', filterField = 'name'} = this.props;
         const options = this.getOptions();
-        return options.filter(item => item[filterField].toLowerCase().indexOf(filterQuery.toLowerCase()) > -1);
+        const filterdOptions = options.filter(item => item[filterField].toLowerCase().indexOf(filterQuery.toLowerCase()) > -1);
+        console.log(this.props.name, filterdOptions);
+        return filterdOptions;
+        // return options.filter(item => item[filterField].toLowerCase().indexOf(filterQuery.toLowerCase()) > -1);
     }
 
     applyValue(toApplyValue = '') {

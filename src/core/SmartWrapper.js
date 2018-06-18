@@ -332,7 +332,6 @@ export class SmartWrapperV2 extends SmartWrapper {
         }
 
     }
-
 }
 
 export class NoLoadingSmartWrapper extends SmartWrapper {

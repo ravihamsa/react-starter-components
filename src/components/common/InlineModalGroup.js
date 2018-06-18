@@ -11,6 +11,17 @@ const rootStyle = {
 
 const popups = [];
 
+let inlineModalRoot = null;
+
+if (typeof document !== 'undefined'){
+    inlineModalRoot = document.createElement('div');
+    inlineModalRoot.className = 'modal-root';
+    for (const i in rootStyle) {
+        inlineModalRoot.style[i] = rootStyle[i];
+    }
+    document.body.appendChild(inlineModalRoot);
+}
+
 const addToModalRoot = modal => {
     inlineModalRoot.appendChild(modal.bodyEl);
     popups.push(modal);
@@ -35,12 +46,8 @@ bodyClick$.filter(() => popups.length > 0).subscribe(event => {
     }
 });
 
-const inlineModalRoot = document.createElement('div');
-inlineModalRoot.className = 'modal-root';
-for (const i in rootStyle) {
-    inlineModalRoot.style[i] = rootStyle[i];
-}
-document.body.appendChild(inlineModalRoot);
+
+
 
 
 export class InlineModal extends Component {
@@ -57,6 +64,11 @@ export class InlineModal extends Component {
         this.setState({
             isOpen: bool
         });
+	    if (bool && this.props.onOpenModal) {
+		    this.props.onOpenModal();
+	    } else if (!bool && this.props.onCloseModal) {
+		    this.props.onCloseModal();
+	    }
     }
 
     closePopup() {
@@ -267,6 +279,11 @@ export class PageModal extends React.Component {
         this.setState({
             isOpen: bool
         });
+	    if (bool && this.props.onOpenModal) {
+		    this.props.onOpenModal();
+	    } else if (!bool && this.props.onCloseModal) {
+		    this.props.onCloseModal();
+	    }
     }
 
     closePopup() {
@@ -327,7 +344,9 @@ export class PageModalBody extends React.Component {
             alignItems: 'center'
         }}>
             <div className="page-modal-container">
-                {utils.cloneChildren(this.props.children, {closePopup:this.props.closePopup})}
+                {utils.cloneChildren(this.props.children, {
+                    closePopup:this.props.closePopup
+                })}
             </div>
 
         </div>;

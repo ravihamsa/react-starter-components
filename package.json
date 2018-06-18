@@ -1,6 +1,6 @@
 {
   "name": "react-starter-components",
-  "version": "1.0.122",
+  "version": "1.0.127",
   "description": "",
   "main": "lib/index.js",
   "repository": "https://github.com/ravihamsa/react-starter-components",
@@ -10,6 +10,7 @@
     "collection-manager": "^1.0.2",
     "history": "^3.0.0",
     "immutable": "^3.8.1",
+    "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.13.1",
     "moment": "^2.13.0",
     "node-fetch": "^1.5.3",
@@ -17,8 +18,7 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "rxjs": "^5.0.0-rc.1",
-    "selection-manager": "1.0.28",
-    "whatwg-fetch": "^1.0.0"
+    "selection-manager": "1.0.29"
   },
   "devDependencies": {
     "eslint": "^4.16.0",
