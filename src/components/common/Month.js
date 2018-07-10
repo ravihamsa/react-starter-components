@@ -51,9 +51,7 @@ class Month extends Component {
         this.DATE_FORMAT = util.getStarterConfig('dateFormat');
         this.state = {
             displayDate: props.displayDate || today.format(this.DATE_FORMAT),
-            selectedDate: props.selectedDate || null,
-            minDate: props.minDate || today.format(this.DATE_FORMAT),
-            maxDate: props.maxDate
+            selectedDate: props.selectedDate || null
         };
     }
 
@@ -87,11 +85,12 @@ class Month extends Component {
     }
 
     render() {
+	    const today = moment();
         const displayDate = moment(this.state.displayDate, this.DATE_FORMAT);
         const selectedDate = moment(this.state.selectedDate, this.DATE_FORMAT);
-        const minDate = moment(this.state.minDate, this.DATE_FORMAT);
-        const maxDate = moment(this.state.maxDate, this.DATE_FORMAT);
-        const today = moment();
+        let {minDate , maxDate} = this.props;
+        minDate = minDate ? moment(minDate, this.DATE_FORMAT) : today;
+        maxDate = moment(maxDate, this.DATE_FORMAT);
 
         const startDate = displayDate.clone().startOf('month').startOf('week');
 
