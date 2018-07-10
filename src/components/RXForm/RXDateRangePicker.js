@@ -39,7 +39,7 @@ export default class RXDateRangePicker extends RXFormElement {
         props.readOnly = true;
         props.value = this.state.value || this.getDefaultDate();
         const valueArr =  props.value.split(dateRangeSplitter);
-        const {valign, bodyPosition, minDate = moment().format(inputFormat), maxDate = moment().add(10, 'years').format(inputFormat)} = this.props;
+        const {valign, bodyPosition, bodyClassName = '', minDate = moment().format(inputFormat), maxDate = moment().add(10, 'years').format(inputFormat)} = this.props;
 
         return <div>
             <InlineModal ref={modal => this.ref_modal_from = modal}>
@@ -47,7 +47,7 @@ export default class RXDateRangePicker extends RXFormElement {
                     <div><span {...props}>{valueArr[0]}</span>
                         <span className="calendar icon"></span></div>
                 </InlineModalButton>
-                <InlineModalBody valign={valign} bodyPosition={bodyPosition}>
+                <InlineModalBody valign={valign} bodyPosition={bodyPosition} className={bodyClassName}>
                     <Month onDateSelect={this.onChange.bind(this, 'from')} selectedDate={valueArr[0]}
 					       displayDate={valueArr[0]}
 					       minDate={minDate} maxDate={valueArr[1]}
@@ -59,7 +59,7 @@ export default class RXDateRangePicker extends RXFormElement {
                     <div><span {...props}>{valueArr[1]}</span>
                         <span className="calendar icon"></span></div>
                 </InlineModalButton>
-                <InlineModalBody valign={valign} bodyPosition={bodyPosition}>
+                <InlineModalBody valign={valign} bodyPosition={bodyPosition} className={bodyClassName}>
                     <Month onDateSelect={this.onChange.bind(this, 'to')} selectedDate={valueArr[1]}
 					       displayDate={valueArr[1]}
 					       minDate={valueArr[0]} maxDate={maxDate}
