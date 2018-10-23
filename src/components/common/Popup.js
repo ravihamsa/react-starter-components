@@ -2,6 +2,7 @@
  * Created by ravi.hamsa on 7/2/16.
  */
 import React, {Component} from 'react';
+import ReactDOM from 'react-dom'
 import PropTypes from "prop-types";
 import {escapePress$} from '../../core/rxutils';
 
