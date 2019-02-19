@@ -33,31 +33,22 @@ const removeFromModalRoot = modal => {
     popups.splice(elementIndex, 1);
 };
 
-let clickSubscription;
-
-const subscribeBodyClick  = () => {
-    if (!clickSubscription) {
-        clickSubscription = bodyClick$.filter(() => popups.length > 0).subscribe(event => {
-            let count = popups.length;
-            while (count--) {
-                const curPopup = popups[count];
-                const isClickedOutside = curPopup.isClickedOutside(event);
-                if (!isClickedOutside) {
-                    break;
-                } else {
-                    curPopup.closePopup();
-                }
-            }
-        });
+bodyClick$.filter(() => popups.length > 0).subscribe(event => {
+    let count = popups.length;
+    while (count--) {
+        const curPopup = popups[count];
+        const isClickedOutside = curPopup.isClickedOutside(event);
+        if (!isClickedOutside) {
+            break;
+        } else {
+            curPopup.closePopup();
+        }
     }
-};
+});
 
-const unSubscribeBodyClick  = () => {
-    if (clickSubscription) {
-        clickSubscription.unsubscribe();
-        clickSubscription = null;
-    }
-};
+
+
+
 
 export class InlineModal extends Component {
     constructor(props) {
@@ -69,21 +60,13 @@ export class InlineModal extends Component {
         this.buttonEl = null;
     }
 
-    setOpen(isOpen) {
-
-        if (isOpen) {
-            subscribeBodyClick();
-        } else {
-            unSubscribeBodyClick();
-        }
-
+    setOpen(bool) {
         this.setState({
-            isOpen: isOpen
+            isOpen: bool
         });
-
-	    if (isOpen && this.props.onOpenModal) {
+	    if (bool && this.props.onOpenModal) {
 		    this.props.onOpenModal();
-	    } else if (!isOpen && this.props.onCloseModal) {
+	    } else if (!bool && this.props.onCloseModal) {
 		    this.props.onCloseModal();
 	    }
     }
@@ -285,7 +268,7 @@ export class PageModal extends React.Component {
         };
     }
 
-    isClickedOutside() {
+    isClickedOutside(event) {
         let isWithinBody = false;
         const target = event.target;
         isWithinBody = target.classList.contains('js-close-modal');
