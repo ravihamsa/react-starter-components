@@ -33,22 +33,31 @@ const removeFromModalRoot = modal => {
     popups.splice(elementIndex, 1);
 };
 
-bodyClick$.filter(() => popups.length > 0).subscribe(event => {
-    let count = popups.length;
-    while (count--) {
-        const curPopup = popups[count];
-        const isClickedOutside = curPopup.isClickedOutside(event);
-        if (!isClickedOutside) {
-            break;
-        } else {
-            curPopup.closePopup();
-        }
+let clickSubscription;
+
+const subscribeBodyClick  = () => {
+    if (!clickSubscription) {
+        clickSubscription = bodyClick$.filter(() => popups.length > 0).subscribe(event => {
+            let count = popups.length;
+            while (count--) {
+                const curPopup = popups[count];
+                const isClickedOutside = curPopup.isClickedOutside(event);
+                if (!isClickedOutside) {
+                    break;
+                } else {
+                    curPopup.closePopup();
+                }
+            }
+        });
     }
-});
+};
 
-
-
-
+const unSubscribeBodyClick  = () => {
+    if (clickSubscription) {
+        clickSubscription.unsubscribe();
+        clickSubscription = null;
+    }
+};
 
 export class InlineModal extends Component {
     constructor(props) {
@@ -60,13 +69,21 @@ export class InlineModal extends Component {
         this.buttonEl = null;
     }
 
-    setOpen(bool) {
+    setOpen(isOpen) {
+
+        if (isOpen) {
+            subscribeBodyClick();
+        } else {
+            unSubscribeBodyClick();
+        }
+
         this.setState({
-            isOpen: bool
+            isOpen: isOpen
         });
-	    if (bool && this.props.onOpenModal) {
+
+	    if (isOpen && this.props.onOpenModal) {
 		    this.props.onOpenModal();
-	    } else if (!bool && this.props.onCloseModal) {
+	    } else if (!isOpen && this.props.onCloseModal) {
 		    this.props.onCloseModal();
 	    }
     }
