@@ -226,7 +226,7 @@ export default class RXSelectionElement extends RXFormElement {
             curElement = curElement.parentNode;
         }
         if (curElement !== listRoot) {
-            const dataId = curElement.dataset[idAttribute];
+            const dataId = curElement.dataset["id"];
             this.selectById(dataId);
         }
     }

@@ -106,7 +106,7 @@ export default class RXDropdown extends RXSelectionElement {
     }
 
     renderElement() {
-        const {valign = 'top', bodyPosition, ListItem = RXDropdownItem, listBodyClassName = 'drop-down-body', useButtonWidth} = this.props;
+        const {valign = 'top', bodyPosition, ListItem = RXDropdownItem, listBodyClassName = 'drop-down-body', useButtonWidth, idAttribute} = this.props;
         const filteredOptions = this.getFilteredOptions();
 
         return <InlineModal ref={inlinePopup => this.ref_inlinePopup = inlinePopup} disabled={this.props.disabled}>
@@ -122,7 +122,7 @@ export default class RXDropdown extends RXSelectionElement {
                     </div> : null}
                     <div onClick={this.onClickHandler.bind(this)} ref={listRoot => this.ref_listRoot = listRoot}>
                         <List items={filteredOptions} selectionManager={this.selectionManager}
-                            selection={this.state.value} ListItem={ListItem}/>
+                            selection={this.state.value} ListItem={ListItem} idAttribute={idAttribute}/>
                     </div>
                 </div>
             </InlineModalBody>
