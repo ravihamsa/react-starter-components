@@ -270,9 +270,17 @@ export class PageModal extends React.Component {
 
     isClickedOutside(event) {
         let isWithinBody = false;
-        const target = event.target;
-        isWithinBody = target.classList.contains('js-close-modal');
-        return isWithinBody;
+        let target = event.target;
+
+        while (target) {
+            if (target.classList.contains('js-close-modal')) {
+                isWithinBody = true;
+                break;
+            }
+            target = target.parentNode;
+        }
+
+        return !isWithinBody;
     }
 
     setOpen(bool) {
