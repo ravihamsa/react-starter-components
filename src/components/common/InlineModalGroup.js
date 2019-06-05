@@ -273,7 +273,7 @@ export class PageModal extends React.Component {
         let target = event.target;
 
         while (target) {
-            if (target.classList.contains('js-close-modal')) {
+            if (target.classList && target.classList.contains('js-close-modal')) {
                 isWithinBody = true;
                 break;
             }
