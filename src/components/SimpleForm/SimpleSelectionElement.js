@@ -47,7 +47,7 @@ export default class SimpleSelectionElement extends SimpleElement {
         });
     }
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         this.applyValue(this.props.value);
         this.readInputValue();
         this.changeSubscription = this.selectionManager.on('change', this.onChange.bind(this));
@@ -71,7 +71,7 @@ export default class SimpleSelectionElement extends SimpleElement {
         }
     }
 
-    componentWillReceiveProps(newProps) {
+    UNSAFE_componentWillReceiveProps(newProps) {
         const newOptions = newProps['options'];
         const selected = this.selectionManager.getSelected();
         if (newOptions && selected) {

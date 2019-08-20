@@ -27,7 +27,7 @@ export default class RXForm extends Component {
         }
     }
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         const read$ = this.elementValue$.filter(e => e.type === 'read');
         const update$ = this.elementValue$.filter(e => e.type === 'update');
         const skipValidateUpdate$ = this.elementValue$.filter(e => e.type === 'skipValidateUpdate');

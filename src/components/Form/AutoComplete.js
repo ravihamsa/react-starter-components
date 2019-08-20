@@ -19,8 +19,8 @@ class AutoComplete extends FormElement {
         });
     }
 
-    componentWillMount() {
-        super.componentWillMount();
+    UNSAFE_componentWillMount() {
+        super.UNSAFE_componentWillMount();
         this.selection.select(this.getDefaultValue());
         this.unsubscribeSelection = this.selection.on('change', selection => {
             this.setValue(selection.id);

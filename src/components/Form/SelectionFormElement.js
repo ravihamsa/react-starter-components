@@ -13,13 +13,13 @@ export default class SelectionFormElement  extends FormElement {
         this.changeSubscription = this.selectionManager.on('change', this.onChange.bind(this));
     }
 
-    componentWillMount(){
-        super.componentWillMount();
+    UNSAFE_componentWillMount(){
+        super.UNSAFE_componentWillMount();
         let defaultValue = this.getDefaultValue();
         this.applyValue(defaultValue)
     }
 
-    componentWillReceiveProps(newProps){
+    UNSAFE_componentWillReceiveProps(newProps){
         if(newProps.options && newProps.options !== this.props.options){
             this.selectionManager.clear();
         }

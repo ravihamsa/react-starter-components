@@ -27,7 +27,7 @@ class SmartWrapper extends Component {
         };
     }
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         if (this.checkActiveRules(this.props)) {
             const stores = this.props.dataRequests;
             if (stores) {
@@ -46,7 +46,7 @@ class SmartWrapper extends Component {
         this.isInDom = false;
     }
 
-    componentWillReceiveProps(newProps) {
+    UNSAFE_componentWillReceiveProps(newProps) {
         const prevProps = this.props;
         if (this.checkActiveRules(newProps, prevProps)) {
             this.checkPropDependencies(newProps, prevProps);

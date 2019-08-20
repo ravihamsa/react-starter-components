@@ -124,7 +124,7 @@ class PaginationWrapper extends Component {
         this.paginationManager.setConfig(config);
     }
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         const paginationManager = this.paginationManager;
         this.paginationSubscription = paginationManager.on('change', this.paginationChangeHandler.bind(this));
     }
@@ -279,7 +279,7 @@ class PaginatedTable extends Component {
         };
     }
 
-    componentWillReceiveProps(newProps) {
+    UNSAFE_componentWillReceiveProps(newProps) {
         this.setState(_.omit(newProps, 'children'));
     }
 

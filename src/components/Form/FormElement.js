@@ -247,7 +247,7 @@ class FormElement extends Component {
         return node.value;
     }
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         let self = this;
         let name = self.props.name;
         let valueStoreValue = this.context.valueStore.get(this.props.name);
