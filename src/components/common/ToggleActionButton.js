@@ -13,7 +13,7 @@ export default class ToggleActionButton extends Component {
         this.collectionManager=new Collection(this.props.actions, {circular:true});
     }
 
-    componentWillMount(){
+    UNSAFE_componentWillMount(){
         this.unsubscribeCollection = this.collectionManager.on('change', (element)=>this.setState({currentElement:element}))
     }
 

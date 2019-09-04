@@ -100,7 +100,7 @@ export default class RXFormElement extends Component {
      })
      }*/
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
 
         const groupedProps$ = this.props$.groupBy(x => x.type + '--' + x.field);
         groupedProps$.mergeMap(group => group.distinctUntilChanged((a, b) => a.value === b.value)).takeUntil(this.unmount$).subscribe(value => this.context.elementProps$.next(value));

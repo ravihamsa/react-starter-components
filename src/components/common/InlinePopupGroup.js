@@ -133,7 +133,7 @@ class InlineBody extends Component {
         this.componentDidUpdate();
     }
 
-    componentWillReceiveProps() {
+    UNSAFE_componentWillReceiveProps() {
         this.componentDidUpdate();
     }
 

@@ -61,7 +61,7 @@ export default class RXSelectionElement extends RXFormElement {
         this.changeSubscription = this.selectionManager.on('change', this.onChange.bind(this));
     }
 
-    componentWillReceiveProps(newProps) {
+    UNSAFE_componentWillReceiveProps(newProps) {
         const newOptions = newProps['options'];
 	    const {idAttribute} = this.props;
         const selected = this.selectionManager.getSelected();

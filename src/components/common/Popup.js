@@ -157,7 +157,7 @@ class PopupBody extends Component {
         }
     }
 
-    componentWillReceiveProps() {
+    UNSAFE_componentWillReceiveProps() {
         this.componentDidUpdate();
     }
 

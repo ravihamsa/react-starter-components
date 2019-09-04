@@ -39,7 +39,7 @@ export default class SimpleElement extends CollectorChild {
         this.updateValue(event.target.value);
     }
 
-    componentWillMount(){
+    UNSAFE_componentWillMount(){
         this.applyValue(this.props.value);
     }
 

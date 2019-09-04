@@ -71,7 +71,7 @@ const connectToStore = function(Component, stores){
             super(props);
             this.state = {};
         }
-        componentWillMount(){
+        UNSAFE_componentWillMount(){
             const self = this;
             this.unsubscribeStore = [];
             _.each(stores, item => {
