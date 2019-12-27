@@ -7,6 +7,7 @@ import Selection from 'selection-manager';
 import RXFormElement from './RXFormElement';
 import List from '../common/List';
 import {_} from '../../core/utils';
+import _isEqual from "lodash/isEqual";
 
 const returnTrue = function() {
     return true;
@@ -66,7 +67,7 @@ export default class RXSelectionElement extends RXFormElement {
 	    const {idAttribute} = this.props;
         const selected = this.selectionManager.getSelected();
         if (newOptions && selected) {
-            if (newOptions !== this.props.options) {
+            if (newOptions.length && !_isEqual(newOptions, this.props.options)) {
                 if (this.multiSelect) {
                     _.each(selected, item => {
                         const selectedOption = newOptions.find(optionItem => optionItem[idAttribute] === item[idAttribute]);
