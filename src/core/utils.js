@@ -25,6 +25,7 @@ import orderBy from 'lodash/orderBy';
 import trim from 'lodash/trim';
 import clone from 'lodash/clone';
 import indexOf from 'lodash/indexOf';
+import isEqual from 'lodash/isEqual';
 const identity = function(arg1){
     return arg1;
 };
@@ -51,7 +52,8 @@ export const _  = {
     clone,
     difference,
 	indexOf,
-	orderBy
+    orderBy,
+    isEqual
 };
 
 

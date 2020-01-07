@@ -66,7 +66,7 @@ export default class RXSelectionElement extends RXFormElement {
 	    const {idAttribute} = this.props;
         const selected = this.selectionManager.getSelected();
         if (newOptions && selected) {
-            if (newOptions !== this.props.options) {
+            if (newOptions.length && !_.isEqual(newOptions, this.props.options)) {
                 if (this.multiSelect) {
                     _.each(selected, item => {
                         const selectedOption = newOptions.find(optionItem => optionItem[idAttribute] === item[idAttribute]);

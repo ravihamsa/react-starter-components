@@ -255,7 +255,6 @@ class SmartWrapper extends Component {
         });
     }
 
-
     bumpAndCheckLoading(diff) {
         this._loadingCount += diff;
         const loadingDone = this._loadingCount === 0;
