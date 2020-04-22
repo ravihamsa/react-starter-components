@@ -220,7 +220,12 @@ class SmartWrapper extends Component {
             delete this.dataIndex.errors;
             return this._addRequest(requestId, params, {
                 done: data => {
-                    this._updateDataIndex(propName, data);
+		    if(storeConfig.orderBy) {
+                        data = _.orderBy(data, [storeConfig.orderBy], [storeConfig.orderType || 'asc']);
+                        this._updateDataIndex(propName, data);
+                    } else {
+                        this._updateDataIndex(propName, data);
+                    }
                 },
                 catch: error => {
                     this.dataIndex['errors'] = error;
