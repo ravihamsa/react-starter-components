@@ -139,13 +139,13 @@ export default class SimpleControllerV2 extends SimpleEmitter {
 
     updateInList(listName, data) {
         const list = this._dataIndex[listName];
-        const recordIndex = list.findIndex(item => item.get('id') === data.id);
+        const recordIndex = list.findIndex(item => item.get('id').toString() === data.id.toString());
         this._dataIndex[listName] = list.update(recordIndex, item => item.merge(fromJS(data)));
     }
 
     resetInList(listName, data) {
         const list = this._dataIndex[listName];
-        const recordIndex = list.findIndex(item => item.get('id') === data.id);
+        const recordIndex = list.findIndex(item => item.get('id').toString() === data.id.toString());
         this._dataIndex[listName] = list.update(recordIndex, () => fromJS(data));
     }
 
