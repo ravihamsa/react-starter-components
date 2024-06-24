@@ -1,21 +1,21 @@
 /**
  * Created by ravi.hamsa on 3/26/17.
  */
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Selection from 'selection-manager';
 import RXFormElement from './RXFormElement';
 import List from '../common/List';
-import {_} from '../../core/utils';
+import { _ } from '../../core/utils';
 
-const returnTrue = function() {
+const returnTrue = function () {
     return true;
 };
 
 export class RXSelectionItem extends Component {
 
     getClassName() {
-        const {itemData, selectionManager} = this.props;
+        const { itemData, selectionManager } = this.props;
         let className = 'list-item ';
         if (selectionManager.isSelected(itemData)) {
             className += ' active';
@@ -24,7 +24,7 @@ export class RXSelectionItem extends Component {
     }
 
     deselectItem() {
-        const {itemData, selectionManager} = this.props;
+        const { itemData, selectionManager } = this.props;
         selectionManager.deselect(itemData);
     }
 
@@ -36,15 +36,18 @@ export class RXSelectionItem extends Component {
     render() {
         const itemData = this.props.itemData;
         const className = this.getClassName();
-	    const {idAttribute} = this.props;
-        return <li data-id={itemData[idAttribute]} className={className}>
+        const { idAttribute } = this.props;
+        return <li
+            data-id={itemData[idAttribute]} className={className}
+            title={itemData[idAttribute]}
+        >
             {itemData.name}
         </li>;
     }
 }
 
 RXSelectionItem.defaultProps = {
-    idAttribute:'id'
+    idAttribute: 'id'
 }
 
 export default class RXSelectionElement extends RXFormElement {
@@ -63,7 +66,7 @@ export default class RXSelectionElement extends RXFormElement {
 
     UNSAFE_componentWillReceiveProps(newProps) {
         const newOptions = newProps['options'];
-	    const {idAttribute} = this.props;
+        const { idAttribute } = this.props;
         const selected = this.selectionManager.getSelected();
         if (newOptions && selected) {
             if (newOptions.length && !_.isEqual(newOptions, this.props.options)) {
@@ -113,8 +116,8 @@ export default class RXSelectionElement extends RXFormElement {
 
     selectById(value) {
         const options = this.getOptions();
-        const {selectionManager} = this;
-        const {idAttribute} = this.props;
+        const { selectionManager } = this;
+        const { idAttribute } = this.props;
         const toSelectItem = _.find(options, item => item[idAttribute] === value);
         if (toSelectItem) {
             if (this.multiSelect) {
@@ -133,7 +136,7 @@ export default class RXSelectionElement extends RXFormElement {
 
     findUpdateSelectionById(id, method) {
         const options = this.getOptions();
-	    const {idAttribute} = this.props;
+        const { idAttribute } = this.props;
         const toSelectItem = _.find(options, item => item[idAttribute] === id);
         if (toSelectItem) {
             this.selectionManager[method](toSelectItem);
@@ -146,7 +149,7 @@ export default class RXSelectionElement extends RXFormElement {
     }
 
     getFormattedSelection(selection = this.selectionManager.getSelected()) {
-	    const {idAttribute} = this.props;
+        const { idAttribute } = this.props;
         if (this.multiSelect) {
             return _.map(selection, idAttribute).join(',');
         } else {
@@ -164,15 +167,15 @@ export default class RXSelectionElement extends RXFormElement {
 
     readInputValue() {
         let selection = this.getFormattedSelection();
-	    if (selection === '', this.props.selectDefaultFirst){
-            const {options} = this.props;
-            if (options && options.length > 0){
+        if (selection === '', this.props.selectDefaultFirst) {
+            const { options } = this.props;
+            if (options && options.length > 0) {
                 this.selectionManager.select(options[0]);
-	            selection = this.getFormattedSelection();
+                selection = this.getFormattedSelection();
             }
-	    }
+        }
         this.updateValue(selection, 'read');
-        const {exposeSelection, exposeName} = this.props;
+        const { exposeSelection, exposeName } = this.props;
         if (exposeSelection || exposeName) {
             const selected = this.selectionManager.getSelected();
             this.selection$.next({
@@ -183,7 +186,7 @@ export default class RXSelectionElement extends RXFormElement {
     }
 
     exposeNameAndSelection() {
-        const {exposeSelection, exposeName} = this.props;
+        const { exposeSelection, exposeName } = this.props;
         const selected = this.selectionManager.getSelected();
         if (exposeSelection) {
             this.selection$.next({
@@ -216,7 +219,7 @@ export default class RXSelectionElement extends RXFormElement {
     onClickHandler(e) {
         let curElement = e.target;
         const listRoot = this.ref_listRoot;
-	    const {idAttribute} = this.props;
+        const { idAttribute } = this.props;
 
         if (this.props.disabled || !this.validateSelection()) {
             return;
@@ -230,21 +233,21 @@ export default class RXSelectionElement extends RXFormElement {
             this.selectById(dataId);
         }
     }
-    getOptions(){
+    getOptions() {
         return this.props.options;
     }
 
     getFilteredOptions() {
-        const {filterQuery, filterField} = this.props;
+        const { filterQuery, filterField } = this.props;
         const options = this.getOptions();
         return options.filter(item => item[filterField].toLowerCase().indexOf(filterQuery.toLowerCase()) > -1);
     }
 
     renderElement() {
-        const {ListItem = RXSelectionItem, idAttribute} = this.props;
+        const { ListItem = RXSelectionItem, idAttribute } = this.props;
         return <div onClick={this.onClickHandler.bind(this)} ref={element => this.ref_listRoot = element}>
             <List items={this.getFilteredOptions()} selectionManager={this.selectionManager}
-                selection={this.state.__shadowValue} idAttribute={idAttribute} ListItem={ListItem}/>
+                selection={this.state.__shadowValue} idAttribute={idAttribute} ListItem={ListItem} />
         </div>;
     }
 
@@ -281,8 +284,8 @@ RXSelectionElement.defaultProps = {
     exposeSelection: false,
     multiSelect: false,
     useSelectionAsValue: false,
-    selectDefaultFirst:false,
+    selectDefaultFirst: false,
     filterQuery: '',
     filterField: 'name',
-    idAttribute:'id'
+    idAttribute: 'id'
 };
