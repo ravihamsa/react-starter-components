@@ -39,7 +39,7 @@ export class RXSelectionItem extends Component {
         const { idAttribute } = this.props;
         return <li
             data-id={itemData[idAttribute]} className={className}
-            title={itemData[idAttribute]}
+            title={itemData.name}
         >
             {itemData.name}
         </li>;
